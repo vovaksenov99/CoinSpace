@@ -24,9 +24,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     private lateinit var mMainBalanceText: TextView
     private lateinit var mAdditionalBalanceText: TextView
 
-
-    fun newInstance() = HomeFragment()
-
     private fun injectDependency() {
         val homeComponent = DaggerFragmentComponent.builder().build()
         homeComponent.inject(this)
@@ -94,6 +91,12 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         val drawable = resources.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
         mNewOperationBtn.setImageDrawable(drawable)
         drawable.start()
+    }
+
+    companion object {
+
+        fun newInstance() = HomeFragment()
+
     }
 
 }

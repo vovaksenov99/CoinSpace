@@ -118,7 +118,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
     }
 
     /**
-     * Animate operation card sliding out and call popbackstack when animation ends or canceled
+     * If user input is suitable, animate operation card sliding out
+     * and call popbackstack when animation ends or canceled
      * @return false if input sum is empty or equals 0
      */
     override fun confirmOperationAndCloseSelf(): Boolean {

@@ -61,7 +61,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
 
     fun openHomeFragment(): HomeFragment {
          return supportFragmentManager.findFragmentById(R.id.contentFrame)
-                as HomeFragment? ?: HomeFragment().newInstance().also {
+                as HomeFragment? ?: HomeFragment.newInstance().also {
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .commit()
         }
@@ -90,6 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
             return true
         } else if (item?.itemId == R.id.about) {
             appInfoDialog.show()
+            return true
         }
         return super.onOptionsItemSelected(item)
     }

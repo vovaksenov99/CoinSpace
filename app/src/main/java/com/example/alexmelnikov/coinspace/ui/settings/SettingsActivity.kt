@@ -12,8 +12,6 @@ import com.example.alexmelnikov.coinspace.R
 import android.util.TypedValue
 
 
-
-
 class SettingsActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {

@@ -2,7 +2,7 @@ package com.example.alexmelnikov.coinspace.model
 
 /**
  *  Created by Alexander Melnikov on 22.07.18.
- *  TODO: Edit class header comment
+ *  Accountant is the base model class for finance management operations
  */
 
 class Accountant {

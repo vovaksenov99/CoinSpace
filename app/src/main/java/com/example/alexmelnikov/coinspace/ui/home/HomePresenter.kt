@@ -6,6 +6,9 @@ import com.example.alexmelnikov.coinspace.model.Operation
 import com.example.alexmelnikov.coinspace.util.TextUtils
 import javax.inject.Inject
 
+/**
+ * HomePresenter handles HomeFragment and OperationFragment
+ */
 class HomePresenter : HomeContract.Presenter {
 
     @Inject

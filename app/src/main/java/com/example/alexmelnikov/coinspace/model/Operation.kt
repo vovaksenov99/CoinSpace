@@ -4,7 +4,7 @@ import java.util.*
 
 /**
  *  Created by Alexander Melnikov on 22.07.18.
- *  TODO: Edit class header comment
+ *  Operation represents financial transaction
  */
 data class Operation(val type: Operation.OperationType,
                      val sum: Float,
