@@ -18,7 +18,7 @@ class HomePresenter : HomeContract.Presenter {
     private var mOperationView: HomeContract.OperationView? = null
     private var currentNewOperation: Operation.OperationType? = null
 
-    override lateinit var mainCurrency: String
+    override lateinit var mainCurrency: Operation.Currency
     override var balanceUsd: Float = 0.00f
 
     override fun attach(view: HomeContract.HomeView) {
@@ -35,14 +35,14 @@ class HomePresenter : HomeContract.Presenter {
         mOperationView = null
     }
 
-    override fun textViewsSetupRequest(mainCurrency: String, balanceUsd: Float) {
+    override fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float) {
         this.mainCurrency = mainCurrency
         this.balanceUsd = balanceUsd
-        mAccountant.updateBalance(balanceUsd, "USD")
+        mAccountant.updateBalance(balanceUsd, Operation.Currency.USD)
 
         mHomeView.setupTextViews(
-                TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(balanceUsd, "USD", mainCurrency), mainCurrency),
-                TextUtils.formatToMoneyString(balanceUsd, "USD"))
+                TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(balanceUsd, Operation.Currency.USD, mainCurrency), mainCurrency),
+                TextUtils.formatToMoneyString(balanceUsd, Operation.Currency.USD))
     }
 
     override fun newOperationButtonClick() {
@@ -57,25 +57,25 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun newExpenseButtonClick() {
-        currentNewOperation = Operation.OperationType.Expense
-        mOperationView?.setupNewOperationLayout(currentNewOperation!!)
+        currentNewOperation = Operation.OperationType.EXPENSE
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE)
     }
 
     override fun newIncomeButtonClick() {
-        currentNewOperation = Operation.OperationType.Income
-        mOperationView?.setupNewOperationLayout(currentNewOperation!!)
+        currentNewOperation = Operation.OperationType.INCOME
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME)
     }
 
-    override fun newOperationRequest(sum: Float, currency: String) {
+    override fun newOperationRequest(sum: Float, currency: Operation.Currency) {
         when (currentNewOperation) {
-            Operation.OperationType.Expense -> mAccountant.addExpense(sum, currency)
-            Operation.OperationType.Income -> mAccountant.addIncome(sum, currency)
+            Operation.OperationType.EXPENSE -> mAccountant.addExpense(sum, currency)
+            Operation.OperationType.INCOME -> mAccountant.addIncome(sum, currency)
         }
         balanceUsd = mAccountant.getBalanceUsd().also {
             mHomeView.saveNewBalance(it)
             mHomeView.setupTextViews(
-                    TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(it, "USD", mainCurrency), mainCurrency),
-                    TextUtils.formatToMoneyString(it, "USD"))
+                    TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(it, Operation.Currency.USD, mainCurrency), mainCurrency),
+                    TextUtils.formatToMoneyString(it, Operation.Currency.USD))
         }
         currentNewOperation = null
     }

@@ -31,14 +31,14 @@ class HomeContract {
 
     interface Presenter : BaseContract.Presenter<HomeContract.HomeView> {
 
-        var mainCurrency: String
+        var mainCurrency: Operation.Currency
         var balanceUsd: Float
 
         fun attachOperationView(view: HomeContract.OperationView)
 
         fun detachOperationView()
 
-        fun textViewsSetupRequest(mainCurrency: String, balanceUsd: Float)
+        fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float)
 
         fun newOperationButtonClick()
 
@@ -46,6 +46,6 @@ class HomeContract {
 
         fun newIncomeButtonClick()
 
-        fun newOperationRequest(sum: Float, currency: String)
+        fun newOperationRequest(sum: Float, currency: Operation.Currency)
     }
 }

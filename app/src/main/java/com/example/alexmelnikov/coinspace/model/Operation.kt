@@ -12,6 +12,10 @@ data class Operation(val type: Operation.OperationType,
                      val date: Date) {
 
     enum class OperationType {
-        Expense, Income
+        EXPENSE, INCOME
+    }
+
+    enum class Currency {
+        USD, RUB, EUR
     }
 }

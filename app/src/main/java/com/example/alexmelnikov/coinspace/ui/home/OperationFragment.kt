@@ -6,7 +6,6 @@ import android.os.Bundle
 import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.text.TextWatcher
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,6 +18,7 @@ import java.text.DateFormat
 import java.util.*
 import android.text.Editable
 import com.example.alexmelnikov.coinspace.model.Operation
+import com.example.alexmelnikov.coinspace.util.TextUtils
 
 
 class OperationFragment : Fragment(), HomeContract.OperationView {
@@ -66,7 +66,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         val spinnerArrayAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, currencies)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         mCurrencySpinner.adapter = spinnerArrayAdapter
-        mCurrencySpinner.setSelection(currencies.indexOf(presenter.mainCurrency))
+        mCurrencySpinner.setSelection(currencies.indexOf(
+                TextUtils.currencyToString(presenter.mainCurrency)))
 
         //animate operation card sliding up
         mExpenseCardLayout.postDelayed({
@@ -107,8 +108,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         mNewOperationLayout.visibility = View.VISIBLE
         mDateLabel.text = DateFormat.getDateTimeInstance().format(Date())
         when (type) {
-            Operation.OperationType.Expense -> mOperationTypeLabel.text = getString(R.string.label_new_expense)
-            Operation.OperationType.Income ->  mOperationTypeLabel.text = getString(R.string.label_new_income)
+            Operation.OperationType.EXPENSE -> mOperationTypeLabel.text = getString(R.string.label_new_expense)
+            Operation.OperationType.INCOME ->  mOperationTypeLabel.text = getString(R.string.label_new_income)
         }
     }
 
@@ -131,7 +132,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             return false
         } else {
             presenter.newOperationRequest(mSumEt.text.toString().trim().toFloat(),
-                    mCurrencySpinner.selectedItem.toString())
+                    TextUtils.stringToCurrency(mCurrencySpinner.selectedItem.toString()))
 
             YoYo.with(Techniques.SlideOutUp)
                     .duration(300)
