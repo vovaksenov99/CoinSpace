@@ -1,7 +1,6 @@
 package com.example.alexmelnikov.coinspace.model
 
-import java.util.*
-import com.example.alexmelnikov.coinspace.model.Operation.Currency
+import com.example.alexmelnikov.coinspace.model.entities.Operation.Currency
 
 /**
  *  Created by Alexander Melnikov on 22.07.18.

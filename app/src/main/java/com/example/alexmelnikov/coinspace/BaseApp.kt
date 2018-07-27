@@ -26,10 +26,11 @@ class BaseApp : Application() {
 
     }
 
-    fun setup() {
+    private fun setup() {
         component = DaggerApplicationComponent.builder().build()
         component.inject(this)
     }
+
 
     companion object {
         lateinit var instance: BaseApp private set

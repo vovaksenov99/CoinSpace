@@ -1,8 +1,9 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
+import android.util.Log
 import com.example.alexmelnikov.coinspace.di.component.DaggerModelComponent
 import com.example.alexmelnikov.coinspace.model.Accountant
-import com.example.alexmelnikov.coinspace.model.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.util.TextUtils
 import javax.inject.Inject
 
@@ -22,8 +23,12 @@ class HomePresenter : HomeContract.Presenter {
     override var balanceUsd: Float = 0.00f
 
     override fun attach(view: HomeContract.HomeView) {
+        Log.d("mytag", "attach $mOperationView")
         mHomeView = view
         DaggerModelComponent.builder().build().inject(this)
+        if (mOperationView != null) mHomeView.openOperationFragment()
+        mOperationView = null
+        currentNewOperation = null
     }
 
     override fun attachOperationView(view: HomeContract.OperationView) {
@@ -32,7 +37,10 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun detachOperationView() {
+        mHomeView.closeOperationFragment()
         mOperationView = null
+        currentNewOperation = null
+        animateOperationAddButtonRequest()
     }
 
     override fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float) {
@@ -47,23 +55,33 @@ class HomePresenter : HomeContract.Presenter {
 
     override fun newOperationButtonClick() {
         if (mOperationView == null) {
-            mHomeView.openOperationFragmentRequest()
+            mHomeView.openOperationFragment()
             mHomeView.animateNewOperationButtonToCheck()
         } else {
-            if (mOperationView!!.confirmOperationAndCloseSelf()) {
-                mHomeView.animateNewOperationButtonToAdd()
-            }
+            mOperationView!!.confirmOperationAndCloseSelf()
         }
     }
 
     override fun newExpenseButtonClick() {
         currentNewOperation = Operation.OperationType.EXPENSE
         mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE)
+        mOperationView?.animateCloseButtonCloseToBack()
     }
 
     override fun newIncomeButtonClick() {
         currentNewOperation = Operation.OperationType.INCOME
         mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME)
+        mOperationView?.animateCloseButtonCloseToBack()
+    }
+
+    override fun clearButtonClick() {
+        if (currentNewOperation == null) {
+            detachOperationView()
+        } else {
+            mOperationView?.resetLayout()
+            mOperationView?.animateCloseButtonBackToClose()
+            currentNewOperation = null
+        }
     }
 
     override fun newOperationRequest(sum: Float, currency: Operation.Currency) {
@@ -79,4 +97,21 @@ class HomePresenter : HomeContract.Presenter {
         }
         currentNewOperation = null
     }
+
+    override fun animateOperationAddButtonRequest() {
+        mHomeView.animateNewOperationButtonToAdd()
+    }
+
+    override fun openSettingsActivityRequest() {
+        mHomeView.openSettingsActivity()
+    }
+
+    override fun showAboutDialogRequest() {
+        mHomeView.showAboutDialog()
+    }
+
+    override fun accountsButtonClick() {
+        mHomeView.openAccountsFragmentRequest()
+    }
+
 }

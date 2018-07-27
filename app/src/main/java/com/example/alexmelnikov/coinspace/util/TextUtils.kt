@@ -1,9 +1,7 @@
 package com.example.alexmelnikov.coinspace.util
 
-import com.example.alexmelnikov.coinspace.model.Accountant
-import com.example.alexmelnikov.coinspace.model.Operation
-import com.example.alexmelnikov.coinspace.model.Operation.Currency
-import java.text.DecimalFormat
+import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Operation.Currency
 import java.text.NumberFormat
 import java.util.*
 
@@ -30,6 +28,7 @@ class TextUtils {
                 Currency.RUB -> "\u20BD"
                 Currency.EUR -> "€"
             }
+
 
         fun stringToCurrency(string: String) =
                 when (string) {

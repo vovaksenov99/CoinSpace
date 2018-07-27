@@ -18,7 +18,9 @@ android {
     }
     buildTypes {
         release {
-            minifyEnabled false
+            debuggable false
+            minifyEnabled true
+            shrinkResources false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
@@ -54,5 +56,16 @@ dependencies {
 
     // Material Dialog
     implementation 'com.afollestad.material-dialogs:core:0.9.6.0'
+
+    //Color pick dialog
+    implementation ('com.thebluealliance:spectrum:0.7.1') { exclude group: 'com.android.support' }
+
+    //Room
+    implementation "android.arch.persistence.room:runtime:1.1.1"
+    kapt "android.arch.persistence.room:compiler:1.1.1"
+    testImplementation "android.arch.persistence.room:testing:1.1.1"
+
+    //Gson
+    implementation 'com.google.code.gson:gson:2.8.5'
 
 }

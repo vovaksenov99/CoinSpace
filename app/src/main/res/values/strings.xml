@@ -31,6 +31,9 @@
     <string name="zero_sum_error">Сумма должна быть больше нуля</string>
     <string name="lbl_empty_operation_history">История действий пуста</string>
     <string name="lbl_sum">Сумма</string>
+    <string name="pref_settings">Настройки</string>
+    <string name="pref_about">О приложении</string>
+    <string name="pref_accounts">Счета</string>
     <string name="icon_rub">₽</string>
     <string name="icon_usd">$</string>
     <string name="icon_eur">€</string>
@@ -41,5 +44,8 @@
         \n\nHaberem visione dicetur rom dominum mutuari hac <a href="https://academy.yandex.ru/events/mobdev/msk-2018/">Yandex School of Mobile Development 2018</a>
         \n\nDeveloped by <a href="https://github.com/millerovv">Alexander Melnikov</a>
     </string>
+
+    <string name="text_new_account_header">Новый счет</string>
+    <string name="hint_account_name">Название счета</string>
 
 </resources>

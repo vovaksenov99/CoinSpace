@@ -1,5 +1,9 @@
 package com.example.alexmelnikov.coinspace.di.module
 
+import com.example.alexmelnikov.coinspace.ui.accounts.AccountsContract
+import com.example.alexmelnikov.coinspace.ui.accounts.AccountsPresenter
+import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountContract
+import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountPresenter
 import com.example.alexmelnikov.coinspace.ui.home.HomeContract
 import com.example.alexmelnikov.coinspace.ui.home.HomePresenter
 import dagger.Module
@@ -10,8 +14,14 @@ import javax.inject.Singleton
 class FragmentModule {
 
     @Provides
-    fun provideHomePresenter(): HomeContract.Presenter {
-        return HomePresenter()
-    }
+    fun provideHomePresenter(): HomeContract.Presenter = HomePresenter()
+
+
+    @Provides
+    fun provideAccountsPresenter(): AccountsContract.Presenter = AccountsPresenter()
+
+
+    @Provides
+    fun provideAddAccountPresenter(): AddAccountContract.Presenter = AddAccountPresenter()
 
 }
