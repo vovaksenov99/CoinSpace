@@ -12,6 +12,7 @@ import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
+import com.example.alexmelnikov.coinspace.util.TextUtils
 import javax.inject.Inject
 
 
@@ -50,7 +51,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
         //Get fresh finance data from storage and give it to presenter
         with (PreferenceManager.getDefaultSharedPreferences(activity)) {
-            presenter.textViewsSetupRequest(this.getString(getString(R.string.sp_key_main_currency), "RUB"),
+            presenter.textViewsSetupRequest(TextUtils.stringToCurrency(this.getString(getString(R.string.sp_key_main_currency), "RUB")),
                     this.getFloat(getString(R.string.sp_key_balance), 0.00f))
         }
 

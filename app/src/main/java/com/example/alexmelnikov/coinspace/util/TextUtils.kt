@@ -1,5 +1,8 @@
 package com.example.alexmelnikov.coinspace.util
 
+import com.example.alexmelnikov.coinspace.model.Accountant
+import com.example.alexmelnikov.coinspace.model.Operation
+import com.example.alexmelnikov.coinspace.model.Operation.Currency
 import java.text.DecimalFormat
 import java.text.NumberFormat
 import java.util.*
@@ -12,23 +15,36 @@ import java.util.*
 class TextUtils {
 
     companion object {
-        fun formatToMoneyString(sum: Float, currency: String): String {
-            var format: NumberFormat = NumberFormat.getCurrencyInstance(Locale.getDefault())
-            when (currency) {
-                "RUB" -> format = NumberFormat.getCurrencyInstance(Locale.getDefault())
-                "USD" -> format = NumberFormat.getCurrencyInstance(Locale.US)
-                "EUR" -> format = NumberFormat.getCurrencyInstance(Locale.GERMANY)
+        fun formatToMoneyString(sum: Float, currency: Currency): String {
+            val format: NumberFormat = when (currency) {
+                Currency.RUB -> NumberFormat.getCurrencyInstance(Locale.getDefault())
+                Currency.USD -> NumberFormat.getCurrencyInstance(Locale.US)
+                Currency.EUR -> NumberFormat.getCurrencyInstance(Locale.GERMANY)
             }
             return format.format(sum)
         }
 
-        fun currencyIcon(currency: String): String {
+        fun currencyIcon(currency: Currency) =
             when (currency) {
-                "USD" -> return "$"
-                "RUB" -> return "\u20BD"
-                "EUR" -> return "€"
+                Currency.USD -> "$"
+                Currency.RUB -> "\u20BD"
+                Currency.EUR -> "€"
             }
-            return ""
-        }
+
+        fun stringToCurrency(string: String) =
+                when (string) {
+                    "USD" -> Currency.USD
+                    "RUB" -> Currency.RUB
+                    "EUR" -> Currency.EUR
+                    else -> throw IllegalArgumentException("Unknown string currency representation")
+                }
+
+        fun currencyToString(currency: Operation.Currency) =
+                when (currency) {
+                    Currency.USD -> "USD"
+                    Currency.RUB -> "RUB"
+                    Currency.EUR -> "EUR"
+                    else -> throw IllegalArgumentException("Unknown currency")
+                }
     }
 }

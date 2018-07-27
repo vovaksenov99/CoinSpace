@@ -1,5 +1,8 @@
 package com.example.alexmelnikov.coinspace.model
 
+import java.util.*
+import com.example.alexmelnikov.coinspace.model.Operation.Currency
+
 /**
  *  Created by Alexander Melnikov on 22.07.18.
  *  Accountant is the base model class for finance management operations
@@ -20,47 +23,33 @@ class Accountant {
         return balanceUsd
     }
 
-    fun updateBalance(newBalance: Float, currency: String) {
-        when (currency) {
-            "USD" -> balanceUsd = newBalance
-            "RUB" -> balanceUsd = newBalance * FACTOR_RUB_TO_USD
-            "EUR" -> balanceUsd = newBalance * FACTOR_EUR_TO_USD
+    fun updateBalance(newBalance: Float, currency: Currency) {
+        balanceUsd = when (currency) {
+            Currency.USD -> newBalance
+            Currency.RUB -> newBalance * FACTOR_RUB_TO_USD
+            Currency.EUR -> newBalance * FACTOR_EUR_TO_USD
         }
     }
 
-    fun convertCurrencyFromTo(money: Float, from: String, to: String): Float {
-        if (from != to) {
-            when (from) {
-                "USD" -> when (to) {
-                    "RUB" -> return money * FACTOR_USD_TO_RUB
-                    "EUR" -> return money * FACTOR_USD_TO_EUR
-                }
-                "EUR" -> {
-                    when (to) {
-                        "USD" -> return money * FACTOR_EUR_TO_USD
-                        "RUB" -> return money * FACTOR_EUR_TO_RUB
-                    }
-                    when (to) {
-                        "USD" -> return money * FACTOR_RUB_TO_USD
-                        "EUR" -> return money * FACTOR_RUB_TO_EUR
-                    }
-                }
-                "RUB" -> when (to) {
-                    "USD" -> return money * FACTOR_RUB_TO_USD
-                    "EUR" -> return money * FACTOR_RUB_TO_EUR
-                }
-            }
-        }
-        return money
-    }
+    fun convertCurrencyFromTo(money: Float, from: Currency, to: Currency) =
+            when (Pair(from, to)) {
+                 Pair(Currency.USD, Currency.RUB) -> money * FACTOR_USD_TO_RUB
+                 Pair(Currency.USD, Currency.EUR) -> money * FACTOR_USD_TO_EUR
+                 Pair(Currency.EUR, Currency.USD) -> money * FACTOR_EUR_TO_USD
+                 Pair(Currency.EUR, Currency.RUB) -> money * FACTOR_EUR_TO_RUB
+                 Pair(Currency.RUB, Currency.USD) -> money * FACTOR_RUB_TO_USD
+                 Pair(Currency.RUB, Currency.EUR) -> money * FACTOR_RUB_TO_EUR
+                 else -> money
+             }
 
-    fun addExpense(sum: Float, currency: String) {
-        val sumUsd = convertCurrencyFromTo(sum, currency, "USD")
+
+    fun addExpense(sum: Float, currency: Currency) {
+        val sumUsd = convertCurrencyFromTo(sum, currency, Currency.USD)
         balanceUsd -= sumUsd
     }
 
-    fun addIncome(sum: Float, currency: String) {
-        val sumUsd = convertCurrencyFromTo(sum, currency, "USD")
+    fun addIncome(sum: Float, currency: Currency) {
+        val sumUsd = convertCurrencyFromTo(sum, currency, Currency.USD)
         balanceUsd += sumUsd
     }
 }
