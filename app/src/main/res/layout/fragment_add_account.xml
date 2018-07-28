@@ -60,31 +60,35 @@
 
         </android.support.design.widget.TextInputLayout>
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
             android:layout_centerInParent="true"
             android:layout_below="@id/input_layout_account_name"
             android:layout_marginTop="10dp"
+            android:layout_marginLeft="6dp"
             android:layout_marginBottom="24dp">
 
             <TextView
                 android:id="@+id/tv_currency_label"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textSize="16sp"
+                android:layout_centerVertical="true"
                 android:textColor="@color/colorWhite"
+                android:textSize="18sp"
                 android:text="@string/tv_currency_label" />
 
             <Spinner
                 android:id="@+id/currency_spinner"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tv_currency_label"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="2dp"
                 android:background="@android:color/transparent"
-                android:gravity="center" />
+                android:gravity="left" />
 
-        </LinearLayout>
+        </RelativeLayout>
 
     </RelativeLayout>
 
@@ -97,6 +101,9 @@
         android:src="@drawable/ic_add_white_32dp"
         app:layout_anchor="@+id/rv_account"
         app:layout_anchorGravity="bottom|center"
-        android:transitionName="fabAdd"/>
+        android:transitionName="fabAdd"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
 
 </android.support.design.widget.CoordinatorLayout>

@@ -32,7 +32,7 @@ class AccountsPresenter : AccountsContract.Presenter {
             accountsRepository.getAccountsOffline()
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ acs -> handleSuccessAccountsRequest(acs, updateLayout) },
+                    .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList, updateLayout) },
                             { handleErrorAccountsRequest() })
         } else {
             view.replaceAccountsRecyclerData(accounts)

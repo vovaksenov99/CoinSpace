@@ -1,12 +1,11 @@
 package com.example.alexmelnikov.coinspace.ui.add_new_account
 
-import android.util.Log
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.di.component.DaggerApplicationComponent
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper.Companion.MAIN_CURRENCY
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 class AddAccountPresenter : AddAccountContract.Presenter {
@@ -38,9 +37,16 @@ class AddAccountPresenter : AddAccountContract.Presenter {
     }
 
     override fun addNewAccountButtonClick(name: String, currency: String) {
-        accountsRepository.insertAccountOffline(name = name, currency = currency,
-                color = selectedColor)
-        view.closeSelf()
-
+        //Check if account with similar name is already in the db
+        accountsRepository.findAccountByName(name)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({account -> view.showEditTextError(true)},
+                        {
+                            accountsRepository.insertAccountOfflineAsync(name = name, currency = currency,
+                                    color = selectedColor)
+                            view.closeSelf()
+                        })
     }
+
 }

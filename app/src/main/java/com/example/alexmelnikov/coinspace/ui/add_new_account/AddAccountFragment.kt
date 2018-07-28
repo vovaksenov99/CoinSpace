@@ -17,6 +17,8 @@ import android.widget.ArrayAdapter
 import android.widget.EditText
 import android.widget.ImageButton
 import android.widget.Spinner
+import com.daimajia.androidanimations.library.Techniques
+import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
@@ -49,9 +51,7 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
         presenter.updateSelectedColor(resources.getColor(R.color.colorPrimary))
-        setupEventListeners()
 
         //setup spinner
         val currencies = resources.getStringArray(R.array.main_currency_values_array)
@@ -67,8 +67,18 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
             imm.showSoftInput(et_account_name, 0)
         }, 150)
 
+        setupEventListeners()
+
         //Prevent the soft keyboard from pushing the view above it
         activity?.window?.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_ADJUST_PAN)
+
+        view.postDelayed({
+            fab_add.show()
+            YoYo.with(Techniques.SlideInUp)
+                    .duration(400)
+                    .playOn(fab_add)
+        }, 370)
+
     }
 
     override fun closeSelf() {
@@ -88,7 +98,7 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
             if (!etText.isEmpty()) {
                 presenter.addNewAccountButtonClick(etText, currency_spinner.selectedItem.toString())
             } else {
-                input_layout_account_name.error = resources.getString(R.string.empty_account_name_error)
+                showEditTextError(false)
             }
 
         }
@@ -107,6 +117,19 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
             }
         })
 
+    }
+
+    override fun showEditTextError(nameAlreadyPresentInDb: Boolean) {
+        if (nameAlreadyPresentInDb) {
+            input_layout_account_name.error = resources
+                    .getString(R.string.account_name_already_in_db_error)
+
+            YoYo.with(Techniques.Shake)
+                    .duration(500)
+                    .playOn(et_account_name)
+
+        }
+        else input_layout_account_name.error = resources.getString(R.string.empty_account_name_error)
     }
 
     override fun showColorPickerDialog() {

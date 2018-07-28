@@ -34,7 +34,6 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter.attach(this)
-        presenter.accountsDataRequest(false)
         return inflater.inflate(R.layout.fragment_accounts, container, false)
     }
 
@@ -54,13 +53,9 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
         accountsAdapter = AccountsAdapter(activity as MainActivity, ArrayList(), presenter)
         accountsAdapter.setHasStableIds(true)
         rv_accounts.adapter = accountsAdapter
-        val accountsLinearLayoutManager = AccountsLinearLayoutManager(activity as MainActivity)
-        rv_accounts.layoutManager = accountsLinearLayoutManager
-    }
+        rv_accounts.layoutManager = AccountsLinearLayoutManager(activity as MainActivity)
 
-    override fun onStart() {
-        super.onStart()
-        presenter.accountsDataRequest(true)
+        presenter.accountsDataRequest(accountsAdapter.dataIsEmpty())
     }
 
     private fun setupEventListeners() {

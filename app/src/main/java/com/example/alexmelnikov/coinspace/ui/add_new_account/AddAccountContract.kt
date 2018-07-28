@@ -9,12 +9,13 @@ class AddAccountContract {
 
         var presenter: AddAccountContract.Presenter
 
+        fun showEditTextError(nameAlreadyPresentInDb: Boolean)
+
         fun showColorPickerDialog()
 
         fun updateLayoutBgColor(color: Int)
 
         fun closeSelf()
-
     }
 
     //interface View

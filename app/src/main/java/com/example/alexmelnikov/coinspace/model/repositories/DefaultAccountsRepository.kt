@@ -12,6 +12,25 @@ import io.reactivex.schedulers.Schedulers
 
 class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRepository {
 
+    /**
+     * This method called from BaseApp onCreate
+     * It checks if accounts table is empty and add two main accounts (cash and card)
+     */
+    override fun initAddTwoMainAccountsIfTableEmptyAsync(cashName: String, mainCurrency: String, color: Int,
+                                                         cardName: String) {
+        Completable.fromAction {
+            if (accountDao.getAll().isEmpty()) {
+                val cashAccount = Account(null, cashName, mainCurrency, 0f, color, ArrayList())
+                val cardAccount = Account(null, cardName, mainCurrency, 0f, color, ArrayList())
+                accountDao.insert(cashAccount)
+                accountDao.insert(cardAccount)
+            }
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ Log.d("mytag", "success") },
+                        {Log.d("mytag", "error")})
+    }
+
     override fun getAccountsOffline(): Single<List<Account>> {
         return Single.create<List<Account>> {
             it.onSuccess(accountDao.getAll())
@@ -19,10 +38,12 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
     }
 
     override fun findAccountByName(name: String): Single<Account> {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        return Single.create<Account> {
+            it.onSuccess(accountDao.findByName(name))
+        }
     }
 
-    override fun insertAccountOffline(name: String, currency: String, balance: Float, color: Int, operations: List<Operation>) {
+    override fun insertAccountOfflineAsync(name: String, currency: String, balance: Float, color: Int, operations: List<Operation>) {
         Completable.fromAction {
             val newAccount = Account(null, name, currency, balance, color, operations)
             accountDao.insert(newAccount)
@@ -32,7 +53,7 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
                         {Log.d("mytag", "error")})
     }
 
-    override fun updateAccountOffline() {
+    override fun updateAccountOfflineAsync() {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

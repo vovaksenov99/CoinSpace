@@ -1,8 +1,13 @@
 <resources>
     <string name="app_name">Coin Space</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="title_home">Главная</string>
+    <string name="title_expenses">Расходы</string>
+    <string name="title_statistics">Статистика</string>
+
+    <string name="cash_account_name">Наличные</string>
+    <string name="card_account_name">Карта</string>
+
+    <string name="main_currency">RUB</string>
 
     <!-- SharedPreferences Keys -->
     <string name="sp_key_main_currency">mainCur</string>
@@ -29,6 +34,7 @@
     <string name="tv_currency_label">Валюта:</string>
     <string name="empty_sum_error">Введите сумму</string>
     <string name="empty_account_name_error">Введите название счета</string>
+    <string name="account_name_already_in_db_error">Счет с таким названием уже существует</string>
     <string name="zero_sum_error">Сумма должна быть больше нуля</string>
     <string name="lbl_empty_operation_history">История действий пуста</string>
     <string name="lbl_sum">Сумма</string>

@@ -20,25 +20,12 @@ import java.util.*
 import android.text.Editable
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.util.TextUtils
-
-
+import kotlinx.android.synthetic.main.fragment_operation.*
 
 
 class OperationFragment : Fragment(), HomeContract.OperationView {
 
     override lateinit var presenter: HomeContract.Presenter
-
-    private lateinit var mExpenseCardLayout: RelativeLayout
-    private lateinit var mOperationTypeButtonsLayout: LinearLayout
-    private lateinit var mNewOperationLayout: RelativeLayout
-    private lateinit var mExpenseButton: Button
-    private lateinit var mIncomeButton: Button
-    private lateinit var mSumInputLayout: TextInputLayout
-    private lateinit var mSumEt: EditText
-    private lateinit var mOperationTypeLabel: TextView
-    private lateinit var mDateLabel: TextView
-    private lateinit var mCurrencySpinner: Spinner
-    private lateinit var mBackBtn: ImageButton
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val root = inflater.inflate(R.layout.fragment_operation, container, false)
@@ -52,44 +39,32 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        mExpenseCardLayout = view.findViewById(R.id.rl_expense_card)
-        mOperationTypeButtonsLayout = view.findViewById(R.id.ll_action_type_btns)
-        mNewOperationLayout = view.findViewById(R.id.rl_new_action)
-        mExpenseButton = view.findViewById(R.id.btn_expense)
-        mIncomeButton = view.findViewById(R.id.btn_income)
-        mOperationTypeLabel = view.findViewById(R.id.tv_label)
-        mCurrencySpinner = view.findViewById(R.id.currency_spinner)
-        mDateLabel = view.findViewById(R.id.tv_date)
-        mSumInputLayout = view.findViewById(R.id.input_layout_sum)
-        mSumEt = view.findViewById(R.id.et_sum)
-        mBackBtn = view.findViewById(R.id.btn_back)
-
         setupEventListeners()
 
         //animate operation card sliding up
-        mExpenseCardLayout.postDelayed({
-            mExpenseCardLayout.visibility = View.VISIBLE
+        rl_expense_card.postDelayed({
+            rl_expense_card.visibility = View.VISIBLE
             YoYo.with(Techniques.SlideInUp)
                     .duration(300)
-                    .playOn(mExpenseCardLayout)
+                    .playOn(rl_expense_card)
         }, 350)
 
     }
 
     private fun setupEventListeners() {
-        mExpenseButton.setOnClickListener {
+        btn_expense.setOnClickListener {
             presenter.newExpenseButtonClick()
         }
 
-        mIncomeButton.setOnClickListener {
+        btn_income.setOnClickListener {
             presenter.newIncomeButtonClick()
         }
 
-        mBackBtn.setOnClickListener {
+        btn_back.setOnClickListener {
             presenter.clearButtonClick()
         }
 
-        mSumEt.addTextChangedListener(object : TextWatcher {
+        et_sum.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {}
 
@@ -99,24 +74,24 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
 
             override fun onTextChanged(s: CharSequence, start: Int,
                                        before: Int, count: Int) {
-                if (mSumInputLayout.isErrorEnabled) mSumInputLayout.error = ""
+                if (input_layout_sum.isErrorEnabled) input_layout_sum.error = ""
             }
         })
     }
 
     override fun setupNewOperationLayout(type: Operation.OperationType) {
-        mOperationTypeButtonsLayout.visibility = View.GONE
-        mNewOperationLayout.visibility = View.VISIBLE
-        mDateLabel.text = DateFormat.getDateTimeInstance().format(Date())
+        ll_action_type_btns.visibility = View.GONE
+        rl_new_action.visibility = View.VISIBLE
+        tv_date.text = DateFormat.getDateTimeInstance().format(Date())
         when (type) {
-            Operation.OperationType.EXPENSE -> mOperationTypeLabel.text = getString(R.string.label_new_expense)
-            Operation.OperationType.INCOME -> mOperationTypeLabel.text = getString(R.string.label_new_income)
+            Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense)
+            Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income)
         }
     }
 
     override fun resetLayout() {
-        mOperationTypeButtonsLayout.visibility = View.VISIBLE
-        mNewOperationLayout.visibility = View.GONE
+        ll_action_type_btns.visibility = View.VISIBLE
+        rl_new_action.visibility = View.GONE
     }
 
     override fun onStart() {
@@ -128,8 +103,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         val currencies = resources.getStringArray(R.array.main_currency_values_array)
         val spinnerArrayAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, currencies)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-        mCurrencySpinner.adapter = spinnerArrayAdapter
-        mCurrencySpinner.setSelection(currencies.indexOf(
+        currency_spinner.adapter = spinnerArrayAdapter
+        currency_spinner.setSelection(currencies.indexOf(
                 TextUtils.currencyToString(presenter.mainCurrency)))
     }
 
@@ -144,28 +119,28 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
      *
      */
     override fun confirmOperationAndCloseSelf(){
-        if (mSumEt.text.toString().trim().isEmpty()) {
-            mSumInputLayout.error = getString(R.string.empty_sum_error)
-        } else if (mSumEt.text.toString().trim().toFloat() <= 0f) {
-            mSumInputLayout.error = getString(R.string.zero_sum_error)
+        if (et_sum.text.toString().trim().isEmpty()) {
+            input_layout_sum.error = getString(R.string.empty_sum_error)
+        } else if (et_sum.text.toString().trim().toFloat() <= 0f) {
+            input_layout_sum.error = getString(R.string.zero_sum_error)
         } else {
-            presenter.newOperationRequest(mSumEt.text.toString().trim().toFloat(),
-                    TextUtils.stringToCurrency(mCurrencySpinner.selectedItem.toString()))
+            presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
+                    TextUtils.stringToCurrency(currency_spinner.selectedItem.toString()))
 
             YoYo.with(Techniques.SlideOutUp)
                     .duration(300)
                     .withListener(object : AnimatorListenerAdapter() {
                         override fun onAnimationCancel(animation: Animator) {
                             super.onAnimationCancel(animation)
-                            mExpenseCardLayout.postDelayed({presenter.detachOperationView()}, 50)
+                            rl_expense_card.postDelayed({presenter.detachOperationView()}, 50)
                         }
 
                         override fun onAnimationEnd(animation: Animator) {
                             super.onAnimationEnd(animation)
-                            mExpenseCardLayout.postDelayed({presenter.detachOperationView()}, 50)
+                            rl_expense_card.postDelayed({presenter.detachOperationView()}, 50)
                         }
                     })
-                    .playOn(mExpenseCardLayout)
+                    .playOn(rl_expense_card)
         }
 
     }
@@ -174,14 +149,14 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
     override fun animateCloseButtonCloseToBack() {
         val drawable = resources.getDrawable(R.drawable.anim_ic_clear_to_back_primary_light_24dp)
                 as AnimatedVectorDrawable
-        mBackBtn.setImageDrawable(drawable)
+        btn_back.setImageDrawable(drawable)
         drawable.start()
     }
 
     override fun animateCloseButtonBackToClose() {
         val drawable = resources.getDrawable(R.drawable.anim_ic_back_to_clear_primary_light_24dp)
                 as AnimatedVectorDrawable
-        mBackBtn.setImageDrawable(drawable)
+        btn_back.setImageDrawable(drawable)
         drawable.start()
     }
 

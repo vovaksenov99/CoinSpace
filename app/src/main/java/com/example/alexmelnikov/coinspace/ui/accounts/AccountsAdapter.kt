@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.item_accounts_list.view.*
 
 class AccountsAdapter(private val mContext: Context,
                       private val mData: ArrayList<Account>,
-                      private val presenter: AccountsContract.Presenter
+                      private val mPresenter: AccountsContract.Presenter
                       ) : RecyclerView.Adapter<AccountsAdapter.AccountsViewHolder>() {
 
 
@@ -43,8 +43,12 @@ class AccountsAdapter(private val mContext: Context,
                 TextUtils.stringToCurrency(account.currency))
 
         //Set colored credit card image view
-        holder.ivCard.setImageResource(R.drawable.ic_credit_card_primary_24dp)
-        holder.ivCard.setColorFilter(account.color, PorterDuff.Mode.SRC_ATOP)
+        if (account.name != mContext.resources.getString(R.string.cash_account_name)) {
+            holder.ivCard.setImageResource(R.drawable.ic_credit_card_primary_24dp)
+            holder.ivCard.setColorFilter(account.color, PorterDuff.Mode.SRC_ATOP)
+        } else {
+            holder.ivCard.setImageResource(R.drawable.ic_account_balance_wallet_primary_24dp)
+        }
     }
 
     override fun getItemCount() = mData.size
@@ -54,6 +58,8 @@ class AccountsAdapter(private val mContext: Context,
         mData.addAll(accounts)
         notifyDataSetChanged()
     }
+
+    fun dataIsEmpty() = mData.isEmpty()
 
     override fun getItemId(position: Int): Long {
         return mData[position].hashCode().toLong()

@@ -5,7 +5,10 @@ import android.app.Application
 import android.support.v4.app.Fragment
 import com.example.alexmelnikov.coinspace.di.component.*
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
+import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
+import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
+import javax.inject.Inject
 
 class BaseApp : Application() {
 
@@ -13,11 +16,25 @@ class BaseApp : Application() {
 
     lateinit var component: ApplicationComponent
 
+    @Inject
+    lateinit var accountsRepository: AccountsRepository
+
+    @Inject
+    lateinit var preferencesHelper: PreferencesHelper
+
     override fun onCreate() {
         super.onCreate()
 
         instance = this
         setup()
+        component.inject(this)
+
+        //Init accounts table in db
+        accountsRepository.initAddTwoMainAccountsIfTableEmptyAsync(
+                resources.getString(R.string.cash_account_name),
+                resources.getString(R.string.main_currency),
+                resources.getColor(R.color.colorPrimary),
+                resources.getString(R.string.card_account_name))
 
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath(BASE_FONT)

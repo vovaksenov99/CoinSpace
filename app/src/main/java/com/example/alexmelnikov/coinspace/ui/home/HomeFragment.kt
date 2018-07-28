@@ -16,8 +16,12 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.ui.accounts.AccountsAdapter
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import com.example.alexmelnikov.coinspace.util.TextUtils
+import kotlinx.android.synthetic.main.card_current_budget.*
+import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
 
@@ -26,9 +30,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     @Inject
     override lateinit var presenter: HomeContract.Presenter
 
-    private lateinit var mNewOperationBtn: FloatingActionButton
-    private lateinit var mMainBalanceText: TextView
-    private lateinit var mAdditionalBalanceText: TextView
     private var appInfoDialog: MaterialDialog? = null
 
     override fun onAttach(context: Context?) {
@@ -38,13 +39,12 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter.attach(this)
+        return inflater.inflate(R.layout.fragment_home, container, false)
+    }
 
-        val root = inflater.inflate(R.layout.fragment_home, container, false)
-
-        // Views initialization
-        mNewOperationBtn = root.findViewById(R.id.fab_new_action)
-        mMainBalanceText = root.findViewById(R.id.tv_main_cur_balance)
-        mAdditionalBalanceText = root.findViewById(R.id.tv_additional_cur_balance)
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        setupEventListeners()
 
         //Get main currency and balance and set it into presenter
         with (PreferenceManager.getDefaultSharedPreferences(activity)) {
@@ -52,16 +52,16 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
                     this.getFloat(getString(R.string.sp_key_balance), 0.00f))
         }
 
+        //Setup ViewPager
+        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, arrayListOf(Any(), Any(), Any()), presenter)
+        accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
 
         //Setup toolbar
-        val mToolbar = root.findViewById<Toolbar>(R.id.home_toolbar)
-        mToolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
-        (activity as MainActivity).setSupportActionBar(mToolbar)
+        home_toolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
+        (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
-        setupEventListeners()
 
-        return root
     }
 
     override fun onStart() {
@@ -77,19 +77,19 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     private fun setupEventListeners() {
-        mNewOperationBtn.setOnClickListener {
+        fab_new_action.setOnClickListener {
             presenter.newOperationButtonClick()
         }
     }
 
     override fun setupTextViews(mainBalance: String, additionalBalance: String) {
-        mMainBalanceText.text = mainBalance
-        mAdditionalBalanceText.text = additionalBalance
+        tv_main_cur_balance.text = mainBalance
+        tv_additional_cur_balance.text = additionalBalance
     }
 
     override fun openOperationFragment() {
         closeOperationFragment()
-        val fragment = OperationFragment.newInstance(mNewOperationBtn)
+        val fragment = OperationFragment.newInstance(fab_new_action)
         fragmentManager?.beginTransaction()
                 ?.replace(R.id.actionFrame, fragment)
                 ?.commit()
@@ -163,14 +163,14 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun animateNewOperationButtonToCheck() {
         //TODO: look for getDrawable future proofed substitution
         val drawable = resources.getDrawable(R.drawable.anim_ic_add_to_check_white) as AnimatedVectorDrawable
-        mNewOperationBtn.setImageDrawable(drawable)
+        fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }
 
     override fun animateNewOperationButtonToAdd() {
         //TODO: look for getDrawable future proofed substitution
         val drawable = resources.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
-        mNewOperationBtn.setImageDrawable(drawable)
+        fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }
 
