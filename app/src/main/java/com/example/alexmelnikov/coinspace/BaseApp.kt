@@ -24,11 +24,13 @@ class BaseApp : Application() {
                 .setFontAttrId(R.attr.fontPath)
                 .build())
 
+        component.inject(this)
     }
 
     private fun setup() {
-        component = DaggerApplicationComponent.builder().build()
-        component.inject(this)
+        component = DaggerApplicationComponent.builder()
+                .applicationModule(ApplicationModule(this))
+                .build()
     }
 
 

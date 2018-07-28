@@ -3,6 +3,7 @@ package com.example.alexmelnikov.coinspace.ui.accounts
 import android.content.Context
 import android.graphics.PorterDuff
 import android.support.v7.widget.RecyclerView
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,7 +18,7 @@ import kotlinx.android.synthetic.main.item_accounts_list.view.*
  */
 
 class AccountsAdapter(private val mContext: Context,
-                      private val mData: ArrayList<Account>,
+                      private var mData: List<Account>,
                       private val presenter: AccountsContract.Presenter
                       ) : RecyclerView.Adapter<AccountsAdapter.AccountsViewHolder>() {
 
@@ -36,22 +37,25 @@ class AccountsAdapter(private val mContext: Context,
     }
 
     override fun onBindViewHolder(holder: AccountsViewHolder, position: Int) {
-        val account = mData.get(position)
+        val account = mData[position]
         holder.tvAccountName.text = account.name
         holder.tvBalance.text = TextUtils.formatToMoneyString(account.balance,
                 TextUtils.stringToCurrency(account.currency))
 
         //Set colored credit card image view
-        val drawable = mContext.resources.getDrawable(R.drawable.ic_credit_card_black_24dp)
+       /* val drawable = mContext.resources.getDrawable(R.drawable.ic_credit_card_primary_24dp)
         drawable.setColorFilter(account.color, PorterDuff.Mode.SRC_ATOP)
-        holder.ivCard.background = drawable
+        holder.itemView.iv_card.background = drawable*/
     }
 
     override fun getItemCount() = mData.size
 
-    fun replaceData(accounts: ArrayList<Account>) {
-        mData.clear()
-        mData.addAll(accounts)
+    fun replaceData(accounts: List<Account>) {
+        mData = accounts
         notifyDataSetChanged()
+    }
+
+    override fun getItemId(position: Int): Long {
+        return mData[position].hashCode().toLong()
     }
 }

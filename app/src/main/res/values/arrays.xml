@@ -1,4 +1,20 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <array name="custom_account_colors">
+        <item>#edbee5</item>
+        <item>#ce8fd9</item>
+        <item>#907bb6</item>
+        <item>#5964a6</item>
+        <item>#6eacdf</item>
+        <item>#56a49d</item>
+        <item>#5f9762</item>
+        <item>#ffe28a</item>
+        <item>#f9ce8f</item>
+        <item>#d67279</item>
+        <item>#9b9999</item>
+        <item>#8ca0ab</item>
+        <item>#0a0e19</item>
+    </array>
+
 </resources>

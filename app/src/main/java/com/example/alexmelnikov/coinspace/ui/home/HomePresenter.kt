@@ -1,7 +1,8 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
 import android.util.Log
-import com.example.alexmelnikov.coinspace.di.component.DaggerModelComponent
+import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.di.component.DaggerApplicationComponent
 import com.example.alexmelnikov.coinspace.model.Accountant
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.util.TextUtils
@@ -25,7 +26,8 @@ class HomePresenter : HomeContract.Presenter {
     override fun attach(view: HomeContract.HomeView) {
         Log.d("mytag", "attach $mOperationView")
         mHomeView = view
-        DaggerModelComponent.builder().build().inject(this)
+        //DaggerApplicationComponent.builder().build().inject(this)
+        BaseApp.instance.component.inject(this)
         if (mOperationView != null) mHomeView.openOperationFragment()
         mOperationView = null
         currentNewOperation = null

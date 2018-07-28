@@ -32,7 +32,8 @@
             app:layout_constraintEnd_toStartOf="@id/tv_account_name"
             android:layout_marginLeft="8dp"
             android:background="?selectableItemBackgroundBorderless"
-            tools:src="@drawable/ic_credit_card_black_24dp"/>
+            android:src="@drawable/ic_credit_card_primary_24dp"
+            tools:src="@drawable/ic_credit_card_primary_24dp"/>
 
         <TextView
             android:id="@+id/tv_account_name"

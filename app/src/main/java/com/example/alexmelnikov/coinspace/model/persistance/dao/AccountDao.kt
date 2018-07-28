@@ -16,6 +16,9 @@ interface AccountDao {
     @Query("SELECT * from accounts")
     fun getAll(): List<Account>
 
+    @Query("SELECT * FROM accounts WHERE name LIKE :name")
+    fun findByName(name: String): Account
+
     @Insert(onConflict = REPLACE)
     fun insert(account: Account)
 

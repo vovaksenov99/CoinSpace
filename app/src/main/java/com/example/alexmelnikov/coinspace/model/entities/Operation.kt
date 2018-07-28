@@ -25,7 +25,7 @@ data class Operation(val type: OperationType,
 
 class OperationTypeConverters {
 
-    val gson: Gson = Gson()
+    private val gson: Gson = Gson()
 
     @TypeConverter
     fun stringToOperationList(data: String?): List<Operation> =
@@ -36,5 +36,5 @@ class OperationTypeConverters {
             }
 
     @TypeConverter
-    fun operationListToString(operations: List<Operation>) = gson.toJson(operations)
+    fun operationListToString(operations: List<Operation>) = gson.toJson(operations)!!
 }
