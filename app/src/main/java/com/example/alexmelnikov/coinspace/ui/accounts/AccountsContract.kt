@@ -20,7 +20,7 @@ class AccountsContract {
 
         fun addNewAccountButtonClick()
 
-        fun accountsDataRequest()
+        fun accountsDataRequest(updateLayout: Boolean)
 
     }
     interface View

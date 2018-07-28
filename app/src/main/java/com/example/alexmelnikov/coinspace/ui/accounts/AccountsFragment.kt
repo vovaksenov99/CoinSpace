@@ -34,6 +34,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter.attach(this)
+        presenter.accountsDataRequest(false)
         return inflater.inflate(R.layout.fragment_accounts, container, false)
     }
 
@@ -59,7 +60,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
 
     override fun onStart() {
         super.onStart()
-        presenter.accountsDataRequest()
+        presenter.accountsDataRequest(true)
     }
 
     private fun setupEventListeners() {

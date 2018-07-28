@@ -20,25 +20,28 @@ class AccountsPresenter : AccountsContract.Presenter {
     override fun attach(view: AccountsContract.AccountsView) {
         this.view = view
         BaseApp.instance.component.inject(this)
+        accounts = ArrayList()
     }
 
     override fun addNewAccountButtonClick() {
         view.openAddAccountFragment()
     }
 
-    override fun accountsDataRequest() {
-        Log.d("mytag", "request")
-
-        accountsRepository.getAccountsOffline()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({acs -> handleSuccessAccountsRequest(acs)},
-                        {handleErrorAccountsRequest()})
+    override fun accountsDataRequest(updateLayout: Boolean) {
+        if (accounts.isEmpty()) {
+            accountsRepository.getAccountsOffline()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe({ acs -> handleSuccessAccountsRequest(acs, updateLayout) },
+                            { handleErrorAccountsRequest() })
+        } else {
+            view.replaceAccountsRecyclerData(accounts)
+        }
     }
 
-    private fun handleSuccessAccountsRequest(accounts: List<Account>) {
+    private fun handleSuccessAccountsRequest(accounts: List<Account>, updateLayout: Boolean) {
         this.accounts = accounts
-        view.replaceAccountsRecyclerData(accounts)
+        if (updateLayout) view.replaceAccountsRecyclerData(accounts)
         Log.d("mytag", "success :: $accounts")
     }
 

@@ -30,9 +30,10 @@
             android:layout_height="wrap_content"
             app:layout_constraintStart_toEndOf="@id/cb_select"
             app:layout_constraintEnd_toStartOf="@id/tv_account_name"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent"
             android:layout_marginLeft="8dp"
             android:background="?selectableItemBackgroundBorderless"
-            android:src="@drawable/ic_credit_card_primary_24dp"
             tools:src="@drawable/ic_credit_card_primary_24dp"/>
 
         <TextView
