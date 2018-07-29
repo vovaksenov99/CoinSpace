@@ -4,6 +4,7 @@ import android.arch.persistence.room.Dao
 import android.arch.persistence.room.Insert
 import android.arch.persistence.room.OnConflictStrategy.REPLACE
 import android.arch.persistence.room.Query
+import android.arch.persistence.room.Update
 import com.example.alexmelnikov.coinspace.model.entities.Account
 
 /**
@@ -24,5 +25,8 @@ interface AccountDao {
 
     @Query("DELETE from accounts")
     fun deleteAll()
+
+    @Update
+    fun updateAccounts(vararg account: Account)
 
 }

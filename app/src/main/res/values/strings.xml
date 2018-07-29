@@ -48,6 +48,8 @@
     <string name="label_new_income">Новый доход</string>
     <string name="label_new_expense">Новый расход</string>
     <string name="tv_currency_label">Валюта:</string>
+    <string name="tv_account_label">Счет:</string>
+    <string name="tv_category_label">Категория:</string>
     <string name="empty_sum_error">Введите сумму</string>
     <string name="empty_account_name_error">Введите название счета</string>
     <string name="account_name_already_in_db_error">Счет с таким названием уже существует</string>

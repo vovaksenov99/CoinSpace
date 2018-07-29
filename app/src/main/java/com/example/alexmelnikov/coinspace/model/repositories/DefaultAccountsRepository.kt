@@ -27,8 +27,8 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
             }
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("mytag", "success") },
-                        {Log.d("mytag", "error")})
+                .subscribe({ Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync success") },
+                        {Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync error!")})
     }
 
     override fun getAccountsOffline(): Single<List<Account>> {
@@ -49,11 +49,19 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
             accountDao.insert(newAccount)
         }.subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("mytag", "success") },
-                        {Log.d("mytag", "error")})
+                .subscribe({ Log.d("mytag", "insertAccountOfflineAsync success") },
+                        {Log.d("mytag", "insertAccountOfflineAsync error!")})
     }
 
-    override fun updateAccountOfflineAsync() {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun updateAccountOfflineAsync(account: Account) {
+        Completable.fromAction {
+            Log.d("mytag", "updating Account ${account.name}\n" +
+                    "balance: ${account.balance}" +
+                    "operations: ${account.operations}")
+            accountDao.updateAccounts(account)
+        }.subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ Log.d("mytag", "updateAccountOfflineAsync success") },
+                        {Log.d("mytag", "updateAccountOfflineAsync error!")})
     }
 }

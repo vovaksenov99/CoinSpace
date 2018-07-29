@@ -15,7 +15,9 @@ class HomeContract {
 
         fun closeOperationFragment()
 
-        fun updateUserBalancePagerView(mainBalance: String, additionalBalance: String)
+        fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String)
+
+        fun updateAccountItemPagerView(account: Account)
 
         fun setupViewPager(balance: UserBalance, accounts: List<Account>)
 
@@ -43,7 +45,7 @@ class HomeContract {
 
         fun resetLayout()
 
-        fun setupNewOperationLayout(type: Operation.OperationType)
+        fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>)
     }
 
     interface Presenter : BaseContract.Presenter<HomeView> {
@@ -62,7 +64,7 @@ class HomeContract {
 
         fun clearButtonClick()
 
-        fun newOperationRequest(sum: Float, currency: String)
+        fun newOperationRequest(sum: Float, account: Account, category: String, currency: String)
 
         fun animateOperationAddButtonRequest()
 

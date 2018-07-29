@@ -24,5 +24,5 @@ interface AccountsRepository {
     fun insertAccountOfflineAsync(name: String, currency: String, balance: Float = 0f, color: Int,
                                   operations: List<Operation> = ArrayList())
 
-    fun updateAccountOfflineAsync()
+    fun updateAccountOfflineAsync(account: Account)
 }

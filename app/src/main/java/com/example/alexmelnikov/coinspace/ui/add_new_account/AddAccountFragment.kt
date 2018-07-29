@@ -14,9 +14,6 @@ import android.view.ViewGroup
 import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
-import android.widget.EditText
-import android.widget.ImageButton
-import android.widget.Spinner
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.R
@@ -100,7 +97,16 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
             } else {
                 showEditTextError(false)
             }
+        }
 
+        et_account_name.setOnEditorActionListener { p0, p1, p2 ->
+            val etText = et_account_name.text.toString().trim()
+            if (!etText.isEmpty()) {
+                presenter.addNewAccountButtonClick(etText, currency_spinner.selectedItem.toString())
+            } else {
+                showEditTextError(false)
+            }
+             false
         }
 
         et_account_name.addTextChangedListener(object : TextWatcher {

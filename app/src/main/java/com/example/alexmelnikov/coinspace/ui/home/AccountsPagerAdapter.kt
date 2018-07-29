@@ -49,7 +49,7 @@ class AccountsPagerAdapter(private val mContext: Context,
                 layout.iv_account_icon.setImageResource(R.drawable.ic_account_balance_wallet_primary_24dp)
             }
 
-            layout.tag = ACCOUNT_VIEW_TAG
+            layout.tag = account.name
             container.addView(layout)
             return layout
         }
@@ -71,6 +71,5 @@ class AccountsPagerAdapter(private val mContext: Context,
 
     companion object {
         val BALANCE_VIEW_TAG = "BALANCE_VIEW_TAG"
-        val ACCOUNT_VIEW_TAG = "ACCOUNT_VIEW_TAG"
     }
 }

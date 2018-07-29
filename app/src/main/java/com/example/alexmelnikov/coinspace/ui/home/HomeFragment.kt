@@ -15,6 +15,8 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.UserBalance
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
+import com.example.alexmelnikov.coinspace.util.formatToMoneyString
+import kotlinx.android.synthetic.main.card_account_balance.view.*
 import kotlinx.android.synthetic.main.card_current_budget.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
@@ -59,15 +61,20 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun updateUserBalancePagerView(mainBalance: String, additionalBalance: String) {
+    override fun setupViewPager(balance: UserBalance, accounts: List<Account>) {
+        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
+        accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+    }
+
+    override fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String) {
         val balanceView = accounts_viewpager.findViewWithTag<View>(BALANCE_VIEW_TAG)
         balanceView.tv_main_cur_balance.text = mainBalance
         balanceView.tv_additional_cur_balance.text = additionalBalance
     }
 
-    override fun setupViewPager(balance: UserBalance, accounts: List<Account>) {
-        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
-        accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+    override fun updateAccountItemPagerView(account: Account) {
+        val balanceView = accounts_viewpager.findViewWithTag<View>(account.name)
+        balanceView.tv_account_balance.text = formatToMoneyString(account.balance, account.currency)
     }
 
     override fun openOperationFragment() {

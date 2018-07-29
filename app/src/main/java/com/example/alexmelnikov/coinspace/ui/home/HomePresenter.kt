@@ -10,7 +10,9 @@ import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 /**
  * HomePresenter handles HomeFragment and OperationFragment
@@ -89,13 +91,13 @@ class HomePresenter : HomeContract.Presenter {
 
     override fun newExpenseButtonClick() {
         currentNewOperation = Operation.OperationType.EXPENSE
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE)
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE, accounts)
         mOperationView?.animateCloseButtonCloseToBack()
     }
 
     override fun newIncomeButtonClick() {
         currentNewOperation = Operation.OperationType.INCOME
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME)
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME, accounts)
         mOperationView?.animateCloseButtonCloseToBack()
     }
 
@@ -109,9 +111,24 @@ class HomePresenter : HomeContract.Presenter {
         }
     }
 
-    override fun newOperationRequest(sum: Float, currency: String) {
+    override fun newOperationRequest(sum: Float, account: Account, category: String, currency: String) {
+        Log.d("mytag", "new operation:\n" +
+                "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
+
+        //Create operation and add it to accountOperationsList
+        val operation = Operation(currentNewOperation!!, sum, currency, category, Date())
+        val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
+        updatedAccountOperations.add(operation)
+        account.operations = updatedAccountOperations
+
+        if (currentNewOperation == Operation.OperationType.INCOME) account.balance += sum
+        else account.balance -= sum
+        accountsRepository.updateAccountOfflineAsync(account)
+
         userBalance = userBalanceInteractor.executeNewOperation(currentNewOperation, sum, currency)
         updateTextViews()
+        updateAccountItemOnPagerView(account)
+
         currentNewOperation = null
     }
 
@@ -133,8 +150,12 @@ class HomePresenter : HomeContract.Presenter {
 
 
     private fun updateTextViews() {
-        mHomeView.updateUserBalancePagerView(
+        mHomeView.updateUserBalanceItemPagerView(
                 formatToMoneyString(userBalance.balance, userBalance.currency),
                 formatToMoneyString(userBalance.balanceUsd, "USD"))
+    }
+
+    private fun updateAccountItemOnPagerView(account: Account) {
+        mHomeView.updateAccountItemPagerView(account)
     }
 }

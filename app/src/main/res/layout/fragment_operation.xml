@@ -12,8 +12,8 @@
             android:id="@+id/rl_expense_card"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginHorizontal="30dp"
-            android:layout_marginVertical="30dp"
+            android:layout_marginHorizontal="26dp"
+            android:layout_marginVertical="26dp"
             android:background="@drawable/bg_card"
             android:layout_centerInParent="true"
             android:visibility="gone"
@@ -36,7 +36,7 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_centerInParent="true"
-                tools:visibility="visible">
+                tools:visibility="gone">
 
                 <Button
                     android:id="@+id/btn_expense"
@@ -65,7 +65,7 @@
                 android:id="@+id/rl_new_action"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_margin="30dp"
+                android:layout_margin="16dp"
                 android:visibility="gone"
                 tools:visibility="visible">
 
@@ -84,10 +84,9 @@
                     style="@style/Widget.CoinSpace.TextInputLayout"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_centerInParent="true"
-                    android:layout_marginTop="10dp"
+                    android:layout_below="@+id/tv_label"
+                    android:layout_marginTop="14dp"
                     android:hint="@string/lbl_sum">
-
                     <EditText
                         android:id="@+id/et_sum"
                         android:layout_width="match_parent"
@@ -96,42 +95,85 @@
                         android:inputType="numberDecimal"
                         android:maxLines="1"
                         android:maxLength="13"/>
-
                 </android.support.design.widget.TextInputLayout>
 
                 <LinearLayout
-                    android:layout_width="wrap_content"
+                    android:id="@+id/account_spinner_container"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_centerInParent="true"
                     android:layout_below="@+id/input_layout_sum"
-                    android:layout_marginTop="10dp">
+                    android:layout_marginTop="4dp">
+
+                    <TextView
+                        android:id="@+id/tv_account_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray"
+                        android:textSize="12sp"
+                        android:text="@string/tv_account_label" />
+
+                    <Spinner
+                        android:id="@+id/accounts_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/category_spinner_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_below="@+id/account_spinner_container"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/tv_category_label"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/colorGray"
+                        android:textSize="12sp"
+                        android:text="@string/tv_category_label" />
+
+                    <Spinner
+                        android:id="@+id/category_spinner"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:gravity="center" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/currency_spinner_container"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_below="@+id/category_spinner_container"
+                    android:layout_marginTop="12dp"
+                    android:orientation="vertical">
 
                     <TextView
                         android:id="@+id/tv_currency_label"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:textColor="@color/colorPrimaryLight"
-                        android:textSize="16sp"
+                        android:textColor="@color/colorGray"
+                        android:textSize="12sp"
                         android:text="@string/tv_currency_label" />
 
                     <Spinner
                         android:id="@+id/currency_spinner"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:background="@android:color/transparent"
+                        android:layout_marginTop="2dp"
                         android:gravity="center" />
 
                 </LinearLayout>
 
-                <TextView
-                    android:id="@+id/tv_date"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
-                    android:textColor="@color/colorPrimaryLight"
-                    android:layout_centerHorizontal="true"
-                    android:textSize="16sp" />
+
+
 
             </RelativeLayout>
 

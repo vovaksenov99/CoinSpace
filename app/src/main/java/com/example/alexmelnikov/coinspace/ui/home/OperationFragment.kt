@@ -2,6 +2,7 @@ package com.example.alexmelnikov.coinspace.ui.home
 
 import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
+import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
@@ -17,7 +18,11 @@ import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import java.text.DateFormat
 import java.util.*
 import android.text.Editable
+import android.view.KeyEvent
+import android.view.inputmethod.InputMethodManager
+import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
 
 
@@ -62,6 +67,11 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             presenter.clearButtonClick()
         }
 
+        et_sum.setOnEditorActionListener { p0, p1, p2 ->
+            presenter.newOperationButtonClick()
+            false
+        }
+
         et_sum.addTextChangedListener(object : TextWatcher {
 
             override fun afterTextChanged(s: Editable) {}
@@ -77,19 +87,26 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         })
     }
 
-    override fun setupNewOperationLayout(type: Operation.OperationType) {
-        ll_action_type_btns.visibility = View.GONE
-        rl_new_action.visibility = View.VISIBLE
-        tv_date.text = DateFormat.getDateTimeInstance().format(Date())
+    override fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>) {
         when (type) {
             Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense)
             Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income)
         }
+
+        accounts_spinner.adapter = AccountsSpinnerAdapter(activity as MainActivity, ArrayList(accounts))
+        category_spinner.adapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item,
+                resources.getStringArray(R.array.operation_categories_array))
+        ll_action_type_btns.visibility = View.GONE
+        rl_new_action.visibility = View.VISIBLE
     }
 
     override fun resetLayout() {
         ll_action_type_btns.visibility = View.VISIBLE
         rl_new_action.visibility = View.GONE
+
+        //Close keyboard
+        val imm = activity?.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+        imm.hideSoftInputFromWindow(view?.windowToken, 0)
     }
 
     override fun onStart() {
@@ -122,6 +139,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             input_layout_sum.error = getString(R.string.zero_sum_error)
         } else {
             presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
+                    accounts_spinner.selectedItem as Account,
+                    category_spinner.selectedItem.toString(),
                     currency_spinner.selectedItem.toString())
 
             YoYo.with(Techniques.SlideOutUp)
