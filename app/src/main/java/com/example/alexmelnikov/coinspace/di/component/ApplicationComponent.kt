@@ -6,6 +6,7 @@ import com.example.alexmelnikov.coinspace.ui.accounts.AccountsPresenter
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountPresenter
 import com.example.alexmelnikov.coinspace.ui.home.HomePresenter
 import com.example.alexmelnikov.coinspace.ui.settings.SettingsFragment
+import com.example.alexmelnikov.coinspace.ui.statistics.StatisticsPresenter
 import dagger.Component
 import javax.inject.Singleton
 
@@ -20,6 +21,8 @@ interface ApplicationComponent {
     fun inject(addAccountPresenter: AddAccountPresenter)
 
     fun inject(accountsPresenter: AccountsPresenter)
+
+    fun inject(statisticsPresenter: StatisticsPresenter)
 
     fun inject(settingsFragment: SettingsFragment)
 

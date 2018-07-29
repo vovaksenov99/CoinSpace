@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
 import android.util.Log
+import android.view.View
 import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
@@ -35,7 +36,6 @@ class HomePresenter : HomeContract.Presenter {
 
     override fun attach(view: HomeContract.HomeView) {
         mHomeView = view
-        //DaggerApplicationComponent.builder().build().inject(this)
         BaseApp.instance.component.inject(this)
         if (mOperationView != null) mHomeView.openOperationFragment()
 
@@ -148,6 +148,9 @@ class HomePresenter : HomeContract.Presenter {
         mHomeView.openAccountsFragmentRequest()
     }
 
+    override fun statisticsButtonClick(animationCenter: View) {
+        mHomeView.openStatisticsFragmentRequest(animationCenter)
+    }
 
     private fun updateTextViews() {
         mHomeView.updateUserBalanceItemPagerView(

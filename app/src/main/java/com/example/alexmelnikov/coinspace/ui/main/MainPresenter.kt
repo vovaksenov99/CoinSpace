@@ -19,6 +19,8 @@ class MainPresenter : MainContract.Presenter {
     override fun start(activeFragmentOnScreen: FragmentOnScreen) {
         when (activeFragmentOnScreen) {
             FragmentOnScreen.HOME -> openHomeFragmentRequest()
+            FragmentOnScreen.ACCOUNTS -> openAccountsFragmentRequest()
+            FragmentOnScreen.STATISTICS -> openStatisticsFragmentRequest(null)
         }
     }
 
@@ -28,7 +30,12 @@ class MainPresenter : MainContract.Presenter {
     }
 
     override fun openAccountsFragmentRequest() {
+        activeFragmentOnScreen = FragmentOnScreen.ACCOUNTS
         view.openAccountsFragment()
     }
 
+    override fun openStatisticsFragmentRequest(animationCenter: View?) {
+        activeFragmentOnScreen = FragmentOnScreen.STATISTICS
+        view.openStatisticsFragment(animationCenter)
+    }
 }

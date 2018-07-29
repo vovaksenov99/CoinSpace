@@ -2,6 +2,12 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
+    <item android:id="@+id/statistics"
+        android:title="@string/pref_statistics"
+        android:orderInCategory="100"
+        android:icon="@drawable/ic_data_usage_white_24dp"
+        app:showAsAction="always" />
+
     <item android:id="@+id/accounts"
         android:title="@string/pref_accounts"
         android:orderInCategory="100"

@@ -59,6 +59,7 @@
     <string name="pref_settings">Настройки</string>
     <string name="pref_about">О приложении</string>
     <string name="pref_accounts">Счета</string>
+    <string name="pref_statistics">Статистика</string>
     <string name="icon_rub">₽</string>
     <string name="icon_usd">$</string>
     <string name="icon_eur">€</string>
@@ -74,5 +75,6 @@
     <string name="hint_account_name">Название счета</string>
     <string name="label_account_color">Цвет счета</string>
     <string name="accounts_fragment_title">Счета</string>
+    <string name="statistics_fragment_title">Статистика</string>
 
 </resources>

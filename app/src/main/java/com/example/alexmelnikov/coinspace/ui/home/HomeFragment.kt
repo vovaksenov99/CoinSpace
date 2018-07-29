@@ -88,7 +88,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun closeOperationFragment() {
         val fragment = fragmentManager?.findFragmentById(R.id.actionFrame)
         try {
-            if (fragment != null) {
+            if (fragment != null && fragment is OperationFragment) {
                 fragmentManager?.beginTransaction()
                         ?.remove(fragment)
                         ?.commit()
@@ -122,7 +122,11 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun openAccountsFragmentRequest() {
-        (activity as MainActivity).openAccountsFragment()
+        (activity as MainActivity).openAccountsFragmentRequest()
+    }
+
+    override fun openStatisticsFragmentRequest(animationCenter: View) {
+        (activity as MainActivity).openStatisticsFragmentRequest(animationCenter)
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
@@ -137,6 +141,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
             }
             item?.itemId == R.id.accounts -> {
                 presenter.accountsButtonClick()
+                return true
+            }
+            item?.itemId == R.id.statistics -> {
+                presenter.statisticsButtonClick(home_toolbar)
                 return true
             }
         }

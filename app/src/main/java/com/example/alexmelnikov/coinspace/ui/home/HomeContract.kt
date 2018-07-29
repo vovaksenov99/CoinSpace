@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
+import android.view.View
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.entities.UserBalance
@@ -28,6 +29,8 @@ class HomeContract {
         fun openSettingsActivity()
 
         fun openAccountsFragmentRequest()
+
+        fun openStatisticsFragmentRequest(animationCenter: View)
 
         fun showAboutDialog()
 
@@ -73,6 +76,8 @@ class HomeContract {
         fun showAboutDialogRequest()
 
         fun accountsButtonClick()
+
+        fun statisticsButtonClick(animationCenter: View)
 
         fun getMainCurrency(): String
 

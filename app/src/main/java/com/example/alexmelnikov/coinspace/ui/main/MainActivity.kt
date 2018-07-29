@@ -8,6 +8,7 @@ import android.support.transition.Slide
 import android.support.transition.TransitionInflater
 import android.support.v7.app.AppCompatActivity
 import android.transition.ChangeBounds
+import android.util.Log
 import android.view.Gravity
 import android.view.View
 import com.example.alexmelnikov.coinspace.R
@@ -16,6 +17,7 @@ import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
 import com.example.alexmelnikov.coinspace.ui.home.HomeFragment
 import com.example.alexmelnikov.coinspace.ui.main.MainContract.Presenter.FragmentOnScreen
 import com.example.alexmelnikov.coinspace.ui.settings.SettingsActivity
+import com.example.alexmelnikov.coinspace.ui.statistics.StatisticsFragment
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import javax.inject.Inject
 
@@ -62,15 +64,41 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         presenter.openAccountsFragmentRequest()
     }
 
+    override fun openStatisticsFragmentRequest(animationCenter: View) {
+        presenter.openStatisticsFragmentRequest(animationCenter)
+    }
+
     override fun openHomeFragment(): HomeFragment {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is HomeFragment)
+            supportFragmentManager.beginTransaction().remove(fragmentOnScreen)
+                    .commit()
+
         return HomeFragment.newInstance().also {
+            it.exitTransition = android.transition.TransitionInflater.from(this).inflateTransition(android.R.transition.fade)
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .commit()
         }
     }
 
     override fun openAccountsFragment(): AccountsFragment {
-        return  AccountsFragment.newInstance().also {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is AccountsFragment)
+            supportFragmentManager.popBackStack()
+
+        return AccountsFragment.newInstance().also {
+            supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
+                    .addToBackStack(null)
+                    .commit()
+        }
+    }
+
+    override fun openStatisticsFragment(animationCenter: View?): StatisticsFragment {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is StatisticsFragment)
+            supportFragmentManager.popBackStack()
+
+        return StatisticsFragment.newInstance(animationCenter).also {
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .addToBackStack(null)
                     .commit()
