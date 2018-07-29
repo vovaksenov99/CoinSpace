@@ -1,11 +1,15 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
+import android.text.TextUtils
 import android.util.Log
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.di.component.DaggerApplicationComponent
-import com.example.alexmelnikov.coinspace.model.Accountant
+import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.util.TextUtils
+import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
+import com.example.alexmelnikov.coinspace.util.formatToMoneyString
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -14,17 +18,21 @@ import javax.inject.Inject
 class HomePresenter : HomeContract.Presenter {
 
     @Inject
-    lateinit var mAccountant: Accountant
+    lateinit var accountsRepository: AccountsRepository
+
+    @Inject
+    lateinit var userBalanceInteractor: IUserBalanceInteractor
 
     private lateinit var mHomeView: HomeContract.HomeView
     private var mOperationView: HomeContract.OperationView? = null
     private var currentNewOperation: Operation.OperationType? = null
 
-    override lateinit var mainCurrency: Operation.Currency
-    override var balanceUsd: Float = 0.00f
+    private var mainCurrency: String = ""
+    private var userBalance: Float = 0.00f
+
+    private lateinit var accounts: List<Account>
 
     override fun attach(view: HomeContract.HomeView) {
-        Log.d("mytag", "attach $mOperationView")
         mHomeView = view
         //DaggerApplicationComponent.builder().build().inject(this)
         BaseApp.instance.component.inject(this)
@@ -45,14 +53,22 @@ class HomePresenter : HomeContract.Presenter {
         animateOperationAddButtonRequest()
     }
 
-    override fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float) {
-        this.mainCurrency = mainCurrency
-        this.balanceUsd = balanceUsd
-        mAccountant.updateBalance(balanceUsd, Operation.Currency.USD)
+    override fun getMainCurrency(): String {
+        return if (!mainCurrency.isEmpty()) mainCurrency
+        else {
+            val (ub, mainCur) = userBalanceInteractor.getUserBalance()
+            mainCurrency = mainCur
+            mainCur
+        }
+    }
 
-        mHomeView.setupTextViews(
-                TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(balanceUsd, Operation.Currency.USD, mainCurrency), mainCurrency),
-                TextUtils.formatToMoneyString(balanceUsd, Operation.Currency.USD))
+    override fun textViewsSetupRequest() {
+        val (userBalance, mainCurrency) = userBalanceInteractor.getUserBalance()
+        this.userBalance = userBalance
+        this.mainCurrency = mainCurrency
+        Log.d("mytag", "retrieved: $userBalance :: $mainCurrency")
+
+        updateTextViews()
     }
 
     override fun newOperationButtonClick() {
@@ -86,17 +102,9 @@ class HomePresenter : HomeContract.Presenter {
         }
     }
 
-    override fun newOperationRequest(sum: Float, currency: Operation.Currency) {
-        when (currentNewOperation) {
-            Operation.OperationType.EXPENSE -> mAccountant.addExpense(sum, currency)
-            Operation.OperationType.INCOME -> mAccountant.addIncome(sum, currency)
-        }
-        balanceUsd = mAccountant.getBalanceUsd().also {
-            mHomeView.saveNewBalance(it)
-            mHomeView.setupTextViews(
-                    TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(it, Operation.Currency.USD, mainCurrency), mainCurrency),
-                    TextUtils.formatToMoneyString(it, Operation.Currency.USD))
-        }
+    override fun newOperationRequest(sum: Float, currency: String) {
+        userBalance = userBalanceInteractor.executeNewOperation(currentNewOperation, sum, currency)
+        updateTextViews()
         currentNewOperation = null
     }
 
@@ -116,4 +124,29 @@ class HomePresenter : HomeContract.Presenter {
         mHomeView.openAccountsFragmentRequest()
     }
 
+    override fun accountsDataRequest() {
+        accountsRepository.getAccountsOffline()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList) },
+                        { handleErrorAccountsRequest() })
+    }
+
+    private fun updateTextViews() {
+        mHomeView.setupTextViews(
+                formatToMoneyString(userBalance, mainCurrency),
+                formatToMoneyString(userBalanceInteractor.convertCurrencyFromTo(
+                        userBalance, mainCurrency, "USD"), "USD"))
+    }
+
+
+    private fun handleSuccessAccountsRequest(accounts: List<Account>) {
+        this.accounts = accounts
+        //mHomeView.replaceAccountsData(accounts)
+        Log.d("mytag", "success :: $accounts")
+    }
+
+    private fun handleErrorAccountsRequest() {
+        Log.d("mytag", "cant't get data from db")
+    }
 }

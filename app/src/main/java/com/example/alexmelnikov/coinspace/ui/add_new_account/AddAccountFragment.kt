@@ -94,7 +94,7 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
         }
 
         fab_add.setOnClickListener {
-            val etText = et_account_name.text.toString()
+            val etText = et_account_name.text.toString().trim()
             if (!etText.isEmpty()) {
                 presenter.addNewAccountButtonClick(etText, currency_spinner.selectedItem.toString())
             } else {

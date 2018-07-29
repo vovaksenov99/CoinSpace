@@ -23,8 +23,6 @@ class HomeContract {
 
         fun openAccountsFragmentRequest()
 
-        fun saveNewBalance(sum: Float)
-
         fun showAboutDialog()
 
     }
@@ -46,14 +44,11 @@ class HomeContract {
 
     interface Presenter : BaseContract.Presenter<HomeView> {
 
-        var mainCurrency: Operation.Currency
-        var balanceUsd: Float
-
         fun attachOperationView(view: OperationView)
 
         fun detachOperationView()
 
-        fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float)
+        fun textViewsSetupRequest()
 
         fun newOperationButtonClick()
 
@@ -63,7 +58,7 @@ class HomeContract {
 
         fun clearButtonClick()
 
-        fun newOperationRequest(sum: Float, currency: Operation.Currency)
+        fun newOperationRequest(sum: Float, currency: String)
 
         fun animateOperationAddButtonRequest()
 
@@ -72,6 +67,10 @@ class HomeContract {
         fun showAboutDialogRequest()
 
         fun accountsButtonClick()
+
+        fun accountsDataRequest()
+
+        fun getMainCurrency(): String
 
     }
 }

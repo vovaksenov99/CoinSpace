@@ -3,13 +3,14 @@ package com.example.alexmelnikov.coinspace.ui.accounts
 import android.content.Context
 import android.graphics.PorterDuff
 import android.support.v7.widget.RecyclerView
+import android.text.TextUtils
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.util.TextUtils
+import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import kotlinx.android.synthetic.main.item_accounts_list.view.*
 
 /**
@@ -39,8 +40,7 @@ class AccountsAdapter(private val mContext: Context,
     override fun onBindViewHolder(holder: AccountsViewHolder, position: Int) {
         val account = mData[position]
         holder.tvAccountName.text = account.name
-        holder.tvBalance.text = TextUtils.formatToMoneyString(account.balance,
-                TextUtils.stringToCurrency(account.currency))
+        holder.tvBalance.text = formatToMoneyString(account.balance, account.currency)
 
         //Set colored credit card image view
         if (account.name != mContext.resources.getString(R.string.cash_account_name)) {

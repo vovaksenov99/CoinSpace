@@ -10,8 +10,8 @@
     <string name="main_currency">RUB</string>
 
     <!-- SharedPreferences Keys -->
-    <string name="sp_key_main_currency">mainCur</string>
-    <string name="sp_key_balance">balance</string>
+    <string name="sp_key_main_currency">MAINCUR</string>
+    <string name="sp_key_balance">BALANCE</string>
 
     <string-array name="main_currency_names_array">
         <item>Рубль</item>

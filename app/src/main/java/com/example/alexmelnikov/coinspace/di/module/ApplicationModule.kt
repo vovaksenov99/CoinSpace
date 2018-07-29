@@ -4,7 +4,8 @@ import android.app.Application
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.model.Accountant
+import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.persistance.AccountsDatabase
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
@@ -26,12 +27,6 @@ class ApplicationModule(private val baseApp: BaseApp) {
 
     @Provides
     @Singleton
-    fun provideAccountant(): Accountant {
-        return Accountant()
-    }
-
-    @Provides
-    @Singleton
     fun provideContext(application: Application): Context = application.applicationContext
 
     @Provides
@@ -49,4 +44,10 @@ class ApplicationModule(private val baseApp: BaseApp) {
     fun provideAccountsRepository(accountsDatabase: AccountsDatabase): AccountsRepository =
             DefaultAccountsRepository(accountsDatabase.accountDao())
 
+
+    @Provides
+    @Singleton
+    fun provideUserBalanceInteractor(preferencesHelper: PreferencesHelper,
+                                     accountsRepository: AccountsRepository): IUserBalanceInteractor =
+            UserBalanceInteractor(preferencesHelper, accountsRepository)
 }

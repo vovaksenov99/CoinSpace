@@ -4,7 +4,6 @@ import android.animation.Animator
 import android.animation.AnimatorListenerAdapter
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
-import android.support.design.widget.TextInputLayout
 import android.support.v4.app.Fragment
 import android.text.TextWatcher
 import android.view.LayoutInflater
@@ -19,7 +18,6 @@ import java.text.DateFormat
 import java.util.*
 import android.text.Editable
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.util.TextUtils
 import kotlinx.android.synthetic.main.fragment_operation.*
 
 
@@ -104,8 +102,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         val spinnerArrayAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, currencies)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         currency_spinner.adapter = spinnerArrayAdapter
-        currency_spinner.setSelection(currencies.indexOf(
-                TextUtils.currencyToString(presenter.mainCurrency)))
+        currency_spinner.setSelection(currencies.indexOf(presenter.getMainCurrency()))
     }
 
     override fun onStop() {
@@ -125,7 +122,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             input_layout_sum.error = getString(R.string.zero_sum_error)
         } else {
             presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
-                    TextUtils.stringToCurrency(currency_spinner.selectedItem.toString()))
+                    currency_spinner.selectedItem.toString())
 
             YoYo.with(Techniques.SlideOutUp)
                     .duration(300)

@@ -17,10 +17,6 @@ data class Operation(val type: OperationType,
     enum class OperationType {
         EXPENSE, INCOME
     }
-
-    enum class Currency {
-        USD, RUB, EUR
-    }
 }
 
 class OperationTypeConverters {

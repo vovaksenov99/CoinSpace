@@ -2,13 +2,8 @@ package com.example.alexmelnikov.coinspace.ui.home
 
 import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
-import android.media.VolumeShaper
 import android.os.Bundle
-import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
-
-import android.support.v7.preference.PreferenceManager
-import android.support.v7.widget.Toolbar
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.*
@@ -16,10 +11,7 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
-import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.ui.accounts.AccountsAdapter
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
-import com.example.alexmelnikov.coinspace.util.TextUtils
 import kotlinx.android.synthetic.main.card_current_budget.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
@@ -46,33 +38,18 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         super.onViewCreated(view, savedInstanceState)
         setupEventListeners()
 
-        //Get main currency and balance and set it into presenter
-        with (PreferenceManager.getDefaultSharedPreferences(activity)) {
-            presenter.textViewsSetupRequest(TextUtils.stringToCurrency(this.getString(getString(R.string.sp_key_main_currency), "RUB")),
-                    this.getFloat(getString(R.string.sp_key_balance), 0.00f))
-        }
+        presenter.textViewsSetupRequest()
+
 
         //Setup ViewPager
-        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, arrayListOf(Any(), Any(), Any()), presenter)
-        accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+       // accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, arrayListOf(Any(), Any(), Any()), presenter)
+       // accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
 
         //Setup toolbar
         home_toolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
         (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
-
-    }
-
-    override fun onStart() {
-        super.onStart()
-
-        //Get fresh finance data from storage and give it to presenter in case when user
-        //opens gets back to this fragment from SettingsActivity where he changed main currency
-        with (PreferenceManager.getDefaultSharedPreferences(activity)) {
-            presenter.textViewsSetupRequest(TextUtils.stringToCurrency(this.getString(getString(R.string.sp_key_main_currency), "RUB")),
-                    this.getFloat(getString(R.string.sp_key_balance), 0.00f))
-        }
 
     }
 
@@ -106,13 +83,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         } catch (exp: IllegalStateException) {
             Log.e("exception", "can't commit remove fragment transaction after onSaveInstanceState")
         }
-    }
-
-    override fun saveNewBalance(sum: Float) {
-        val prefs = PreferenceManager.getDefaultSharedPreferences(activity)
-        val editor = prefs.edit()
-        editor.putFloat(getString(R.string.sp_key_balance), sum)
-        editor.apply()
     }
 
 
