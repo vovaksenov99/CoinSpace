@@ -5,6 +5,7 @@ import android.app.Application
 import android.support.v4.app.Fragment
 import com.example.alexmelnikov.coinspace.di.component.*
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
+import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
@@ -22,6 +23,9 @@ class BaseApp : Application() {
     @Inject
     lateinit var preferencesHelper: PreferencesHelper
 
+    @Inject
+    lateinit var userBalanceInteractor: IUserBalanceInteractor
+
     override fun onCreate() {
         super.onCreate()
 
@@ -35,6 +39,9 @@ class BaseApp : Application() {
                 resources.getString(R.string.main_currency),
                 resources.getColor(R.color.colorPrimary),
                 resources.getString(R.string.card_account_name))
+
+        //Init UserBalanceInteractor
+        userBalanceInteractor.initCurrencyRates()
 
         CalligraphyConfig.initDefault(CalligraphyConfig.Builder()
                 .setDefaultFontPath(BASE_FONT)

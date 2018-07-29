@@ -20,7 +20,7 @@ import kotlinx.android.synthetic.main.item_accounts_list.view.*
 
 class AccountsAdapter(private val mContext: Context,
                       private val mData: ArrayList<Account>,
-                      private val mPresenter: AccountsContract.Presenter
+                      private val mEventsListener: AccountsAdapter.AccountsAdapterEventsListener
                       ) : RecyclerView.Adapter<AccountsAdapter.AccountsViewHolder>() {
 
 
@@ -64,4 +64,6 @@ class AccountsAdapter(private val mContext: Context,
     override fun getItemId(position: Int): Long {
         return mData[position].hashCode().toLong()
     }
+
+    interface AccountsAdapterEventsListener {}
 }

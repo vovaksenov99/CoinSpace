@@ -11,8 +11,11 @@ import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.entities.UserBalance
+import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
-import kotlinx.android.synthetic.main.card_current_budget.*
+import kotlinx.android.synthetic.main.card_current_budget.view.*
 import kotlinx.android.synthetic.main.fragment_home.*
 import javax.inject.Inject
 
@@ -38,19 +41,16 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         super.onViewCreated(view, savedInstanceState)
         setupEventListeners()
 
-        presenter.textViewsSetupRequest()
-
-
-        //Setup ViewPager
-       // accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, arrayListOf(Any(), Any(), Any()), presenter)
-       // accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
-
         //Setup toolbar
         home_toolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
         (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
+    }
 
+    override fun onStart() {
+        super.onStart()
+        presenter.viewPagerSetupRequest()
     }
 
     private fun setupEventListeners() {
@@ -59,9 +59,15 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun setupTextViews(mainBalance: String, additionalBalance: String) {
-        tv_main_cur_balance.text = mainBalance
-        tv_additional_cur_balance.text = additionalBalance
+    override fun updateUserBalancePagerView(mainBalance: String, additionalBalance: String) {
+        val balanceView = accounts_viewpager.findViewWithTag<View>(BALANCE_VIEW_TAG)
+        balanceView.tv_main_cur_balance.text = mainBalance
+        balanceView.tv_additional_cur_balance.text = additionalBalance
+    }
+
+    override fun setupViewPager(balance: UserBalance, accounts: List<Account>) {
+        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
+        accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
     }
 
     override fun openOperationFragment() {

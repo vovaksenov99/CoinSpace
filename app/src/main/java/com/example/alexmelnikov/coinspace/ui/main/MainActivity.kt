@@ -3,10 +3,13 @@ package com.example.alexmelnikov.coinspace.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.support.transition.Fade
 import android.support.transition.Slide
 import android.support.transition.TransitionInflater
 import android.support.v7.app.AppCompatActivity
+import android.transition.ChangeBounds
 import android.view.Gravity
+import android.view.View
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerActivityComponent
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
@@ -55,6 +58,10 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         startActivity(intent)
     }
 
+    override fun openAccountsFragmentRequest() {
+        presenter.openAccountsFragmentRequest()
+    }
+
     override fun openHomeFragment(): HomeFragment {
         return HomeFragment.newInstance().also {
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
@@ -63,14 +70,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     }
 
     override fun openAccountsFragment(): AccountsFragment {
-        //val currentFragment = supportFragmentManager.findFragmentById(R.id.contentFrame)
-        //currentFragment?.exitTransition = (TransitionInflater.from(this).inflateTransition(android.R.transition.fade))
-
-        val fragment = AccountsFragment.newInstance()
-        /*val transition = Slide(Gravity.END)
-        transition.duration = 300
-        fragment.enterTransition = transition*/
-        return fragment.also {
+        return  AccountsFragment.newInstance().also {
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .addToBackStack(null)
                     .commit()

@@ -12,6 +12,7 @@ import java.util.*
 data class Operation(val type: OperationType,
                      val sum: Float,
                      val currency: String,
+                     val category: String,
                      val date: Date) {
 
     enum class OperationType {

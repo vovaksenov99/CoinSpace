@@ -39,6 +39,7 @@
             android:layout_height="wrap_content"
             android:paddingRight="6dp"
             android:paddingLeft="6dp"
+
             android:overScrollMode="never"
             android:layoutAnimation="@anim/layout_animation_fall_down"
             tools:listitem="@layout/item_accounts_list">

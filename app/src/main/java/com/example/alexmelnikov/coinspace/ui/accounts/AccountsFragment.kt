@@ -54,8 +54,11 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
         accountsAdapter.setHasStableIds(true)
         rv_accounts.adapter = accountsAdapter
         rv_accounts.layoutManager = AccountsLinearLayoutManager(activity as MainActivity)
+    }
 
-        presenter.accountsDataRequest(accountsAdapter.dataIsEmpty())
+    override fun onStart() {
+        super.onStart()
+        presenter.accountsDataRequest()
     }
 
     private fun setupEventListeners() {

@@ -15,34 +15,29 @@ class AccountsPresenter : AccountsContract.Presenter {
     @Inject
     lateinit var accountsRepository: AccountsRepository
 
-    private lateinit var accounts: List<Account>
+    private var accounts: List<Account> = ArrayList()
 
     override fun attach(view: AccountsContract.AccountsView) {
         this.view = view
         BaseApp.instance.component.inject(this)
-        accounts = ArrayList()
     }
 
     override fun addNewAccountButtonClick() {
         view.openAddAccountFragment()
     }
 
-    override fun accountsDataRequest(updateLayout: Boolean) {
-        if (accounts.isEmpty()) {
-            accountsRepository.getAccountsOffline()
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList, updateLayout) },
-                            { handleErrorAccountsRequest() })
-        } else {
-            view.replaceAccountsRecyclerData(accounts)
-        }
+    override fun accountsDataRequest() {
+        accountsRepository.getAccountsOffline()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList) },
+                        { handleErrorAccountsRequest() })
     }
 
-    private fun handleSuccessAccountsRequest(accounts: List<Account>, updateLayout: Boolean) {
+    private fun handleSuccessAccountsRequest(accounts: List<Account>) {
         this.accounts = accounts
-        if (updateLayout) view.replaceAccountsRecyclerData(accounts)
-        Log.d("mytag", "success :: $accounts")
+        view.replaceAccountsRecyclerData(accounts)
+        Log.d("mytag", "accounts req success :: $accounts")
     }
 
     private fun handleErrorAccountsRequest() {

@@ -6,10 +6,10 @@
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
-        android:layout_marginBottom="30dp"
+        android:layout_marginBottom="40dp"
         android:layout_marginTop="12dp"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
@@ -26,6 +26,7 @@
             android:layout_centerHorizontal="true">
 
             <ImageView
+                android:id="@+id/iv_account_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 tools:src="@drawable/ic_account_balance_wallet_primary_24dp" />
@@ -41,7 +42,7 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/tv_main_cur_balance"
+            android:id="@+id/tv_account_balance"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@id/layout_image_and_name"

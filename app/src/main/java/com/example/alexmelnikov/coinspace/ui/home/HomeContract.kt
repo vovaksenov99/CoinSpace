@@ -1,6 +1,8 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
+import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.UserBalance
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 
 class HomeContract {
@@ -13,7 +15,9 @@ class HomeContract {
 
         fun closeOperationFragment()
 
-        fun setupTextViews(mainBalance: String, additionalBalance: String)
+        fun updateUserBalancePagerView(mainBalance: String, additionalBalance: String)
+
+        fun setupViewPager(balance: UserBalance, accounts: List<Account>)
 
         fun animateNewOperationButtonToCheck()
 
@@ -48,7 +52,7 @@ class HomeContract {
 
         fun detachOperationView()
 
-        fun textViewsSetupRequest()
+        fun viewPagerSetupRequest()
 
         fun newOperationButtonClick()
 
@@ -67,8 +71,6 @@ class HomeContract {
         fun showAboutDialogRequest()
 
         fun accountsButtonClick()
-
-        fun accountsDataRequest()
 
         fun getMainCurrency(): String
 

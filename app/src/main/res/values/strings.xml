@@ -12,6 +12,9 @@
     <!-- SharedPreferences Keys -->
     <string name="sp_key_main_currency">MAINCUR</string>
     <string name="sp_key_balance">BALANCE</string>
+    <string name="sp_key_last_currency_update_timestamp">LAST_CUR_UPDATE</string>
+    <string name="sp_key_currency_usd_rub">USD_RUB</string>
+    <string name="sp_key_currency_usd_eur">USD_EUR</string>
 
     <string-array name="main_currency_names_array">
         <item>Рубль</item>
@@ -23,6 +26,19 @@
         <item>RUB</item>
         <item>USD</item>
         <item>EUR</item>
+    </string-array>
+
+    <string-array name="operation_categories_array">
+        <item>Прочие расходы</item>
+        <item>Супермаркеты</item>
+        <item>Образование</item>
+        <item>Путешествия</item>
+        <item>Рестораны и кафе</item>
+        <item>Коммунальные платежи, связь, интернет</item>
+        <item>Одежда и аксессуары</item>
+        <item>Отдых и развлечения</item>
+        <item>Транспорт</item>
+        <item>Здоровье и красота</item>
     </string-array>
 
     <string name="preferences_activity_title">Настройки</string>

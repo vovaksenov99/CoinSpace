@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.coinspace.ui.main
 
+import android.view.View
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
 import com.example.alexmelnikov.coinspace.ui.home.HomeFragment
@@ -11,6 +12,8 @@ class MainContract {
     interface View : BaseContract.View {
 
         fun openSettingsActivityRequest()
+
+        fun openAccountsFragmentRequest()
 
         fun openHomeFragment(): HomeFragment
 

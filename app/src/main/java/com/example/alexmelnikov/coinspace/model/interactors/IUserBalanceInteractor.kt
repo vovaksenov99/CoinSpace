@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.model.interactors
 
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.UserBalance
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
@@ -8,7 +9,12 @@ import com.example.alexmelnikov.coinspace.model.entities.Operation
  */
 interface IUserBalanceInteractor {
 
-    fun getUserBalance(): Pair<Float, String>
+    /**
+     * Called in application constructor
+     */
+    fun initCurrencyRates()
+
+    fun getUserBalance(): UserBalance
 
     fun mainCurrencyChanged(currencyBeforeChange: String)
     /**
@@ -16,7 +22,7 @@ interface IUserBalanceInteractor {
      */
     fun executeNewOperation(type: Operation.OperationType?,
                             sum: Float,
-                            currency: String): Float
+                            currency: String): UserBalance
 
     fun convertCurrencyFromTo(money: Float, from: String, to: String): Float
 }

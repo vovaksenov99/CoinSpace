@@ -1,0 +1,17 @@
+package com.example.alexmelnikov.coinspace.model.api
+
+import com.example.alexmelnikov.coinspace.model.entities.ApiResponseRoot
+import retrofit2.Call
+import retrofit2.http.GET
+import retrofit2.http.Query
+
+/**
+ *  Created by Alexander Melnikov on 29.07.18.
+ *  TODO: Edit class header comment
+ */
+interface ApiService {
+
+    @GET("latest.json")
+    fun getRatesForCurrency(@Query("app_id") key: String,
+                            @Query("base") base: String = "USD") : Call<ApiResponseRoot>
+}

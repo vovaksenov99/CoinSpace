@@ -29,8 +29,16 @@ class PreferencesHelper(private val context: Context) {
         return preferences.getFloat(key, 0F)
     }
 
-    companion object {
-        val MAIN_CURRENCY = "mainCur"
+    fun saveLong(key: String, value: Long) {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        val editor = preferences.edit()
+        editor.putLong(key, value)
+        editor.apply()
+    }
+
+    fun loadLong(key: String): Long {
+        val preferences = PreferenceManager.getDefaultSharedPreferences(context)
+        return preferences.getLong(key, 0L)
     }
 
 }
