@@ -13,10 +13,6 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import kotlinx.android.synthetic.main.item_accounts_list.view.*
 
-/**
- *  Created by Alexander Melnikov on 27.07.18.
- *  TODO: Edit class header comment
- */
 
 class AccountsAdapter(private val mContext: Context,
                       private val mData: ArrayList<Account>,

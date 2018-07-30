@@ -73,8 +73,9 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun updateAccountItemPagerView(account: Account) {
-        val balanceView = accounts_viewpager.findViewWithTag<View>(account.name)
-        balanceView.tv_account_balance.text = formatToMoneyString(account.balance, account.currency)
+        val balanceView = accounts_viewpager.findViewWithTag<View>(account.id)
+        if (balanceView != null)
+            balanceView.tv_account_balance.text = formatToMoneyString(account.balance, account.currency)
     }
 
     override fun openOperationFragment() {
@@ -152,15 +153,13 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun animateNewOperationButtonToCheck() {
-        //TODO: look for getDrawable future proofed substitution
-        val drawable = resources.getDrawable(R.drawable.anim_ic_add_to_check_white) as AnimatedVectorDrawable
+        val drawable = activity?.getDrawable(R.drawable.anim_ic_add_to_check_white) as AnimatedVectorDrawable
         fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }
 
     override fun animateNewOperationButtonToAdd() {
-        //TODO: look for getDrawable future proofed substitution
-        val drawable = resources.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
+        val drawable = activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
         fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }

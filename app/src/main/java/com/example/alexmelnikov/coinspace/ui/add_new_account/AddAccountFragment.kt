@@ -150,7 +150,7 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
     }
 
     override fun updateLayoutBgColor(color: Int) {
-        val drawable = activity?.resources?.getDrawable(R.drawable.bg_card)
+        val drawable = activity?.getDrawable(R.drawable.bg_card)
         drawable?.setColorFilter(color, PorterDuff.Mode.SRC_ATOP)
         rv_account.background = drawable
     }

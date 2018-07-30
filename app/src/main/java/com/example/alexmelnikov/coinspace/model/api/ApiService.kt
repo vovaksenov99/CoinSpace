@@ -7,7 +7,7 @@ import retrofit2.http.Query
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
- *  TODO: Edit class header comment
+ *  API: https://openexchangerates.org/api/
  */
 interface ApiService {
 

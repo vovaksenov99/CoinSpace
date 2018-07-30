@@ -13,9 +13,6 @@ class AddAccountPresenter : AddAccountContract.Presenter {
     lateinit var view: AddAccountContract.View
 
     @Inject
-    lateinit var preferencesHelper: PreferencesHelper
-
-    @Inject
     lateinit var accountsRepository: AccountsRepository
 
     @Inject

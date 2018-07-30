@@ -3,6 +3,7 @@ package com.example.alexmelnikov.coinspace.ui.home
 import android.content.Context
 import android.graphics.PorterDuff
 import android.support.v4.view.PagerAdapter
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +50,7 @@ class AccountsPagerAdapter(private val mContext: Context,
                 layout.iv_account_icon.setImageResource(R.drawable.ic_account_balance_wallet_primary_24dp)
             }
 
-            layout.tag = account.name
+            layout.tag = account.id
             container.addView(layout)
             return layout
         }

@@ -67,10 +67,10 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             presenter.clearButtonClick()
         }
 
-        et_sum.setOnEditorActionListener { p0, p1, p2 ->
+        /*et_sum.setOnEditorActionListener { p0, p1, p2 ->
             presenter.newOperationButtonClick()
             false
-        }
+        }*/
 
         et_sum.addTextChangedListener(object : TextWatcher {
 
@@ -163,14 +163,14 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
 
 
     override fun animateCloseButtonCloseToBack() {
-        val drawable = resources.getDrawable(R.drawable.anim_ic_clear_to_back_primary_light_24dp)
+        val drawable = activity?.getDrawable(R.drawable.anim_ic_clear_to_back_primary_light_24dp)
                 as AnimatedVectorDrawable
         btn_back.setImageDrawable(drawable)
         drawable.start()
     }
 
     override fun animateCloseButtonBackToClose() {
-        val drawable = resources.getDrawable(R.drawable.anim_ic_back_to_clear_primary_light_24dp)
+        val drawable = activity?.getDrawable(R.drawable.anim_ic_back_to_clear_primary_light_24dp)
                 as AnimatedVectorDrawable
         btn_back.setImageDrawable(drawable)
         drawable.start()

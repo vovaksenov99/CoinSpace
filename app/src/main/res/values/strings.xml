@@ -1,9 +1,5 @@
 <resources>
     <string name="app_name">Coin Space</string>
-    <string name="title_home">Главная</string>
-    <string name="title_expenses">Расходы</string>
-    <string name="title_statistics">Статистика</string>
-
     <string name="cash_account_name">Наличные</string>
     <string name="card_account_name">Карта</string>
 
@@ -76,5 +72,6 @@
     <string name="label_account_color">Цвет счета</string>
     <string name="accounts_fragment_title">Счета</string>
     <string name="statistics_fragment_title">Статистика</string>
+    <string name="expenses_pie_chart_lbl">Расходы по категориям</string>
 
 </resources>

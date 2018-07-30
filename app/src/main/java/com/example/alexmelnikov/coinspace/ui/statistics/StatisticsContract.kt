@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.ui.statistics
 
 import com.example.alexmelnikov.coinspace.ui.BaseContract
+import com.github.mikephil.charting.data.PieDataSet
 
 class StatisticsContract {
 
@@ -8,7 +9,7 @@ class StatisticsContract {
 
         var presenter: StatisticsContract.Presenter
 
-        fun setupChartData()
+        fun setupChartData(dataSet: PieDataSet)
 
     }
 

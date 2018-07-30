@@ -17,4 +17,19 @@
         <item>#0a0e19</item>
     </array>
 
+    <array name="custom_pie_chart_colors">
+        <item>#8ca0ab</item>
+        <item>#6eacdf</item>
+        <item>#f9ce8f</item>
+        <item>#d67279</item>
+        <item>#907bb6</item>
+        <item>#5f9762</item>
+        <item>#5964a6</item>
+        <item>#edbee5</item>
+        <item>#56a49d</item>
+        <item>#ffe28a</item>
+        <item>#9b9999</item>
+        <item>#0a0e19</item>
+    </array>
+
 </resources>
