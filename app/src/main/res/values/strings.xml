@@ -1,12 +1,16 @@
 <resources>
     <string name="app_name">Coin Space</string>
-    <string name="title_home">Home</string>
-    <string name="title_dashboard">Dashboard</string>
-    <string name="title_notifications">Notifications</string>
+    <string name="cash_account_name">Наличные</string>
+    <string name="card_account_name">Карта</string>
+
+    <string name="main_currency">RUB</string>
 
     <!-- SharedPreferences Keys -->
-    <string name="sp_key_main_currency">mainCur</string>
-    <string name="sp_key_balance">balance</string>
+    <string name="sp_key_main_currency">MAINCUR</string>
+    <string name="sp_key_balance">BALANCE</string>
+    <string name="sp_key_last_currency_update_timestamp">LAST_CUR_UPDATE</string>
+    <string name="sp_key_currency_usd_rub">USD_RUB</string>
+    <string name="sp_key_currency_usd_eur">USD_EUR</string>
 
     <string-array name="main_currency_names_array">
         <item>Рубль</item>
@@ -20,6 +24,19 @@
         <item>EUR</item>
     </string-array>
 
+    <string-array name="operation_categories_array">
+        <item>Прочие расходы</item>
+        <item>Супермаркеты</item>
+        <item>Образование</item>
+        <item>Путешествия</item>
+        <item>Рестораны и кафе</item>
+        <item>Коммунальные платежи, связь, интернет</item>
+        <item>Одежда и аксессуары</item>
+        <item>Отдых и развлечения</item>
+        <item>Транспорт</item>
+        <item>Здоровье и красота</item>
+    </string-array>
+
     <string name="preferences_activity_title">Настройки</string>
     <string name="tv_balance_lbl">Текущий баланс</string>
     <string name="btn_income">Доход</string>
@@ -27,10 +44,18 @@
     <string name="label_new_income">Новый доход</string>
     <string name="label_new_expense">Новый расход</string>
     <string name="tv_currency_label">Валюта:</string>
+    <string name="tv_account_label">Счет:</string>
+    <string name="tv_category_label">Категория:</string>
     <string name="empty_sum_error">Введите сумму</string>
+    <string name="empty_account_name_error">Введите название счета</string>
+    <string name="account_name_already_in_db_error">Счет с таким названием уже существует</string>
     <string name="zero_sum_error">Сумма должна быть больше нуля</string>
     <string name="lbl_empty_operation_history">История действий пуста</string>
     <string name="lbl_sum">Сумма</string>
+    <string name="pref_settings">Настройки</string>
+    <string name="pref_about">О приложении</string>
+    <string name="pref_accounts">Счета</string>
+    <string name="pref_statistics">Статистика</string>
     <string name="icon_rub">₽</string>
     <string name="icon_usd">$</string>
     <string name="icon_eur">€</string>
@@ -41,5 +66,12 @@
         \n\nHaberem visione dicetur rom dominum mutuari hac <a href="https://academy.yandex.ru/events/mobdev/msk-2018/">Yandex School of Mobile Development 2018</a>
         \n\nDeveloped by <a href="https://github.com/millerovv">Alexander Melnikov</a>
     </string>
+
+    <string name="text_new_account_header">Новый счет</string>
+    <string name="hint_account_name">Название счета</string>
+    <string name="label_account_color">Цвет счета</string>
+    <string name="accounts_fragment_title">Счета</string>
+    <string name="statistics_fragment_title">Статистика</string>
+    <string name="expenses_pie_chart_lbl">Расходы по категориям</string>
 
 </resources>

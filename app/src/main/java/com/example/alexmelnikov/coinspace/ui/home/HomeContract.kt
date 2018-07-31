@@ -1,6 +1,9 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
-import com.example.alexmelnikov.coinspace.model.Operation
+import android.view.View
+import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.UserBalance
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 
 class HomeContract {
@@ -9,36 +12,52 @@ class HomeContract {
 
         var presenter: HomeContract.Presenter
 
-        fun openOperationFragmentRequest()
+        fun openOperationFragment()
 
-        fun setupTextViews(mainBalance: String, additionalBalance: String)
+        fun closeOperationFragment()
+
+        fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String)
+
+        fun updateAccountItemPagerView(account: Account)
+
+        fun setupViewPager(balance: UserBalance, accounts: List<Account>)
 
         fun animateNewOperationButtonToCheck()
 
         fun animateNewOperationButtonToAdd()
 
-        fun saveNewBalance(sum: Float)
+        fun openSettingsActivity()
+
+        fun openAccountsFragmentRequest()
+
+        fun openStatisticsFragmentRequest(animationCenter: View)
+
+        fun showAboutDialog()
+
     }
 
     interface OperationView : BaseContract.View {
 
         var presenter: HomeContract.Presenter
 
-        fun confirmOperationAndCloseSelf(): Boolean
+        fun confirmOperationAndCloseSelf()
 
-        fun setupNewOperationLayout(type: Operation.OperationType)
+        fun animateCloseButtonCloseToBack()
+
+        fun animateCloseButtonBackToClose()
+
+        fun resetLayout()
+
+        fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>)
     }
 
-    interface Presenter : BaseContract.Presenter<HomeContract.HomeView> {
+    interface Presenter : BaseContract.Presenter<HomeView> {
 
-        var mainCurrency: Operation.Currency
-        var balanceUsd: Float
-
-        fun attachOperationView(view: HomeContract.OperationView)
+        fun attachOperationView(view: OperationView)
 
         fun detachOperationView()
 
-        fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float)
+        fun viewPagerSetupRequest()
 
         fun newOperationButtonClick()
 
@@ -46,6 +65,21 @@ class HomeContract {
 
         fun newIncomeButtonClick()
 
-        fun newOperationRequest(sum: Float, currency: Operation.Currency)
+        fun clearButtonClick()
+
+        fun newOperationRequest(sum: Float, account: Account, category: String, currency: String)
+
+        fun animateOperationAddButtonRequest()
+
+        fun openSettingsActivityRequest()
+
+        fun showAboutDialogRequest()
+
+        fun accountsButtonClick()
+
+        fun statisticsButtonClick(animationCenter: View)
+
+        fun getMainCurrency(): String
+
     }
 }

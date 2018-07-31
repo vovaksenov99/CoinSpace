@@ -1,10 +1,19 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
-import com.example.alexmelnikov.coinspace.di.component.DaggerModelComponent
-import com.example.alexmelnikov.coinspace.model.Accountant
-import com.example.alexmelnikov.coinspace.model.Operation
-import com.example.alexmelnikov.coinspace.util.TextUtils
+import android.util.Log
+import android.view.View
+import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.UserBalance
+import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
+import com.example.alexmelnikov.coinspace.util.formatToMoneyString
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
+import java.util.*
 import javax.inject.Inject
+import kotlin.collections.ArrayList
 
 /**
  * HomePresenter handles HomeFragment and OperationFragment
@@ -12,18 +21,27 @@ import javax.inject.Inject
 class HomePresenter : HomeContract.Presenter {
 
     @Inject
-    lateinit var mAccountant: Accountant
+    lateinit var accountsRepository: AccountsRepository
+
+    @Inject
+    lateinit var userBalanceInteractor: IUserBalanceInteractor
 
     private lateinit var mHomeView: HomeContract.HomeView
     private var mOperationView: HomeContract.OperationView? = null
     private var currentNewOperation: Operation.OperationType? = null
 
-    override lateinit var mainCurrency: Operation.Currency
-    override var balanceUsd: Float = 0.00f
+    private lateinit var userBalance: UserBalance
+
+    private var accounts: List<Account> = ArrayList()
 
     override fun attach(view: HomeContract.HomeView) {
         mHomeView = view
-        DaggerModelComponent.builder().build().inject(this)
+        BaseApp.instance.component.inject(this)
+        if (mOperationView != null) mHomeView.openOperationFragment()
+
+        userBalance = userBalanceInteractor.getUserBalance()
+        mOperationView = null
+        currentNewOperation = null
     }
 
     override fun attachOperationView(view: HomeContract.OperationView) {
@@ -32,51 +50,115 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun detachOperationView() {
+        mHomeView.closeOperationFragment()
         mOperationView = null
+        currentNewOperation = null
+        animateOperationAddButtonRequest()
     }
 
-    override fun textViewsSetupRequest(mainCurrency: Operation.Currency, balanceUsd: Float) {
-        this.mainCurrency = mainCurrency
-        this.balanceUsd = balanceUsd
-        mAccountant.updateBalance(balanceUsd, Operation.Currency.USD)
-
-        mHomeView.setupTextViews(
-                TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(balanceUsd, Operation.Currency.USD, mainCurrency), mainCurrency),
-                TextUtils.formatToMoneyString(balanceUsd, Operation.Currency.USD))
+    override fun getMainCurrency(): String {
+        return userBalance.currency
     }
+
+
+
+    override fun viewPagerSetupRequest() {
+        accountsRepository.getAccountsOffline()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList)},
+                        { handleErrorAccountsRequest() })
+    }
+
+    private fun handleSuccessAccountsRequest(accounts: List<Account>) {
+        this.accounts = accounts
+        mHomeView.setupViewPager(userBalance, accounts)
+    }
+
+    private fun handleErrorAccountsRequest() {
+        Log.d("mytag", "cant't get data from db")
+    }
+
 
     override fun newOperationButtonClick() {
         if (mOperationView == null) {
-            mHomeView.openOperationFragmentRequest()
+            mHomeView.openOperationFragment()
             mHomeView.animateNewOperationButtonToCheck()
         } else {
-            if (mOperationView!!.confirmOperationAndCloseSelf()) {
-                mHomeView.animateNewOperationButtonToAdd()
-            }
+            mOperationView!!.confirmOperationAndCloseSelf()
         }
     }
 
     override fun newExpenseButtonClick() {
         currentNewOperation = Operation.OperationType.EXPENSE
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE)
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE, accounts)
+        mOperationView?.animateCloseButtonCloseToBack()
     }
 
     override fun newIncomeButtonClick() {
         currentNewOperation = Operation.OperationType.INCOME
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME)
+        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME, accounts)
+        mOperationView?.animateCloseButtonCloseToBack()
     }
 
-    override fun newOperationRequest(sum: Float, currency: Operation.Currency) {
-        when (currentNewOperation) {
-            Operation.OperationType.EXPENSE -> mAccountant.addExpense(sum, currency)
-            Operation.OperationType.INCOME -> mAccountant.addIncome(sum, currency)
+    override fun clearButtonClick() {
+        if (currentNewOperation == null) {
+            detachOperationView()
+        } else {
+            mOperationView?.resetLayout()
+            mOperationView?.animateCloseButtonBackToClose()
+            currentNewOperation = null
         }
-        balanceUsd = mAccountant.getBalanceUsd().also {
-            mHomeView.saveNewBalance(it)
-            mHomeView.setupTextViews(
-                    TextUtils.formatToMoneyString(mAccountant.convertCurrencyFromTo(it, Operation.Currency.USD, mainCurrency), mainCurrency),
-                    TextUtils.formatToMoneyString(it, Operation.Currency.USD))
-        }
+    }
+
+    override fun newOperationRequest(sum: Float, account: Account, category: String, currency: String) {
+        Log.d("mytag", "new operation:\n" +
+                "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
+
+        //Create operation and add it to accountOperationsList
+        val operation = Operation(currentNewOperation!!, sum, currency, category, Date())
+        val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
+        updatedAccountOperations.add(operation)
+        account.operations = updatedAccountOperations
+
+        if (currentNewOperation == Operation.OperationType.INCOME) account.balance += sum
+        else account.balance -= sum
+        accountsRepository.updateAccountOfflineAsync(account)
+
+        userBalance = userBalanceInteractor.executeNewOperation(currentNewOperation, sum, currency)
+        updateTextViews()
+        updateAccountItemOnPagerView(account)
+
         currentNewOperation = null
+    }
+
+    override fun animateOperationAddButtonRequest() {
+        mHomeView.animateNewOperationButtonToAdd()
+    }
+
+    override fun openSettingsActivityRequest() {
+        mHomeView.openSettingsActivity()
+    }
+
+    override fun showAboutDialogRequest() {
+        mHomeView.showAboutDialog()
+    }
+
+    override fun accountsButtonClick() {
+        mHomeView.openAccountsFragmentRequest()
+    }
+
+    override fun statisticsButtonClick(animationCenter: View) {
+        mHomeView.openStatisticsFragmentRequest(animationCenter)
+    }
+
+    private fun updateTextViews() {
+        mHomeView.updateUserBalanceItemPagerView(
+                formatToMoneyString(userBalance.balance, userBalance.currency),
+                formatToMoneyString(userBalance.balanceUsd, "USD"))
+    }
+
+    private fun updateAccountItemOnPagerView(account: Account) {
+        mHomeView.updateAccountItemPagerView(account)
     }
 }

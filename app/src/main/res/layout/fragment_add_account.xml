@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.design.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+
+    <RelativeLayout
+        android:id="@+id/rv_account"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/bg_card"
+        android:elevation="4dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginRight="12dp"
+        android:layout_marginLeft="12dp"
+        android:layout_marginBottom="10dp"
+        android:paddingTop="20dp"
+        android:paddingRight="12dp"
+        android:paddingBottom="12dp"
+        android:paddingLeft="12dp"
+        tools:background="@color/colorPrimary">
+
+        <TextView
+            android:id="@+id/tv_heading"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="4dp"
+            android:layout_marginBottom="12dp"
+            android:textColor="@color/colorWhite"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:text="@string/text_new_account_header" />
+
+        <ImageButton
+            android:id="@+id/btn_change_color"
+            android:layout_width="27dp"
+            android:layout_height="27dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:background="?selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_palette_primary_24dp" />
+
+        <android.support.design.widget.TextInputLayout
+            android:id="@+id/input_layout_account_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/tv_heading">
+
+            <EditText
+                android:id="@+id/et_account_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:textColor="@color/colorWhite"
+                android:textSize="20sp"
+                android:inputType="text"
+                android:hint="@string/hint_account_name"
+                android:maxLines="1" />
+
+        </android.support.design.widget.TextInputLayout>
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_below="@id/input_layout_account_name"
+            android:layout_marginTop="10dp"
+            android:layout_marginLeft="6dp"
+            android:layout_marginBottom="24dp">
+
+            <TextView
+                android:id="@+id/tv_currency_label"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:textColor="@color/colorWhite"
+                android:textSize="18sp"
+                android:text="@string/tv_currency_label" />
+
+            <Spinner
+                android:id="@+id/currency_spinner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_toEndOf="@id/tv_currency_label"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="2dp"
+                android:background="@android:color/transparent"
+                android:gravity="left" />
+
+        </RelativeLayout>
+
+    </RelativeLayout>
+
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/fab_add"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:clickable="true"
+        android:focusable="true"
+        android:src="@drawable/ic_add_white_32dp"
+        app:layout_anchor="@+id/rv_account"
+        app:layout_anchorGravity="bottom|center"
+        android:transitionName="fabAdd"
+        android:visibility="gone"
+        tools:visibility="visible"/>
+
+
+</android.support.design.widget.CoordinatorLayout>

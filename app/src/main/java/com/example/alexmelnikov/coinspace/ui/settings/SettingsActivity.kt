@@ -6,7 +6,6 @@ import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
 import android.view.View
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
-import com.example.alexmelnikov.coinspace.R.id.toolbar
 import android.view.ViewGroup
 import com.example.alexmelnikov.coinspace.R
 import android.util.TypedValue

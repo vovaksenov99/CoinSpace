@@ -3,95 +3,105 @@ package com.example.alexmelnikov.coinspace.ui.main
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.support.v4.content.ContextCompat
+import android.support.transition.Fade
+import android.support.transition.Slide
+import android.support.transition.TransitionInflater
 import android.support.v7.app.AppCompatActivity
-import android.text.method.LinkMovementMethod
-import android.view.Menu
-import android.view.MenuItem
+import android.transition.ChangeBounds
+import android.util.Log
+import android.view.Gravity
 import android.view.View
-import android.widget.TextView
-import com.afollestad.materialdialogs.MaterialDialog
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerActivityComponent
-import com.example.alexmelnikov.coinspace.ui.home.OperationFragment
+import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
 import com.example.alexmelnikov.coinspace.ui.home.HomeFragment
+import com.example.alexmelnikov.coinspace.ui.main.MainContract.Presenter.FragmentOnScreen
 import com.example.alexmelnikov.coinspace.ui.settings.SettingsActivity
-import kotlinx.android.synthetic.main.activity_main.*
+import com.example.alexmelnikov.coinspace.ui.statistics.StatisticsFragment
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper
 import javax.inject.Inject
 
 class MainActivity : AppCompatActivity(), MainContract.View {
 
+    private val CURRENT_ACTIVE_FRAGMENT = "CURRENT_ACTIVE_FRAGMENT"
+
     @Inject
     lateinit var presenter: MainContract.Presenter
 
-    private lateinit var appInfoDialog: MaterialDialog
-    private lateinit var homeFragment: HomeFragment
-    private lateinit var operationFragment: OperationFragment
-
-    private fun injectDependency() {
-        val activityComponent = DaggerActivityComponent.builder().build()
-        activityComponent.inject(this)
-    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
+        DaggerActivityComponent.builder().build().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        injectDependency()
+
         presenter.attach(this)
 
-        // Setup toolbar
-        setSupportActionBar(toolbar)
-        toolbar.overflowIcon = ContextCompat.getDrawable(this, R.drawable.ic_more_vert_white_24dp)
+        if (savedInstanceState != null) {
+            presenter.start(savedInstanceState
+                    .getSerializable(CURRENT_ACTIVE_FRAGMENT) as FragmentOnScreen)
+        } else {
+            presenter.start(FragmentOnScreen.HOME)
+        }
 
-        homeFragment = openHomeFragment()
-
-        //Setup dialog with application info
-        appInfoDialog = MaterialDialog.Builder(this)
-                .customView(R.layout.dialog_app_info, false)
-                .positiveText(android.R.string.ok)
-                //.dismissListener()
-                .build()
-        appInfoDialog.view.findViewById<TextView>(R.id.tv_content).movementMethod = LinkMovementMethod.getInstance()
     }
 
     override fun attachBaseContext(newBase: Context?) {
         super.attachBaseContext(CalligraphyContextWrapper.wrap(newBase))
     }
 
-    fun openHomeFragment(): HomeFragment {
-         return supportFragmentManager.findFragmentById(R.id.contentFrame)
-                as HomeFragment? ?: HomeFragment.newInstance().also {
+    override fun onSaveInstanceState(outState: Bundle?) {
+        super.onSaveInstanceState(outState?.apply {
+            putSerializable(CURRENT_ACTIVE_FRAGMENT, presenter.activeFragmentOnScreen)
+        })
+    }
+
+    override fun openSettingsActivityRequest() {
+        val intent = Intent(this, SettingsActivity::class.java)
+        startActivity(intent)
+    }
+
+    override fun openAccountsFragmentRequest() {
+        presenter.openAccountsFragmentRequest()
+    }
+
+    override fun openStatisticsFragmentRequest(animationCenter: View) {
+        presenter.openStatisticsFragmentRequest(animationCenter)
+    }
+
+    override fun openHomeFragment(): HomeFragment {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is HomeFragment)
+            supportFragmentManager.beginTransaction().remove(fragmentOnScreen)
+                    .commit()
+
+        return HomeFragment.newInstance().also {
+            it.exitTransition = android.transition.TransitionInflater.from(this).inflateTransition(android.R.transition.fade)
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .commit()
         }
     }
 
-    fun openActionFragment(circleAnimationCenter: View): OperationFragment {
-        operationFragment = supportFragmentManager.findFragmentById(R.id.actionFrame)
-                as OperationFragment? ?: OperationFragment.newInstance(sourceView = circleAnimationCenter).also {
-            supportFragmentManager.beginTransaction()
-                    .replace(R.id.actionFrame, it)
+    override fun openAccountsFragment(): AccountsFragment {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is AccountsFragment)
+            supportFragmentManager.popBackStack()
+
+        return AccountsFragment.newInstance().also {
+            supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .addToBackStack(null)
                     .commit()
         }
-        return operationFragment
     }
 
-    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
-        menuInflater.inflate(R.menu.toolbar_main, menu)
-        return true
-    }
+    override fun openStatisticsFragment(animationCenter: View?): StatisticsFragment {
+        val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
+        if (fragmentOnScreen is StatisticsFragment)
+            supportFragmentManager.popBackStack()
 
-    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        if (item?.itemId == R.id.settings) {
-            val intent = Intent(this, SettingsActivity::class.java)
-            startActivity(intent)
-            return true
-        } else if (item?.itemId == R.id.about) {
-            appInfoDialog.show()
-            return true
+        return StatisticsFragment.newInstance(animationCenter).also {
+            supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
+                    .addToBackStack(null)
+                    .commit()
         }
-        return super.onOptionsItemSelected(item)
     }
 }
