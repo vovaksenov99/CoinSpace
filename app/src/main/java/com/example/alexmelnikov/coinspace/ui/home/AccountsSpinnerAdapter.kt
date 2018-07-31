@@ -13,14 +13,14 @@ import kotlinx.android.synthetic.main.spinner_item_account.view.*
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
- *  TODO: Edit class header comment
  */
 
 class AccountsSpinnerAdapter(private val mContext: Context,
                              private val mData: ArrayList<Account>) : BaseAdapter(), SpinnerAdapter {
 
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup?): View {
-        val view: View = convertView ?: LayoutInflater.from(mContext).inflate(R.layout.spinner_item_account, viewGroup, false)
+        val view: View = convertView ?: LayoutInflater.from(mContext)
+                .inflate(R.layout.spinner_item_account, viewGroup, false)
         val account = mData[i]
         view.tv_account_name.text = account.name
 

@@ -18,7 +18,6 @@ import kotlinx.android.synthetic.main.card_current_budget.view.*
 
 /**
  *  Created by Alexander Melnikov on 28.07.18.
- *  TODO: Edit class header comment
  */
 
 class AccountsPagerAdapter(private val mContext: Context,

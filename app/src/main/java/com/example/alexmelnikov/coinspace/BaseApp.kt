@@ -8,12 +8,14 @@ import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
+import com.hawkcatcherkotlin.akscorp.hawkcatcherkotlin.HawkExceptionCatcher
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import javax.inject.Inject
 
 class BaseApp : Application() {
 
     val BASE_FONT = "fonts/Roboto-Regular.ttf"
+    val HAWK_TOKEN = "9c18e011-e644-4a4d-bfb3-e84313fbf5fd"
 
     lateinit var component: ApplicationComponent
 
@@ -47,6 +49,14 @@ class BaseApp : Application() {
                 .setDefaultFontPath(BASE_FONT)
                 .setFontAttrId(R.attr.fontPath)
                 .build())
+
+        //Init Hawk
+        val exceptionCatcher = HawkExceptionCatcher(this, HAWK_TOKEN)
+        try {
+            exceptionCatcher.start()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
 
         component.inject(this)
     }

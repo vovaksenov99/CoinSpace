@@ -11,8 +11,6 @@ import dagger.Provides
 class ActivityModule {
 
     @Provides
-    fun provideMainPresenter(): MainContract.Presenter {
-        return MainPresenter()
-    }
+    fun provideMainPresenter(): MainContract.Presenter = MainPresenter()
 
 }

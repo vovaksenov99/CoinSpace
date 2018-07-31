@@ -9,10 +9,7 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.OperationTypeConverters
 import com.example.alexmelnikov.coinspace.model.persistance.dao.AccountDao
 
-/**
- *  Created by Alexander Melnikov on 27.07.18.
- *  TODO: Edit class header comment
- */
+
 @Database(entities = arrayOf(Account::class), version = 1, exportSchema = false)
 @TypeConverters(OperationTypeConverters::class)
 abstract class AccountsDatabase : RoomDatabase() {
