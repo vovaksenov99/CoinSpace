@@ -68,8 +68,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String) {
         val balanceView = accounts_viewpager.findViewWithTag<View>(BALANCE_VIEW_TAG)
-        balanceView.tv_main_cur_balance.text = mainBalance
-        balanceView.tv_additional_cur_balance.text = additionalBalance
+        if (balanceView != null) {
+            balanceView.tv_main_cur_balance.text = mainBalance
+            balanceView.tv_additional_cur_balance.text = additionalBalance
+        }
     }
 
     override fun updateAccountItemPagerView(account: Account) {
@@ -131,20 +133,20 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when {
-            item?.itemId == R.id.settings -> {
+        when (item?.itemId ){
+            R.id.settings -> {
                 presenter.openSettingsActivityRequest()
                 return true
             }
-            item?.itemId == R.id.about -> {
+            R.id.about -> {
                 presenter.showAboutDialogRequest()
                 return true
             }
-            item?.itemId == R.id.accounts -> {
+            R.id.accounts -> {
                 presenter.accountsButtonClick()
                 return true
             }
-            item?.itemId == R.id.statistics -> {
+            R.id.statistics -> {
                 presenter.statisticsButtonClick(home_toolbar)
                 return true
             }

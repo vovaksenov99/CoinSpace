@@ -35,12 +35,17 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
         return Single.create<List<Account>> {
             it.onSuccess(accountDao.getAll())
         }
+        //TODO: На ревью сказали заменить create на just
+        //Но данная реализация почему-то не работает
+        //return Single.just<List<Account>>(accountDao.getAll())
     }
 
     override fun findAccountByName(name: String): Single<Account> {
         return Single.create<Account> {
             it.onSuccess(accountDao.findByName(name))
         }
+        //TODO: На ревью сказали заменить create на just
+        //return Single.just<Account>(accountDao.findByName(name))
     }
 
     override fun insertAccountOfflineAsync(name: String, currency: String, balance: Float, color: Int, operations: List<Operation>) {

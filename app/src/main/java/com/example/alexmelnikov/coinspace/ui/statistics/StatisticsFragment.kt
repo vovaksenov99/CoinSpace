@@ -5,6 +5,8 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.content.ContextCompat
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -49,7 +51,7 @@ class StatisticsFragment: Fragment(), StatisticsContract.View {
         (activity as MainActivity).setSupportActionBar(statistics_toolbar)
         setHasOptionsMenu(true)
         statistics_toolbar.title = resources.getString(R.string.statistics_fragment_title)
-        statistics_toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_arrow_back_white_24dp)
+        statistics_toolbar.navigationIcon = ContextCompat.getDrawable(activity!!, R.drawable.ic_arrow_back_white_24dp)
         statistics_toolbar.setNavigationOnClickListener { fragmentManager?.popBackStack() }
 
         //Setup chart
@@ -69,11 +71,14 @@ class StatisticsFragment: Fragment(), StatisticsContract.View {
         l.yOffset = 30f
 
         view.postDelayed({
-            chart_container.visibility = View.VISIBLE
-            YoYo.with(Techniques.SlideInUp)
-                    .duration(400)
-                    .playOn(chart_container)
-            expenses_by_category_chart.animateY(500)
+            try {
+                chart_container.visibility = View.VISIBLE
+                YoYo.with(Techniques.SlideInUp)
+                        .duration(400)
+                        .playOn(chart_container)
+            } catch (e: Exception) {
+                Log.e("StatisticsFragment", e.toString())
+            }
         }, 370)
 
         presenter.chartDataRequest()

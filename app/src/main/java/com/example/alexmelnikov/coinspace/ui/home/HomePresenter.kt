@@ -3,6 +3,7 @@ package com.example.alexmelnikov.coinspace.ui.home
 import android.util.Log
 import android.view.View
 import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.R.id.accounts
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.entities.UserBalance
@@ -121,8 +122,9 @@ class HomePresenter : HomeContract.Presenter {
         updatedAccountOperations.add(operation)
         account.operations = updatedAccountOperations
 
-        if (currentNewOperation == Operation.OperationType.INCOME) account.balance += sum
-        else account.balance -= sum
+        if (currentNewOperation == Operation.OperationType.INCOME)
+            account.balance += userBalanceInteractor.convertCurrencyFromTo(sum, currency, account.currency)
+        else account.balance -= userBalanceInteractor.convertCurrencyFromTo(sum, currency, account.currency)
         accountsRepository.updateAccountOfflineAsync(account)
 
         userBalance = userBalanceInteractor.executeNewOperation(currentNewOperation, sum, currency)

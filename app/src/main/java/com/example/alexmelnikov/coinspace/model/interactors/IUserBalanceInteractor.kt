@@ -5,7 +5,6 @@ import com.example.alexmelnikov.coinspace.model.entities.UserBalance
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
- *  TODO: Edit class header comment
  */
 interface IUserBalanceInteractor {
 

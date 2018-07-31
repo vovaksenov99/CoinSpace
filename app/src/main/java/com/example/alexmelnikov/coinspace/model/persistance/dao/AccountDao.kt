@@ -9,7 +9,6 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 
 /**
  *  Created by Alexander Melnikov on 27.07.18.
- *  TODO: Edit class header comment
  */
 @Dao
 interface AccountDao {

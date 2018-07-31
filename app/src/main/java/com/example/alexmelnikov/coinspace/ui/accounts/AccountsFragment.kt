@@ -4,6 +4,7 @@ import android.content.Context
 import android.os.Bundle
 import android.support.design.widget.FloatingActionButton
 import android.support.v4.app.Fragment
+import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.Toolbar
 import android.transition.ChangeBounds
 import android.transition.TransitionInflater
@@ -52,6 +53,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
         //Setup Accounts Recycler View
         accountsAdapter = AccountsAdapter(activity as MainActivity, ArrayList(), presenter)
         accountsAdapter.setHasStableIds(true)
+        rv_accounts.setHasFixedSize(true)
         rv_accounts.adapter = accountsAdapter
         rv_accounts.layoutManager = AccountsLinearLayoutManager(activity as MainActivity)
     }

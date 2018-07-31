@@ -14,4 +14,6 @@ interface ApiService {
     @GET("latest.json")
     fun getRatesForCurrency(@Query("app_id") key: String,
                             @Query("base") base: String = "USD") : Call<ApiResponseRoot>
+
+    //https://openexchangerates.org/api/latest.json/?app_id=API_KEY&base=USD
 }

@@ -92,4 +92,7 @@ dependencies {
     // MPAndroidChart
     implementation 'com.github.PhilJay:MPAndroidChart:v3.0.3'
 
+    //Hawk
+    implementation 'com.github.codex-team:hawk.kotlin:v1.0.4'
+
 }

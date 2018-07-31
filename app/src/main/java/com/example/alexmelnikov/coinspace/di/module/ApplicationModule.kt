@@ -24,7 +24,6 @@ import javax.inject.Singleton
 class ApplicationModule(private val baseApp: BaseApp) {
 
     private val DATABASE_NAME = "room.db"
-    private val FIXER_API_KEY = BuildConfig.FIXER_API_KEY
     private val BASE_URL = "https://openexchangerates.org/api/"
 
     @Provides
@@ -44,6 +43,11 @@ class ApplicationModule(private val baseApp: BaseApp) {
 
     @Provides
     @Singleton
+    fun provideAccountsRepository(accountsDatabase: AccountsDatabase): AccountsRepository =
+            DefaultAccountsRepository(accountsDatabase.accountDao())
+
+    @Provides
+    @Singleton
     fun providePreferencesHelper(context: Context): PreferencesHelper =
             PreferencesHelper(context)
 
@@ -52,10 +56,6 @@ class ApplicationModule(private val baseApp: BaseApp) {
     fun provideConnectionHelper(context: Context): ConnectionHelper =
             ConnectionHelper(context)
 
-    @Provides
-    @Singleton
-    fun provideAccountsRepository(accountsDatabase: AccountsDatabase): AccountsRepository =
-            DefaultAccountsRepository(accountsDatabase.accountDao())
 
     @Provides
     @Singleton

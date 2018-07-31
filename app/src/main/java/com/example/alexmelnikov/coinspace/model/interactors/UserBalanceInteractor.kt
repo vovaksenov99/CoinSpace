@@ -17,7 +17,6 @@ import retrofit2.Response
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
- *  TODO: Edit class header comment
  */
 
 class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper,

@@ -26,6 +26,7 @@ class FragmentModule {
     @Provides
     fun provideAddAccountPresenter(): AddAccountContract.Presenter = AddAccountPresenter()
 
+
     @Provides
     fun provadeStatisticsPresenter(): StatisticsContract.Presenter = StatisticsPresenter()
 

@@ -8,6 +8,9 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
@@ -21,14 +24,16 @@ class AccountsAdapter(private val mContext: Context,
 
 
     class AccountsViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        var tvAccountName = itemView.tv_account_name
-        var tvBalance = itemView.tv_balance
-        var ivCard = itemView.iv_card
-        var cbSelect = itemView.cb_select
+        var tvAccountName: TextView = itemView.tv_account_name
+        var tvBalance: TextView = itemView.tv_balance
+        var ivCard: ImageView = itemView.iv_card
+        var cbSelect: CheckBox = itemView.cb_select
+
     }
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AccountsViewHolder {
+        //TODO: check how to implement view init in view holder (Ошибки и советы в лекции)
         return AccountsViewHolder(LayoutInflater.from(mContext)
                 .inflate(R.layout.item_accounts_list, parent, false))
     }
@@ -47,18 +52,22 @@ class AccountsAdapter(private val mContext: Context,
         }
     }
 
+    //TODO: implement checkbox with payload
+    /*override fun onBindViewHolder(holder: AccountsViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isEmpty()) onBindViewHolder(holder, position)
+        else //обновление holder.tv_text.text = payloads[0] as String
+    }*/
+
     override fun getItemCount() = mData.size
+
+    override fun getItemId(position: Int): Long {
+        return mData[position].hashCode().toLong()
+    }
 
     fun replaceData(accounts: List<Account>) {
         mData.clear()
         mData.addAll(accounts)
         notifyDataSetChanged()
-    }
-
-    fun dataIsEmpty() = mData.isEmpty()
-
-    override fun getItemId(position: Int): Long {
-        return mData[position].hashCode().toLong()
     }
 
     interface AccountsAdapterEventsListener {}
