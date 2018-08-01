@@ -14,6 +14,9 @@ import org.joda.time.Hours
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
+import java.io.Serializable
+import java.text.DecimalFormat
+import java.text.DecimalFormatSymbols
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
@@ -135,16 +138,118 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper,
     }
 
     override fun convertCurrencyFromTo(money: Float, from: String, to: String): Float {
-        if (money == 0F) return 0F
-        if (from == to) return money
-        return when (Pair(from, to)) {
-            Pair("USD", "RUB") -> money * usdToRub
-            Pair("USD", "EUR") -> money * usdToEur
-            Pair("RUB", "EUR") -> money * rubToEur
-            Pair("RUB", "USD") -> money * (1f / usdToRub)
-            Pair("EUR", "USD") -> money * (1f / usdToEur)
-            Pair("EUR", "RUB") -> money * (1f / rubToEur)
-            else -> money
-        }
+        val converter = CurrencyConverter()
+        val money = Money(money.toDouble(),getCurrencyByString(from))
+        val convertedMoney = converter.convertCurrency(money, getCurrencyByString(to))
+        return convertedMoney.count.toFloat()
     }
+}
+val defaultCurrency = Currency.USD
+
+
+data class Money(var count: Double, var currency: Currency) : Serializable {
+    fun normalizeCountString(): String? {
+        val format = DecimalFormat.getInstance() as DecimalFormat
+        val custom = DecimalFormatSymbols()
+        custom.decimalSeparator = custom.decimalSeparator
+        format.decimalFormatSymbols = custom
+        val f = String.format("%.2f", count)
+        if (count.isNaN())
+            return "0.0"
+        return format.format(format.parse(f))
+    }
+}
+
+/**
+ * Main currency is defaultCurrency [EUR]
+ */
+class CurrencyConverter() {
+
+    /**
+     * Convert [money] to another [currency]
+     */
+    private fun fromDefaultCurrencyToCurrency(money: Money, currency: Currency) =
+        Money(money.count * currency.rate, currency)
+
+    /**
+     * @param money - money to convert
+     * @param toCurrency - Currency to convert [money]
+     */
+    fun convertCurrency(money: Money, toCurrency: Currency): Money {
+        val defCur = toDefaultCurrency(money)
+        return fromDefaultCurrencyToCurrency(defCur, toCurrency)
+    }
+
+    /**
+     * @param balance - balance to convert
+     * @param currencies - currencies for convert
+     *
+     * @return list with balance which converted to all [currencies]
+     */
+    fun currentBalanceToAnotherCurrencies(balance: Money, currencies: List<Currency> = listOf(
+        Currency.USD,
+        Currency.EUR,
+        Currency.RUR,
+        Currency.GBP)): List<Money> {
+        val rez = mutableListOf<Money>()
+
+        for (currency in currencies) {
+            if (balance.currency == currency)
+                continue
+            rez.add(convertCurrency(balance, currency))
+        }
+        return rez
+    }
+
+    /**
+     * Convert money to [defaultCurrency]
+     */
+    fun toDefaultCurrency(money: Money): Money =
+        Money(money.count / money.currency.rate, defaultCurrency)
+}
+
+
+
+enum class Currency {
+    USD {
+        override val currencySymbol = "$"
+        override var rate: Double = 1.0
+        override fun toString(): String {
+            return "USD"
+        }
+    },
+    RUR {
+        override val currencySymbol = "\u20BD"
+        override var rate: Double = 63.0
+        override fun toString(): String {
+            return "RUB"
+        }
+    },
+
+    EUR {
+        override val currencySymbol = "€"
+        override var rate: Double = 0.8611
+        override fun toString(): String {
+            return "EUR"
+        }
+    },
+
+    GBP {
+        override val currencySymbol = "£"
+        override var rate: Double = 0.76
+        override fun toString(): String {
+            return "GBP"
+        }
+    };
+
+    abstract var rate: Double
+    abstract override fun toString(): String
+    abstract val currencySymbol: String
+}
+
+fun getCurrencyByString(currencyIndex: String): Currency {
+    for(currency in Currency.values())
+        if(currency.toString() == currencyIndex)
+            return currency
+    throw Exception("Not valid currency index. Invalid string '$currencyIndex'")
 }
