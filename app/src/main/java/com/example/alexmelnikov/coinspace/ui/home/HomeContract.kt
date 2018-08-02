@@ -3,7 +3,8 @@ package com.example.alexmelnikov.coinspace.ui.home
 import android.view.View
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.entities.UserBalance
+import com.example.alexmelnikov.coinspace.model.interactors.Currency
+import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 
 class HomeContract {
@@ -20,7 +21,7 @@ class HomeContract {
 
         fun updateAccountItemPagerView(account: Account)
 
-        fun setupViewPager(balance: UserBalance, accounts: List<Account>)
+        fun setupViewPager(balance: Money, accounts: List<Account>)
 
         fun animateNewOperationButtonToCheck()
 
@@ -33,6 +34,8 @@ class HomeContract {
         fun openStatisticsFragmentRequest(animationCenter: View)
 
         fun showAboutDialog()
+
+        fun setupOperationsAdapter(operations: List<Operation>)
 
     }
 
@@ -79,7 +82,7 @@ class HomeContract {
 
         fun statisticsButtonClick(animationCenter: View)
 
-        fun getMainCurrency(): String
+        fun getMainCurrency(): Currency
 
     }
 }

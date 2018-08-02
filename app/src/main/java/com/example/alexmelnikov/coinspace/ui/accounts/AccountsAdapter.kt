@@ -13,6 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import kotlinx.android.synthetic.main.item_accounts_list.view.*
 
@@ -41,7 +43,7 @@ class AccountsAdapter(private val mContext: Context,
     override fun onBindViewHolder(holder: AccountsViewHolder, position: Int) {
         val account = mData[position]
         holder.tvAccountName.text = account.name
-        holder.tvBalance.text = formatToMoneyString(account.balance, account.currency)
+        holder.tvBalance.text = formatToMoneyString(Money(account.balance, getCurrencyByString(account.currency)))
 
         //Set colored credit card image view
         if (account.name != mContext.resources.getString(R.string.cash_account_name)) {
@@ -53,7 +55,7 @@ class AccountsAdapter(private val mContext: Context,
     }
 
     //TODO: implement checkbox with payload
-    /*override fun onBindViewHolder(holder: AccountsViewHolder, position: Int, payloads: MutableList<Any>) {
+    /*override funy onBindViewHolder(holder: AccountsViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) onBindViewHolder(holder, position)
         else //обновление holder.tv_text.text = payloads[0] as String
     }*/

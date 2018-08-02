@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.*
@@ -12,7 +15,9 @@ import com.afollestad.materialdialogs.MaterialDialog
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.UserBalance
+import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
@@ -61,9 +66,43 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun setupViewPager(balance: UserBalance, accounts: List<Account>) {
+    override fun setupViewPager(balance: Money, accounts: List<Account>) {
         accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+        setupOperationsAdapter(accounts.flatMap { it.operations })
+
+        accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
+            override fun onPageScrollStateChanged(p0: Int) {
+
+            }
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+            }
+
+            override fun onPageSelected(p0: Int) {
+                if(p0 == 0)
+                {
+                    setupOperationsAdapter(accounts.flatMap { it.operations })
+                    return
+                }
+                setupOperationsAdapter(accounts[p0 - 1].operations)
+            }
+        })
+    }
+
+    override fun setupOperationsAdapter(operations: List<Operation>) {
+        val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        operation_rv.setHasFixedSize(true)
+        operation_rv.layoutManager = layoutManager
+        operation_rv.isNestedScrollingEnabled = true
+
+        operation_rv.adapter = OperationAdapter(operations)
+
+        if(operations.isNotEmpty())
+        {
+            lbl_empty_operation_history.visibility = View.INVISIBLE
+        }
+        //accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
     }
 
     override fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String) {
@@ -77,7 +116,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun updateAccountItemPagerView(account: Account) {
         val balanceView = accounts_viewpager.findViewWithTag<View>(account.id)
         if (balanceView != null)
-            balanceView.tv_account_balance.text = formatToMoneyString(account.balance, account.currency)
+            balanceView.tv_account_balance.text = formatToMoneyString(Money(account.balance, getCurrencyByString(account.currency)))
     }
 
     override fun openOperationFragment() {

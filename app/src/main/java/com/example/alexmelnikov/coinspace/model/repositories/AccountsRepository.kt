@@ -19,6 +19,7 @@ interface AccountsRepository {
 
     fun getAccountsOffline(): Single<List<Account>>
 
+
     fun findAccountByName(name: String): Single<Account>
 
     fun insertAccountOfflineAsync(name: String, currency: String, balance: Float = 0f, color: Int,

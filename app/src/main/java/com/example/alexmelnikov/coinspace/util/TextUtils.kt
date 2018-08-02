@@ -1,16 +1,10 @@
 package com.example.alexmelnikov.coinspace.util
 
-import java.text.NumberFormat
-import java.util.*
+import com.example.alexmelnikov.coinspace.model.interactors.Currency
+import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 
 
-fun formatToMoneyString(sum: Float, currency: String): String {
-    //TODO: заменить getDefault и вообще все переделать
-    val format: NumberFormat = when (currency) {
-        "RUB" -> NumberFormat.getCurrencyInstance(Locale.getDefault())
-        "USD" -> NumberFormat.getCurrencyInstance(Locale.US)
-        "EUR" -> NumberFormat.getCurrencyInstance(Locale.GERMANY)
-        else -> NumberFormat.getCurrencyInstance(Locale.getDefault())
-    }
-    return format.format(sum)
+fun formatToMoneyString(money: Money): String {
+    return "${money.normalizeCountString()} ${money.currency}"
 }
