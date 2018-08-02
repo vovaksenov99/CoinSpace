@@ -3,11 +3,10 @@ package com.example.alexmelnikov.coinspace.ui.home
 import android.util.Log
 import android.view.View
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.R.id.accounts
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.entities.UserBalance
-import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.interactors.*
+import com.example.alexmelnikov.coinspace.model.interactors.Currency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import io.reactivex.android.schedulers.AndroidSchedulers
@@ -27,13 +26,17 @@ class HomePresenter : HomeContract.Presenter {
     @Inject
     lateinit var userBalanceInteractor: IUserBalanceInteractor
 
+    @Inject
+    lateinit var currencyConverter: CurrencyConverter
+
     private lateinit var mHomeView: HomeContract.HomeView
     private var mOperationView: HomeContract.OperationView? = null
     private var currentNewOperation: Operation.OperationType? = null
 
-    private lateinit var userBalance: UserBalance
+    private lateinit var userBalance: Money
 
     private var accounts: List<Account> = ArrayList()
+    private var operations: MutableList<Operation> = mutableListOf()
 
     override fun attach(view: HomeContract.HomeView) {
         mHomeView = view
@@ -57,23 +60,34 @@ class HomePresenter : HomeContract.Presenter {
         animateOperationAddButtonRequest()
     }
 
-    override fun getMainCurrency(): String {
+    override fun getMainCurrency(): Currency {
         return userBalance.currency
     }
 
 
-
     override fun viewPagerSetupRequest() {
         accountsRepository.getAccountsOffline()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList)},
-                        { handleErrorAccountsRequest() })
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ accountsList -> handleSuccessAccountsRequest(accountsList) },
+                { handleErrorAccountsRequest() })
+
     }
 
     private fun handleSuccessAccountsRequest(accounts: List<Account>) {
         this.accounts = accounts
         mHomeView.setupViewPager(userBalance, accounts)
+        initOperationsRV(accounts)
+    }
+
+    fun initOperationsRV(accounts: List<Account>)
+    {
+        this.operations.clear()
+        for(account in accounts)
+        {
+            this.operations.addAll(account.operations)
+        }
+        mHomeView.setupOperationsAdapter(operations)
     }
 
     private fun handleErrorAccountsRequest() {
@@ -85,7 +99,8 @@ class HomePresenter : HomeContract.Presenter {
         if (mOperationView == null) {
             mHomeView.openOperationFragment()
             mHomeView.animateNewOperationButtonToCheck()
-        } else {
+        }
+        else {
             mOperationView!!.confirmOperationAndCloseSelf()
         }
     }
@@ -105,14 +120,16 @@ class HomePresenter : HomeContract.Presenter {
     override fun clearButtonClick() {
         if (currentNewOperation == null) {
             detachOperationView()
-        } else {
+        }
+        else {
             mOperationView?.resetLayout()
             mOperationView?.animateCloseButtonBackToClose()
             currentNewOperation = null
         }
     }
 
-    override fun newOperationRequest(sum: Float, account: Account, category: String, currency: String) {
+    override fun newOperationRequest(sum: Float, account: Account, category: String,
+                                     currency: String) {
         Log.d("mytag", "new operation:\n" +
                 "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
 
@@ -122,12 +139,22 @@ class HomePresenter : HomeContract.Presenter {
         updatedAccountOperations.add(operation)
         account.operations = updatedAccountOperations
 
+        val money = currencyConverter.convertCurrency(Money(sum, getCurrencyByString(currency)),
+            defaultCurrency)
+        val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
+            getCurrencyByString(account.currency)),
+            defaultCurrency)
+
         if (currentNewOperation == Operation.OperationType.INCOME)
-            account.balance += userBalanceInteractor.convertCurrencyFromTo(sum, currency, account.currency)
-        else account.balance -= userBalanceInteractor.convertCurrencyFromTo(sum, currency, account.currency)
+            accountMoney.count += money.count
+        else
+            accountMoney.count -= money.count
+
+        account.balance = currencyConverter.convertCurrency(accountMoney, getCurrencyByString(account.currency)).count
         accountsRepository.updateAccountOfflineAsync(account)
 
-        userBalance = userBalanceInteractor.executeNewOperation(currentNewOperation, sum, currency)
+        userBalance =
+                userBalanceInteractor.executeNewOperation(currentNewOperation, money)
         updateTextViews()
         updateAccountItemOnPagerView(account)
 
@@ -156,8 +183,8 @@ class HomePresenter : HomeContract.Presenter {
 
     private fun updateTextViews() {
         mHomeView.updateUserBalanceItemPagerView(
-                formatToMoneyString(userBalance.balance, userBalance.currency),
-                formatToMoneyString(userBalance.balanceUsd, "USD"))
+            formatToMoneyString(userBalance),
+            formatToMoneyString(currencyConverter.toDefaultCurrency(userBalance)))
     }
 
     private fun updateAccountItemOnPagerView(account: Account) {

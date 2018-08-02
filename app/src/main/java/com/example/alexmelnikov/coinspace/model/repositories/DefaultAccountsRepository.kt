@@ -12,6 +12,7 @@ import io.reactivex.schedulers.Schedulers
 
 class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRepository {
 
+
     /**
      * This method called from BaseApp onCreate
      * It checks if accounts table is empty and add two main accounts (cash and card)

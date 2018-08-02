@@ -55,7 +55,7 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
         val spinnerArrayAdapter = ArrayAdapter<String>(activity, R.layout.spinner_item_white_text, currencies)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         currency_spinner.adapter = spinnerArrayAdapter
-        currency_spinner.setSelection(currencies.indexOf((presenter.mainCurrencyRequest())))
+        currency_spinner.setSelection(currencies.indexOf((presenter.mainCurrencyRequest().toString())))
 
         et_account_name.inputType = InputType.TYPE_CLASS_TEXT
         et_account_name.requestFocus()

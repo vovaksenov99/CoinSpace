@@ -6,6 +6,7 @@ import android.content.Context
 import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.BuildConfig
 import com.example.alexmelnikov.coinspace.model.api.ApiService
+import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.persistance.AccountsDatabase
@@ -55,6 +56,10 @@ class ApplicationModule(private val baseApp: BaseApp) {
     @Singleton
     fun provideConnectionHelper(context: Context): ConnectionHelper =
             ConnectionHelper(context)
+
+    @Provides
+    @Singleton
+    fun provideCurrencyConverter(): CurrencyConverter = CurrencyConverter()
 
 
     @Provides

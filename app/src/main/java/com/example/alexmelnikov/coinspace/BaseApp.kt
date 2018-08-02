@@ -6,6 +6,7 @@ import android.support.v4.app.Fragment
 import com.example.alexmelnikov.coinspace.di.component.*
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import com.hawkcatcherkotlin.akscorp.hawkcatcherkotlin.HawkExceptionCatcher
@@ -38,7 +39,7 @@ class BaseApp : Application() {
         //Init accounts table in db
         accountsRepository.initAddTwoMainAccountsIfTableEmptyAsync(
                 resources.getString(R.string.cash_account_name),
-                resources.getString(R.string.main_currency),
+                defaultCurrency.toString(),
                 resources.getColor(R.color.colorPrimary),
                 resources.getString(R.string.card_account_name))
 

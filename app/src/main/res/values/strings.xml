@@ -3,8 +3,6 @@
     <string name="cash_account_name">Наличные</string>
     <string name="card_account_name">Карта</string>
 
-    <string name="main_currency">RUB</string>
-
     <!-- SharedPreferences Keys -->
     <string name="sp_key_main_currency">MAINCUR</string>
     <string name="sp_key_balance">BALANCE</string>
@@ -24,18 +22,16 @@
         <item>EUR</item>
     </string-array>
 
-    <string-array name="operation_categories_array">
-        <item>Прочие расходы</item>
-        <item>Супермаркеты</item>
-        <item>Образование</item>
-        <item>Путешествия</item>
-        <item>Рестораны и кафе</item>
-        <item>Коммунальные платежи, связь, интернет</item>
-        <item>Одежда и аксессуары</item>
-        <item>Отдых и развлечения</item>
-        <item>Транспорт</item>
-        <item>Здоровье и красота</item>
-    </string-array>
+    <string name="meal">Супермаркеты</string>
+    <string name="education">Образование</string>
+    <string name="travel">Путешествия</string>
+    <string name="food">Рестораны и кафе</string>
+    <string name="house">Коммунальные платежи, связь, интернет</string>
+    <string name="cloth">Одежда и аксессуары</string>
+    <string name="funy">Отдых и развлечения</string>
+    <string name="transport">Транспорт</string>
+    <string name="other">Другое</string>
+    <string name="health">Здоровье и красота</string>
 
     <string name="preferences_activity_title">Настройки</string>
     <string name="tv_balance_lbl">Текущий баланс</string>
