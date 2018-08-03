@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.ui.add_new_account
 
 import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.model.interactors.Currency
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
@@ -25,7 +26,7 @@ class AddAccountPresenter : AddAccountContract.Presenter {
         BaseApp.instance.component.inject(this)
     }
 
-    override fun mainCurrencyRequest(): String = userBalanceInteractor.getUserBalance().currency
+    override fun mainCurrencyRequest(): Currency = userBalanceInteractor.getUserBalance().currency
 
     override fun showColorPickerRequest() {
         view.showColorPickerDialog()

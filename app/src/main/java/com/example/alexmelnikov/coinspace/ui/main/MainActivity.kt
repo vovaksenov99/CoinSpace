@@ -2,6 +2,7 @@ package com.example.alexmelnikov.coinspace.ui.main
 
 import android.content.Context
 import android.content.Intent
+import android.content.pm.ActivityInfo
 import android.os.Bundle
 import android.support.transition.Fade
 import android.support.transition.Slide
