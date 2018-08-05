@@ -1,8 +1,7 @@
 package com.example.alexmelnikov.coinspace.ui.add_new_account
 
-import com.example.alexmelnikov.coinspace.model.interactors.Currency
+import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.ui.BaseContract
-import java.util.*
 
 class AddAccountContract {
 

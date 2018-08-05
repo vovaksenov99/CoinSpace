@@ -11,6 +11,11 @@ import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
 class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRepository {
+    override fun findAccountById(id: Long): Single<Account> {
+        return Single.create<Account> {
+            it.onSuccess(accountDao.findById(id))
+        }
+    }
 
 
     /**

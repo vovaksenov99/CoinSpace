@@ -4,14 +4,14 @@ import android.app.Application
 import android.arch.persistence.room.Room
 import android.content.Context
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.BuildConfig
-import com.example.alexmelnikov.coinspace.model.api.ApiService
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
-import com.example.alexmelnikov.coinspace.model.persistance.AccountsDatabase
+import com.example.alexmelnikov.coinspace.model.persistance.Database
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
+import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
 import com.example.alexmelnikov.coinspace.util.ConnectionHelper
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import dagger.Module
@@ -39,23 +39,28 @@ class ApplicationModule(private val baseApp: BaseApp) {
 
     @Provides
     @Singleton
-    fun provideAccountsDatabase(context: Context): AccountsDatabase =
-            Room.databaseBuilder(context, AccountsDatabase::class.java, DATABASE_NAME).build()
+    fun provideDatabase(context: Context): Database =
+        Room.databaseBuilder(context, Database::class.java, DATABASE_NAME).build()
 
     @Provides
     @Singleton
-    fun provideAccountsRepository(accountsDatabase: AccountsDatabase): AccountsRepository =
-            DefaultAccountsRepository(accountsDatabase.accountDao())
+    fun provideDeferRepository(database: Database): DeferOperations =
+        DeferOperationsRepository(database.deferOperationsDao())
+
+    @Provides
+    @Singleton
+    fun provideAccountsRepository(database: Database): AccountsRepository =
+        DefaultAccountsRepository(database.accountDao())
 
     @Provides
     @Singleton
     fun providePreferencesHelper(context: Context): PreferencesHelper =
-            PreferencesHelper(context)
+        PreferencesHelper(context)
 
     @Provides
     @Singleton
     fun provideConnectionHelper(context: Context): ConnectionHelper =
-            ConnectionHelper(context)
+        ConnectionHelper(context)
 
     @Provides
     @Singleton
@@ -65,16 +70,16 @@ class ApplicationModule(private val baseApp: BaseApp) {
     @Provides
     @Singleton
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-            .addConverterFactory(GsonConverterFactory.create())
-            .baseUrl(BASE_URL)
-            .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
-            .build()
+        .addConverterFactory(GsonConverterFactory.create())
+        .baseUrl(BASE_URL)
+        .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
+        .build()
 
     @Provides
     @Singleton
     fun provideUserBalanceInteractor(preferencesHelper: PreferencesHelper,
-                                     connectionHelper: ConnectionHelper,
+                                     context: Context,
                                      accountsRepository: AccountsRepository,
                                      retrofit: Retrofit): IUserBalanceInteractor =
-            UserBalanceInteractor(preferencesHelper, connectionHelper, accountsRepository, retrofit.create(ApiService::class.java))
+        UserBalanceInteractor(preferencesHelper)
 }

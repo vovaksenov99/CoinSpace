@@ -12,12 +12,14 @@ import android.util.Log
 import android.view.*
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
-import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
@@ -36,7 +38,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        DaggerFragmentComponent.builder().build().inject(this)
+        DaggerFragmentComponent.builder().fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build().inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
@@ -70,6 +72,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
         setupOperationsAdapter(accounts.flatMap { it.operations })
+
         accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener{
             override fun onPageScrollStateChanged(p0: Int) {
 

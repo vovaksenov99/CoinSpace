@@ -1,13 +1,13 @@
 package com.example.alexmelnikov.coinspace.ui.add_new_account
 
 import com.example.alexmelnikov.coinspace.BaseApp
-import com.example.alexmelnikov.coinspace.model.interactors.Currency
+import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
+
 
 class AddAccountPresenter : AddAccountContract.Presenter {
 

@@ -22,6 +22,8 @@ interface AccountsRepository {
 
     fun findAccountByName(name: String): Single<Account>
 
+    fun findAccountById(id: Long): Single<Account>
+
     fun insertAccountOfflineAsync(name: String, currency: String, balance: Float = 0f, color: Int,
                                   operations: List<Operation> = ArrayList())
 

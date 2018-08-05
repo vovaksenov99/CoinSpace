@@ -18,9 +18,9 @@ import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import java.util.*
 import android.text.Editable
 import android.view.inputmethod.InputMethodManager
+import com.example.alexmelnikov.coinspace.model.Category
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.interactors.Category
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
 
@@ -93,7 +93,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         }
 
         accounts_spinner.adapter = AccountsSpinnerAdapter(activity as MainActivity, ArrayList(accounts))
-        category_spinner.adapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item,
+        category_spinner.adapter = ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,
                 Category.values().map { context!!.getString(it.getStringResource()) })
         ll_action_type_btns.visibility = View.GONE
         rl_new_action.visibility = View.VISIBLE
@@ -140,7 +140,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
                     accounts_spinner.selectedItem as Account,
                     category_spinner.selectedItem.toString(),
-                    currency_spinner.selectedItem.toString())
+                    currency_spinner.selectedItem.toString(),
+                    et_repeat.text.toString())
 
             YoYo.with(Techniques.SlideOutUp)
                     .duration(300)

@@ -3,17 +3,23 @@ package com.example.alexmelnikov.coinspace.ui.home
 import android.util.Log
 import android.view.View
 import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.interactors.*
-import com.example.alexmelnikov.coinspace.model.interactors.Currency
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
+import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
+import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
+import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
-import kotlin.collections.ArrayList
+
 
 /**
  * HomePresenter handles HomeFragment and OperationFragment
@@ -22,6 +28,9 @@ class HomePresenter : HomeContract.Presenter {
 
     @Inject
     lateinit var accountsRepository: AccountsRepository
+
+    @Inject
+    lateinit var deferRepository: DeferOperations
 
     @Inject
     lateinit var userBalanceInteractor: IUserBalanceInteractor
@@ -77,16 +86,15 @@ class HomePresenter : HomeContract.Presenter {
     private fun handleSuccessAccountsRequest(accounts: List<Account>) {
         this.accounts = accounts
         mHomeView.setupViewPager(userBalance, accounts)
-        initOperationsRV(accounts)
-    }
 
-    fun initOperationsRV(accounts: List<Account>)
-    {
         this.operations.clear()
-        for(account in accounts)
-        {
+        for (account in accounts) {
             this.operations.addAll(account.operations)
         }
+        initOperationsRV(operations)
+    }
+
+    fun initOperationsRV(operations: List<Operation>) {
         mHomeView.setupOperationsAdapter(operations)
     }
 
@@ -129,10 +137,16 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun newOperationRequest(sum: Float, account: Account, category: String,
-                                     currency: String) {
+                                     currency: String, repeat: String) {
         Log.d("mytag", "new operation:\n" +
                 "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
 
+        if (repeat != "") {
+            if (currentNewOperation == Operation.OperationType.INCOME)
+                newRepeatOperationRequest(sum, account, category, currency, repeat)
+            else
+                newRepeatOperationRequest(-sum, account, category, currency, repeat)
+        }
         //Create operation and add it to accountOperationsList
         val operation = Operation(currentNewOperation!!, sum, currency, category, Date())
         val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
@@ -150,15 +164,44 @@ class HomePresenter : HomeContract.Presenter {
         else
             accountMoney.count -= money.count
 
-        account.balance = currencyConverter.convertCurrency(accountMoney, getCurrencyByString(account.currency)).count
+        account.balance = currencyConverter.convertCurrency(accountMoney,
+            getCurrencyByString(account.currency)).count
         accountsRepository.updateAccountOfflineAsync(account)
 
         userBalance =
                 userBalanceInteractor.executeNewOperation(currentNewOperation, money)
         updateTextViews()
+        initOperationsRV(account.operations)
         updateAccountItemOnPagerView(account)
 
         currentNewOperation = null
+    }
+
+    fun newRepeatOperationRequest(sum: Float, account: Account, category: String,
+                                  currency: String, repeat: String) {
+        Log.d("mytag", "new operation:\n" +
+                "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
+
+
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, repeat.toInt())
+
+        val nextRepeatDay = calendar.get(Calendar.DAY_OF_MONTH)
+        val nextRepeatMonth = calendar.get(Calendar.MONTH)
+        val nextRepeatYear = calendar.get(Calendar.YEAR)
+
+        val operation = DeferOperation(null,
+            "",
+            nextRepeatDay,
+            currency,
+            account.id!!,
+            nextRepeatMonth,
+            nextRepeatYear,
+            repeat.toInt(),
+            sum,
+            category)
+
+        deferRepository.addNewOperation(operation)
     }
 
     override fun animateOperationAddButtonRequest() {
@@ -184,7 +227,7 @@ class HomePresenter : HomeContract.Presenter {
     private fun updateTextViews() {
         mHomeView.updateUserBalanceItemPagerView(
             formatToMoneyString(userBalance),
-            formatToMoneyString(currencyConverter.toDefaultCurrency(userBalance)))
+            formatToMoneyString(currencyConverter.convertCurrency(userBalance, Currency.RUR)))
     }
 
     private fun updateAccountItemOnPagerView(account: Account) {

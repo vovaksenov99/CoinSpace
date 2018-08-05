@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.coinspace.model.interactors
 
+import android.content.Context
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 
 /**
@@ -10,7 +11,7 @@ interface IUserBalanceInteractor {
     /**
      * Called in application constructor
      */
-    fun initCurrencyRates()
+    fun initCurrencyRates(context: Context, callback: () -> Unit)
 
     fun getUserBalance(): Money
 

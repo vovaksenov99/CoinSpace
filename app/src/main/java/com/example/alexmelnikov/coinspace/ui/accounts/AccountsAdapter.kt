@@ -13,8 +13,8 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Account
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
-import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import kotlinx.android.synthetic.main.item_accounts_list.view.*
 

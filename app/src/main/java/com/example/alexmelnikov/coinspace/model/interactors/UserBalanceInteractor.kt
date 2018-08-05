@@ -1,20 +1,13 @@
 package com.example.alexmelnikov.coinspace.model.interactors
 
 import android.content.Context
-import android.util.Log
-import com.example.alexmelnikov.coinspace.BuildConfig.FIXER_API_KEY
+import android.content.SharedPreferences
+import com.example.alexmelnikov.coinspace.model.workers.CurrenciesRateWorker
 import com.example.alexmelnikov.coinspace.R
-import com.example.alexmelnikov.coinspace.model.api.ApiService
-import com.example.alexmelnikov.coinspace.model.entities.ApiResponseRoot
+import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.util.ConnectionHelper
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
-import org.joda.time.DateTime
-import org.joda.time.Hours
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.io.Serializable
 import java.text.DecimalFormat
 import java.text.DecimalFormatSymbols
@@ -23,10 +16,7 @@ import java.text.DecimalFormatSymbols
  *  Created by Alexander Melnikov on 29.07.18.
  */
 
-class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper,
-                            private val connectionHelper: ConnectionHelper,
-                            private val accountsRepository: AccountsRepository,
-                            private val currencyService: ApiService) : IUserBalanceInteractor {
+class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper) : IUserBalanceInteractor {
 
     var currencyConverter = CurrencyConverter()
 
@@ -38,66 +28,37 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper,
         private const val CUR_USD_EUR_KEY = "USD_EUR"
     }
 
-    private var usdToRub: Float = 0f
-    private var usdToEur: Float = 0f
-    private var rubToEur: Float = 0f
+    override fun initCurrencyRates(context: Context, callback: () -> Unit) {
+        val pref =
+            context.getSharedPreferences(CurrenciesRateWorker.CurrenciesStorage,
+                Context.MODE_PRIVATE)
 
-    override fun initCurrencyRates() {
-        val lastUpdateTimeStamp = preferencesHelper.loadLong(LAST_CURRENCY_UPDATE_KEY)
-        if (lastUpdateTimeStamp != 0L) {
-            //Unix time is in seconds, Java time is in milliseconds -> x1000L
-            val lastUpdate = DateTime(lastUpdateTimeStamp * 1000L)
-            val now = DateTime()
+        synchronized(pref) {
 
-            //Check if since last update more than 10 hours passed, update currency rates with api if yes
-            val hoursPassed =
-                Hours.hoursBetween(lastUpdate.toLocalDateTime(), now.toLocalDateTime()).hours
-            if (hoursPassed > 10 && connectionHelper.isOnline()) {
-                getCurrencyRatesFromApi()
-            }
-            else {
-                usdToRub = preferencesHelper.loadFloat(CUR_USD_RUB_KEY)
-                usdToEur = preferencesHelper.loadFloat(CUR_USD_EUR_KEY)
-                rubToEur = usdToEur / usdToRub
-            }
-        }
-        else {
-            if (connectionHelper.isOnline()) getCurrencyRatesFromApi()
-            else {
-                Log.d("mytag", "can't get initial currency rates from api (no connection)")
-                //Assign default values as of 07/2018
-                usdToRub = 63f
-                usdToEur = 0.8547f
-                rubToEur = usdToEur / usdToRub
-            }
-        }
-    }
 
-    private fun getCurrencyRatesFromApi() {
-        currencyService.getRatesForCurrency(FIXER_API_KEY)
-            .enqueue(object : Callback<ApiResponseRoot> {
+            val spChanged =
+                SharedPreferences.OnSharedPreferenceChangeListener { sharedPreferences, key ->
 
-                override fun onResponse(call: Call<ApiResponseRoot>,
-                                        response: Response<ApiResponseRoot>) {
-                    val timestamp = response.body()?.timestamp
-                    val usdRates = response.body()?.rates
-                    if (usdRates != null) {
-                        usdToRub = usdRates["RUB"]!!
-                        usdToEur = usdRates["EUR"]!!
-                        rubToEur = usdToEur / usdToRub
+                    for (currency in Currency.values()) {
+                        if (currency.toString() == key) {
+                            currency.rate =
+                                    sharedPreferences.getFloat(currency.toString(),
+                                        currency.rate.toFloat()).toDouble()
+                            callback()
+                            break
+                        }
                     }
-
-                    preferencesHelper.saveFloat(CUR_USD_RUB_KEY, usdToRub)
-                    preferencesHelper.saveFloat(CUR_USD_EUR_KEY, usdToEur)
-                    preferencesHelper.saveLong(LAST_CURRENCY_UPDATE_KEY, timestamp ?: 0L)
-
-                    Log.d("mytag", "ApiHelper request succeeed ${response.toString()}")
                 }
 
-                override fun onFailure(call: Call<ApiResponseRoot>, t: Throwable) {
-                    Log.d("mytag", "ApiHelper request failed ${t.toString()}")
-                }
-            })
+            pref.registerOnSharedPreferenceChangeListener(spChanged)
+
+            for (currency in Currency.values()) {
+                currency.rate =
+                        pref.getFloat(currency.toString(), currency.rate.toFloat()).toDouble()
+            }
+
+        }
+
     }
 
     override fun getUserBalance(): Money {
@@ -141,7 +102,7 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper,
     }
 }
 
-val defaultCurrency = Currency.USD
+val defaultCurrency = Currency.EUR
 
 
 data class Money(var count: Float, var currency: Currency) : Serializable {
@@ -206,148 +167,3 @@ class CurrencyConverter() {
 }
 
 
-enum class Currency {
-    USD {
-        override val currencySymbol = "$"
-        override var rate: Double = 1.0
-        override fun toString(): String {
-            return "USD"
-        }
-    },
-    RUR {
-        override val currencySymbol = "\u20BD"
-        override var rate: Double = 63.0
-        override fun toString(): String {
-            return "RUB"
-        }
-    },
-
-    EUR {
-        override val currencySymbol = "€"
-        override var rate: Double = 0.8611
-        override fun toString(): String {
-            return "EUR"
-        }
-    },
-
-    GBP {
-        override val currencySymbol = "£"
-        override var rate: Double = 0.76
-        override fun toString(): String {
-            return "GBP"
-        }
-    };
-
-    abstract var rate: Double
-    abstract override fun toString(): String
-    abstract val currencySymbol: String
-}
-enum class Category {
-    MEAL {
-        override fun getStringResource(): Int {
-            return R.string.meal
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.meal
-        }
-
-    },
-    EDUCATION {
-        override fun getStringResource(): Int {
-            return R.string.education
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.educational
-        }
-    },
-    OTHER {
-        override fun getStringResource(): Int {
-            return R.string.other
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.other
-        }
-    },
-    TRAVEL {
-        override fun getStringResource(): Int {
-            return R.string.travel
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.travel
-        }
-    },
-    FOOD {
-        override fun getStringResource(): Int {
-            return R.string.food
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.food
-        }
-    },
-    HOUSE {
-        override fun getStringResource(): Int {
-            return R.string.house
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.house
-        }
-    },
-    CLOTH {
-        override fun getStringResource(): Int {
-            return R.string.cloth
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.cloth
-        }
-    },
-    FUN {
-        override fun getStringResource(): Int {
-            return R.string.funy
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.funy
-        }
-    },
-    TRANSPORT {
-        override fun getStringResource(): Int {
-            return R.string.transport
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.transport
-        }
-    },
-    HEALTH {
-        override fun getStringResource(): Int {
-            return R.string.health
-        }
-
-        override fun getIconResource(): Int {
-            return R.drawable.health
-        }
-    };
-
-    abstract fun getIconResource(): Int
-    abstract fun getStringResource(): Int
-}
-fun getCurrencyByString(currencyIndex: String): Currency {
-    for (currency in Currency.values())
-        if (currency.toString() == currencyIndex)
-            return currency
-    throw Exception("Not valid currency index. Invalid string '$currencyIndex'")
-}
-
-fun getCategoryByString(context:Context, categoryIndex: String): Category {
-    for (category in Category.values())
-        if (context.getString(category.getStringResource()) == categoryIndex)
-            return category
-    throw Exception("Not valid currency index. Invalid string '$categoryIndex'")
-}

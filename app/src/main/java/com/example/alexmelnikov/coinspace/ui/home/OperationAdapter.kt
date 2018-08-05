@@ -8,9 +8,9 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.getCategoryByString
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
-import com.example.alexmelnikov.coinspace.model.interactors.getCategoryByString
-import com.example.alexmelnikov.coinspace.model.interactors.getCurrencyByString
 import kotlinx.android.synthetic.main.operation_rv_item.view.*
 
 /**
