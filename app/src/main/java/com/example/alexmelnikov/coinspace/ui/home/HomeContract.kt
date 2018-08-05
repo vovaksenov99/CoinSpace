@@ -6,7 +6,6 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.BaseContract
-import io.reactivex.internal.operators.flowable.FlowableRepeat
 
 class HomeContract {
 
@@ -71,7 +70,8 @@ class HomeContract {
 
         fun clearButtonClick()
 
-        fun newOperationRequest(sum: Float, account: Account, category: String, currency: String, repeat: String)
+        fun newOperationRequest(sum: Float, account: Account, category: String, currency: String,
+                                repeat: String)
 
         fun animateOperationAddButtonRequest()
 

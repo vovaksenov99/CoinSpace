@@ -23,9 +23,6 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper) : 
     companion object {
         private const val BALANCE_KEY = "BALANCE"
         private const val MAIN_CURRENCY_KEY = "MAINCUR"
-        private const val LAST_CURRENCY_UPDATE_KEY = "LAST_CUR_UPDATE"
-        private const val CUR_USD_RUB_KEY = "USD_RUB"
-        private const val CUR_USD_EUR_KEY = "USD_EUR"
     }
 
     override fun initCurrencyRates(context: Context, callback: () -> Unit) {
@@ -109,7 +106,6 @@ data class Money(var count: Float, var currency: Currency) : Serializable {
     fun normalizeCountString(): String? {
         val format = DecimalFormat.getInstance() as DecimalFormat
         val custom = DecimalFormatSymbols()
-        custom.decimalSeparator = custom.decimalSeparator
         format.decimalFormatSymbols = custom
         val f = String.format("%.2f", count)
         if (count.isNaN())

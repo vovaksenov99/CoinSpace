@@ -43,7 +43,11 @@ class AccountsPagerAdapter(private val mContext: Context,
 
             layout.tag = BALANCE_VIEW_TAG
             container.addView(layout)
+            layout.show_periodic_transaction.setOnClickListener {
+                val dialog = PeriodicDialog()
+                dialog.showNow((mContext as FragmentActivity).supportFragmentManager, PERIODIC_DIALOG_TAG)
 
+            }
             return layout
         }
         else {
@@ -57,11 +61,7 @@ class AccountsPagerAdapter(private val mContext: Context,
                 getCurrencyByString(account.currency))
             layout.tv_account_balance.text = formatToMoneyString(money)
 
-            layout.add_periodic_transaction.setOnClickListener {
-                val dialog = PeriodicDialog()
-                dialog.showNow((mContext as FragmentActivity).supportFragmentManager, PERIODIC_DIALOG_TAG)
 
-            }
 
             if (account.name != mContext.resources.getString(R.string.cash_account_name)) {
                 layout.iv_account_icon.setImageResource(R.drawable.ic_credit_card_primary_24dp)

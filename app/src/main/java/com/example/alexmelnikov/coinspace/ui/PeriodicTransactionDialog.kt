@@ -1,16 +1,12 @@
 package com.example.alexmelnikov.coinspace.ui
 
 import android.app.AlertDialog
-import android.app.DatePickerDialog
-import android.arch.persistence.room.Room
 import android.content.Context
 import android.content.DialogInterface
 import android.os.Bundle
 import android.support.v4.app.DialogFragment
-import android.support.v4.app.FragmentActivity
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,28 +16,18 @@ import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.di.module.FragmentModule
-import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
 import com.example.alexmelnikov.coinspace.model.getCategoryByString
-import com.example.alexmelnikov.coinspace.model.persistance.Database
 import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
-import com.example.alexmelnikov.coinspace.ui.home.OperationFragment
-import dagger.android.AndroidInjection
-import dagger.android.DaggerDialogFragment
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.periodic_operation_rv_item.view.*
 import kotlinx.android.synthetic.main.periodic_transaction_dialog.view.*
-import java.util.*
 import javax.inject.Inject
 
 val PERIODIC_DIALOG_TAG = "PAYMENT_DIALOG_TAG"
 
 class PeriodicDialog : DialogFragment() {
-
-    private val DATABASE_NAME = "room.db"
-
 
     @Inject
     lateinit var database: DeferOperations
@@ -51,7 +37,9 @@ class PeriodicDialog : DialogFragment() {
     override fun onAttach(context: Context?) {
         super.onAttach(context)
 
-        DaggerFragmentComponent.builder().fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build().inject(this)
+        DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
+            .inject(this)
 
     }
 
@@ -119,6 +107,8 @@ class PeriodicDialog : DialogFragment() {
             holder.currency.text = operation.currency
             holder.icon.setImageResource(getCategoryByString(context!!,
                 operation.category).getIconResource())
+
+            //TODO formattng output
             holder.description.text =
                     "${getString(R.string.next_repeat)} ${operation.repeatDays} ${getString(R.string.days)}"
 

@@ -69,8 +69,7 @@ class PeriodicOperationsWorker : Worker() {
                         account,
                         operation.category,
                         operation.currency)
-                },
-                    { Log.w("Test", it) })
+                }, { Log.w("Test", it) })
         }
     }
 

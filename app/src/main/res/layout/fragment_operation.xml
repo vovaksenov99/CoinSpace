@@ -7,10 +7,10 @@
     android:background="@color/colorPrimaryLight">
 
     <ScrollView
+        android:id="@+id/scrol_view_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:fillViewport="true"
-        app:layout_behavior="yourPackageName.FixAppBarLayoutBehavior"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

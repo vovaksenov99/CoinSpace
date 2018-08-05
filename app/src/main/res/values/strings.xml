@@ -69,11 +69,11 @@
     <string name="accounts_fragment_title">Счета</string>
     <string name="statistics_fragment_title">Статистика</string>
     <string name="expenses_pie_chart_lbl">Расходы по категориям</string>
-    <string name="next_repeat">Повторять через указанное количесво днейw</string>
+    <string name="next_repeat">Повторяется каждые </string>
     <string name="days">Дней</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
-
+    <string name="show_delay_operation">Показать отложенные операции</string>
     <string name="do_you_want_to_delete_periodic_payment">Вы действительно хотите удалить переодическую операцию?</string>
 
 </resources>

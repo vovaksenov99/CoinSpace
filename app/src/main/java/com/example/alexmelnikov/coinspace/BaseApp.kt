@@ -6,17 +6,12 @@ import androidx.work.PeriodicWorkRequest
 import androidx.work.WorkManager
 import com.example.alexmelnikov.coinspace.di.component.ApplicationComponent
 import com.example.alexmelnikov.coinspace.di.component.DaggerApplicationComponent
-import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
-import com.example.alexmelnikov.coinspace.di.component.FragmentComponent
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
-import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
-import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.model.workers.CurrenciesRateWorker
 import com.example.alexmelnikov.coinspace.model.workers.PeriodicOperationsWorker
-import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import com.hawkcatcherkotlin.akscorp.hawkcatcherkotlin.HawkExceptionCatcher
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig
 import java.util.concurrent.TimeUnit
@@ -105,7 +100,7 @@ class BaseApp : Application() {
             }
 
             val periodicWorkRequest = PeriodicWorkRequest
-                .Builder(PeriodicOperationsWorker::class.java, 8, TimeUnit.HOURS)
+                .Builder(PeriodicOperationsWorker::class.java, 1, TimeUnit.DAYS)
                 .addTag(PeriodicOperationsWorker.TAG)
                 .build()
 

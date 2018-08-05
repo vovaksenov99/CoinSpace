@@ -85,7 +85,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
                 ?.replace(R.id.contentFrame, fragment)
                 ?.addToBackStack(null)
                 ?.addSharedElement(fab_new_account, "fabAdd")
-                ?.commit()
+                ?.commitNow()
     }
 
     companion object {

@@ -73,12 +73,12 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         val fragmentOnScreen = supportFragmentManager.findFragmentById(R.id.contentFrame)
         if (fragmentOnScreen is HomeFragment)
             supportFragmentManager.beginTransaction().remove(fragmentOnScreen)
-                    .commit()
+                    .commitNow()
 
         return HomeFragment.newInstance().also {
             it.exitTransition = android.transition.TransitionInflater.from(this).inflateTransition(android.R.transition.fade)
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
-                    .commit()
+                    .commitNow()
         }
     }
 
@@ -90,7 +90,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
         return AccountsFragment.newInstance().also {
             supportFragmentManager.beginTransaction().replace(R.id.contentFrame, it)
                     .addToBackStack(null)
-                    .commit()
+                    .commitNow()
         }
     }
 

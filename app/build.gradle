@@ -40,7 +40,9 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
+    androidTestImplementation 'com.android.support.test:rules:1.0.2'
     implementation 'com.android.support:preference-v7:27.1.1'
+
 
     // Dependency Injection
     implementation "com.google.dagger:dagger:2.16"
@@ -51,6 +53,8 @@ dependencies {
     kapt 'com.google.dagger:dagger-compiler:2.16'
     compileOnly 'javax.annotation:jsr250-api:1.0'
     implementation 'javax.inject:javax.inject:1'
+
+    implementation 'com.squareup.okhttp3:okhttp:3.11.0'
 
     // Calligraphy
     implementation 'uk.co.chrisjenx:calligraphy:2.3.0'
@@ -64,11 +68,6 @@ dependencies {
 
     // Color pick dialog
     implementation ('com.thebluealliance:spectrum:0.7.1') { exclude group: 'com.android.support' }
-
-    //Retrofit
-    implementation 'com.squareup.retrofit2:retrofit:2.3.0'
-    implementation 'com.squareup.retrofit2:adapter-rxjava2:2.3.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.3.0'
 
     // Room
     implementation "android.arch.persistence.room:runtime:1.1.1"
@@ -98,6 +97,8 @@ dependencies {
 
 
     implementation "android.arch.work:work-runtime:$work_version"
+
+    testImplementation 'com.nhaarman:mockito-kotlin-kt1.1:1.5.0'
 }
 
 //Dagger not found DaggerApplicationComponent

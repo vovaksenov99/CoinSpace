@@ -8,23 +8,24 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginBottom="40dp"
         android:layout_marginLeft="10dp"
         android:layout_marginRight="10dp"
-        android:layout_marginBottom="40dp"
         android:layout_marginTop="11dp"
+        android:background="@drawable/bg_card"
+        android:elevation="20dp"
+        android:gravity="center"
+        android:paddingBottom="@dimen/activity_vertical_margin"
         android:paddingLeft="@dimen/activity_horizontal_margin"
         android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        android:background="@drawable/bg_card"
-        android:elevation="20dp">
+        android:paddingTop="@dimen/activity_vertical_margin">
 
         <LinearLayout
             android:id="@+id/layout_image_and_name"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:layout_centerHorizontal="true">
+            android:layout_centerHorizontal="true"
+            android:orientation="horizontal">
 
             <ImageView
                 android:id="@+id/iv_account_icon"
@@ -38,7 +39,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="6dp"
                 android:textSize="20sp"
-                tools:text="Наличные"/>
+                tools:text="Наличные" />
 
         </LinearLayout>
 
@@ -52,17 +53,7 @@
             android:textColor="@color/colorPrimary"
             android:textSize="28sp"
             android:textStyle="bold"
-            tools:text="200$"/>
-
-        <ImageButton
-            android:id="@+id/add_periodic_transaction"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentEnd="true"
-            android:layout_alignParentTop="true"
-            android:background="?attr/selectableItemBackground"
-            android:padding="12dp"
-            app:srcCompat="@drawable/ic_repeat_black_24dp" />
+            tools:text="200$" />
 
     </RelativeLayout>
 

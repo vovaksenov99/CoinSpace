@@ -22,7 +22,6 @@ import com.example.alexmelnikov.coinspace.ui.statistics.StatisticsPresenter
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import dagger.Module
 import dagger.Provides
-import retrofit2.Retrofit
 import javax.inject.Singleton
 
 @Module
