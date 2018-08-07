@@ -40,8 +40,7 @@ class OperationAdapter(private val operations: List<Operation>) :
         holder.sum.text = getSign(operation)+
                 Money(operation.sum, getCurrencyByString(operation.currency)).normalizeCountString()
         holder.currency.text = operation.currency
-        holder.icon.setImageResource(getCategoryByString(holder.itemView.context,
-            operation.category).getIconResource())
+        holder.icon.setImageResource(getCategoryByString(operation.category).getIconResource())
         holder.date.text = operation.date.toString()
     }
 

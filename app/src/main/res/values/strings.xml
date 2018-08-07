@@ -39,6 +39,8 @@
     <string name="btn_expense">Расход</string>
     <string name="label_new_income">Новый доход</string>
     <string name="label_new_expense">Новый расход</string>
+    <string name="label_new_income_pattern">Новый шаблон дохода</string>
+    <string name="label_new_expense_pattern">Новый шабон расхода</string>
     <string name="tv_currency_label">Валюта:</string>
     <string name="tv_account_label">Счет:</string>
     <string name="tv_category_label">Категория:</string>
@@ -75,5 +77,22 @@
     <string name="no">Нет</string>
     <string name="show_delay_operation">Показать отложенные операции</string>
     <string name="do_you_want_to_delete_periodic_payment">Вы действительно хотите удалить переодическую операцию?</string>
+    <string name="do_you_want_to_delete_pattern">Вы действительно хотите удалить шаблон?</string>
+
+    <string name="yandex">Yandex</string>
+    <string name="money_tracker">Money Tracker</string>
+
+    <string name="introduce_message">Добро пожаловать</string>
+    <string name="introduce_message_instruction">Для начала необходимо создать кошелек</string>
+    <string name="done">Готово</string>
+
+    <string name="choose_periodic">Повторять каждые</string>
+    <string name="input_sum">Введите сумму</string>
+
+
+    <string name="none">Нет</string>
+    <string name="every_day">Каждый день</string>
+    <string name="every_week">Каждую неделю</string>
+    <string name="every_month">Каждый месяц</string>
 
 </resources>

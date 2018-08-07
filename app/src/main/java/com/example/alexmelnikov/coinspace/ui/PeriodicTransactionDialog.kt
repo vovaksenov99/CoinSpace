@@ -105,8 +105,7 @@ class PeriodicDialog : DialogFragment() {
         override fun onBindViewHolder(holder: CurrencyHolder, position: Int) {
             val operation = operations[position]
             holder.currency.text = operation.currency
-            holder.icon.setImageResource(getCategoryByString(context!!,
-                operation.category).getIconResource())
+            holder.icon.setImageResource(getCategoryByString(operation.category).getIconResource())
 
             //TODO formattng output
             holder.description.text =

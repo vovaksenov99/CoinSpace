@@ -5,8 +5,10 @@ import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.rules.ExpectedException
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -47,6 +49,11 @@ class UnitTests {
 
         for (i in 0 until list.size)
             assertEquals(listRez[i], getCurrencyByString(list[i]))
+    }
+
+    @Test(expected = Exception::class)
+    fun getCurrencyByStringTestBad() {
+      getCurrencyByString("NONE")
     }
 
     @Test

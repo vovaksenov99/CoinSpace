@@ -29,7 +29,6 @@ class AccountsAdapter(private val mContext: Context,
         var tvAccountName: TextView = itemView.tv_account_name
         var tvBalance: TextView = itemView.tv_balance
         var ivCard: ImageView = itemView.iv_card
-        var cbSelect: CheckBox = itemView.cb_select
 
     }
 
@@ -55,7 +54,7 @@ class AccountsAdapter(private val mContext: Context,
     }
 
     //TODO: implement checkbox with payload
-    /*override funy onBindViewHolder(holder: AccountsViewHolder, position: Int, payloads: MutableList<Any>) {
+    /*override funy onBindViewHolder(holder: PatternViewHolder, position: Int, payloads: MutableList<Any>) {
         if (payloads.isEmpty()) onBindViewHolder(holder, position)
         else //обновление holder.tv_text.text = payloads[0] as String
     }*/

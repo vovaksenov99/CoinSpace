@@ -12,6 +12,7 @@ import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.*
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
+import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod
 import io.reactivex.schedulers.Schedulers
 import java.util.*
 import javax.inject.Inject
@@ -54,7 +55,13 @@ class PeriodicOperationsWorker : Worker() {
             //calculate next execute time
             val calendar = Calendar.getInstance()
             calendar.set(year, month, day)
-            calendar.add(Calendar.DAY_OF_MONTH, operation.repeatDays)
+
+            when(operation.repeatDays)
+            {
+                RepeatedPeriod.DAY ->calendar.add(Calendar.DAY_OF_MONTH, 1)
+                RepeatedPeriod.WEEK ->calendar.add(Calendar.DAY_OF_MONTH, 7)
+                RepeatedPeriod.MONTH ->calendar.add(Calendar.MONTH, 1)
+            }
 
             operation.nextRepeatDay = calendar.get(Calendar.DAY_OF_MONTH)
             operation.nextRepeatMonth = calendar.get(Calendar.MONTH)

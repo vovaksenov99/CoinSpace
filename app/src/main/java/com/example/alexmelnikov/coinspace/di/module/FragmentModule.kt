@@ -7,10 +7,7 @@ import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.persistance.Database
-import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.*
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsContract
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsPresenter
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountContract
@@ -69,6 +66,11 @@ class FragmentModule(private val baseApp: BaseApp) {
     @Singleton
     fun provideAccountRepository(database: Database): AccountsRepository =
         DefaultAccountsRepository(database.accountDao())
+
+    @Provides
+    @Singleton
+    fun providePatternRepository(database: Database): PatternRepository =
+        PatternsRepository(database.patternDao())
 
     @Provides
     @Singleton

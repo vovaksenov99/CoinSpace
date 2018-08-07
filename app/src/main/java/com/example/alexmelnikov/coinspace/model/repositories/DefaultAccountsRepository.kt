@@ -5,7 +5,6 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.persistance.dao.AccountDao
 import io.reactivex.Completable
-import io.reactivex.Scheduler
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -21,7 +20,8 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
      * This method called from BaseApp onCreate
      * It checks if accounts table is empty and add two main accounts (cash and card)
      */
-    override fun initAddTwoMainAccountsIfTableEmptyAsync(cashName: String, mainCurrency: String, color: Int,
+    override fun initAddTwoMainAccountsIfTableEmptyAsync(cashName: String, mainCurrency: String,
+                                                         color: Int,
                                                          cardName: String) {
         Completable.fromAction {
             if (accountDao.getAll().isEmpty()) {
@@ -31,9 +31,9 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
                 accountDao.insert(cardAccount)
             }
         }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync success") },
-                        {Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync error!")})
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync success") },
+                { Log.d("mytag", "initAddTwoMainAccountsIfTableEmptyAsync error!") })
     }
 
     override fun getAccountsOffline(): Single<List<Account>> {
@@ -53,14 +53,19 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
         //return Single.just<Account>(accountDao.findByName(name))
     }
 
-    override fun insertAccountOfflineAsync(name: String, currency: String, balance: Float, color: Int, operations: List<Operation>) {
+    override fun insertAccountOfflineAsync(name: String, currency: String, balance: Float,
+                                           color: Int, operations: List<Operation>,
+                                           callback: () -> Unit) {
         Completable.fromAction {
             val newAccount = Account(null, name, currency, balance, color, operations)
             accountDao.insert(newAccount)
         }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("mytag", "insertAccountOfflineAsync success") },
-                        {Log.d("mytag", "insertAccountOfflineAsync error!")})
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("mytag", "insertAccountOfflineAsync success")
+                callback()
+            },
+                { Log.d("mytag", "insertAccountOfflineAsync error!") })
     }
 
     override fun insertAccountOfflineAsync(account: Account) {
@@ -69,7 +74,7 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d("mytag", "insertAccountOfflineAsync success") },
-                {Log.d("mytag", "insertAccountOfflineAsync error!")})
+                { Log.d("mytag", "insertAccountOfflineAsync error!") })
     }
 
     override fun updateAccountOfflineAsync(account: Account) {
@@ -79,9 +84,9 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
                     "operations: ${account.operations}")
             accountDao.updateAccounts(account)
         }.subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe({ Log.d("mytag", "updateAccountOfflineAsync success") },
-                        {Log.d("mytag", "updateAccountOfflineAsync error!")})
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d("mytag", "updateAccountOfflineAsync success") },
+                { Log.d("mytag", "updateAccountOfflineAsync error!") })
     }
 
     override fun deleteAll() {
@@ -90,6 +95,6 @@ class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d("mytag", "deleteAll success") },
-                {Log.d("mytag", "deleteAll error!")})
+                { Log.d("mytag", "deleteAll error!") })
     }
 }

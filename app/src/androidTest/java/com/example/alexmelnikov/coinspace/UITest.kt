@@ -82,16 +82,11 @@ class MainActivityTest {
 
         Espresso.closeSoftKeyboard()
 
-        onView(withId(R.id.et_repeat)).perform(scrollTo())
 
         onView(withId(R.id.currency_spinner)).perform(click())
         onData(allOf(`is`(instanceOf(String::class.java)), `is`("RUB"))).perform(click())
         onView(withId(R.id.currency_spinner)).check(matches(withSpinnerText(containsString("RUB"))))
 
-        onView(withId(R.id.et_repeat)).perform(scrollTo())
-
-        onView(withId(R.id.et_repeat))
-            .perform(clearText(), typeText("1")).check(matches(withText("1")))
 
         onView(withId(R.id.fab_new_action)).perform(click())
 

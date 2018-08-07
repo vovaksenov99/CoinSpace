@@ -12,8 +12,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountFragment
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
@@ -30,8 +32,9 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        DaggerFragmentComponent.builder().build().inject(this)
-    }
+        DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
+            .inject(this)    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         presenter.attach(this)
@@ -48,7 +51,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
         setHasOptionsMenu(true)
         accounts_toolbar.title = resources.getString(R.string.accounts_fragment_title)
         accounts_toolbar.navigationIcon = resources.getDrawable(R.drawable.ic_arrow_back_white_24dp)
-        accounts_toolbar.setNavigationOnClickListener { fragmentManager?.popBackStack() }
+        accounts_toolbar.setNavigationOnClickListener { (activity as MainActivity).onBackPressed() }
 
         //Setup Accounts Recycler View
         accountsAdapter = AccountsAdapter(activity as MainActivity, ArrayList(), presenter)
@@ -85,7 +88,7 @@ class AccountsFragment : Fragment(), AccountsContract.AccountsView {
                 ?.replace(R.id.contentFrame, fragment)
                 ?.addToBackStack(null)
                 ?.addSharedElement(fab_new_account, "fabAdd")
-                ?.commitNow()
+                ?.commit()
     }
 
     companion object {

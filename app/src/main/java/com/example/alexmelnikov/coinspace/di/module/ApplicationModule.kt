@@ -8,10 +8,7 @@ import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.persistance.Database
-import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.*
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import dagger.Module
 import dagger.Provides
@@ -46,6 +43,11 @@ class ApplicationModule(private val baseApp: BaseApp) {
     @Singleton
     fun provideAccountsRepository(database: Database): AccountsRepository =
         DefaultAccountsRepository(database.accountDao())
+
+    @Provides
+    @Singleton
+    fun providePatternRepository(database: Database): PatternRepository =
+        PatternsRepository(database.patternDao())
 
     @Provides
     @Singleton

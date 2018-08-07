@@ -1,9 +1,11 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
+import android.content.Context
 import android.view.View
 import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 
@@ -14,6 +16,8 @@ class HomeContract {
         var presenter: HomeContract.Presenter
 
         fun openOperationFragment()
+
+        fun openOperationPatternFragment()
 
         fun closeOperationFragment()
 
@@ -35,6 +39,8 @@ class HomeContract {
 
         fun showAboutDialog()
 
+        fun initPatternsRv(patterns: List<Pattern>)
+
         fun setupOperationsAdapter(operations: List<Operation>)
 
     }
@@ -52,6 +58,8 @@ class HomeContract {
         fun resetLayout()
 
         fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>)
+
+        fun showPeriodicDialog()
     }
 
     interface Presenter : BaseContract.Presenter<HomeView> {
@@ -64,14 +72,20 @@ class HomeContract {
 
         fun newOperationButtonClick()
 
+        fun newOperationPatternButtonClick()
+
         fun newExpenseButtonClick()
+
+        fun addNewPattern(pattern: Pattern, account: Account)
 
         fun newIncomeButtonClick()
 
         fun clearButtonClick()
 
         fun newOperationRequest(sum: Float, account: Account, category: String, currency: String,
-                                repeat: String)
+                                repeat: Int)
+
+        fun newOperationRequest(operation: Operation, accountId: Int)
 
         fun animateOperationAddButtonRequest()
 
@@ -80,6 +94,8 @@ class HomeContract {
         fun showAboutDialogRequest()
 
         fun accountsButtonClick()
+
+        fun initPatternsRV()
 
         fun statisticsButtonClick(animationCenter: View)
 

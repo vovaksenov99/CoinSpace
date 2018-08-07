@@ -7,8 +7,6 @@ import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
-import android.text.Editable
-import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -20,6 +18,10 @@ import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.Category
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Pattern
+import com.example.alexmelnikov.coinspace.model.getCategoryByString
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
+import com.example.alexmelnikov.coinspace.model.repositories.PatternRepository
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.DAY
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.MONTH
@@ -28,15 +30,9 @@ import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.WEEK
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
 import java.util.*
+import javax.inject.Inject
 
-object RepeatedPeriod {
-    val NONE = 0
-    val DAY = 1
-    val WEEK = 7
-    val MONTH = 3
-}
-
-class OperationFragment : Fragment(), HomeContract.OperationView {
+class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
 
     override lateinit var presenter: HomeContract.Presenter
@@ -45,7 +41,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
-        val root = inflater.inflate(R.layout.fragment_operation, container, false)
+        val root = inflater.inflate(R.layout.fragment_operation_pattern, container, false)
         RevealCircleAnimatorHelper
             .create(this, container)
             .start(root)
@@ -103,33 +99,12 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             presenter.clearButtonClick()
         }
 
-        set_periodic_transaction.setOnClickListener {
-            showPeriodicDialog()
-        }
-        /*et_sum.setOnEditorActionListener { p0, p1, p2 ->
-            presenter.newOperationButtonClick()
-            false
-        }*/
-
-        et_sum.addTextChangedListener(object : TextWatcher {
-
-            override fun afterTextChanged(s: Editable) {}
-
-            override fun beforeTextChanged(s: CharSequence, start: Int,
-                                           count: Int, after: Int) {
-            }
-
-            override fun onTextChanged(s: CharSequence, start: Int,
-                                       before: Int, count: Int) {
-                if (input_layout_sum.isErrorEnabled) input_layout_sum.error = ""
-            }
-        })
     }
 
     override fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>) {
         when (type) {
-            Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense)
-            Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income)
+            Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense_pattern)
+            Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income_pattern)
         }
 
         accounts_spinner.adapter =
@@ -169,40 +144,35 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         presenter.detachOperationView()
     }
 
-    /**
-     * If user input is suitable, animate operation card sliding out
-     * and call popbackstack when animation ends or canceled
-     *
-     */
+
     override fun confirmOperationAndCloseSelf() {
-        if (et_sum.text.toString().trim().isEmpty()) {
-            input_layout_sum.error = getString(R.string.empty_sum_error)
-        }
-        else if (et_sum.text.toString().trim().toFloat() <= 0f) {
-            input_layout_sum.error = getString(R.string.zero_sum_error)
-        }
-        else {
-            presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
-                accounts_spinner.selectedItem as Account,
-                Category.values()[category_spinner.selectedItemPosition].toString(),
-                currency_spinner.selectedItem.toString(),
-                selectedRepeat)
 
-            YoYo.with(Techniques.SlideOutUp)
-                .duration(300)
-                .withListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationCancel(animation: Animator) {
-                        super.onAnimationCancel(animation)
-                        rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
-                    }
+        val account = accounts_spinner.selectedItem as Account
+        val currency = getCurrencyByString(currency_spinner.selectedItem.toString())
+        val category =
+            getCategoryByString(Category.values()[category_spinner.selectedItemPosition].toString())
 
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-                        rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
-                    }
-                })
-                .playOn(rl_expense_card)
-        }
+        val pattern = Pattern(account.id!!.toInt(), null, null, currency, category)
+        presenter.addNewPattern(pattern, account)
+
+        YoYo.with(Techniques.SlideOutUp)
+            .duration(300)
+            .withListener(object : AnimatorListenerAdapter() {
+                override fun onAnimationCancel(animation: Animator) {
+                    super.onAnimationCancel(animation)
+                    rl_expense_card.postDelayed({
+                        presenter.detachOperationView()
+                    }, 50)
+                }
+
+                override fun onAnimationEnd(animation: Animator) {
+                    super.onAnimationEnd(animation)
+                    rl_expense_card.postDelayed({
+                        presenter.detachOperationView()
+                    }, 50)
+                }
+            })
+            .playOn(rl_expense_card)
 
     }
 
@@ -226,7 +196,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         /**
          * @sourceView – circle animation starting point center
          */
-        fun newInstance(sourceView: View? = null) = OperationFragment().apply {
+        fun newInstance(sourceView: View? = null) = OperationPatternFragment().apply {
             arguments = Bundle()
             RevealCircleAnimatorHelper.addBundleValues(arguments!!, sourceView)
         }

@@ -7,6 +7,7 @@ import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
@@ -14,6 +15,11 @@ import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
 import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
+import com.example.alexmelnikov.coinspace.model.repositories.PatternRepository
+import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.DAY
+import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.MONTH
+import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.NONE
+import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.WEEK
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
@@ -26,6 +32,7 @@ import javax.inject.Inject
  */
 class HomePresenter : HomeContract.Presenter {
 
+
     @Inject
     lateinit var accountsRepository: AccountsRepository
 
@@ -33,13 +40,16 @@ class HomePresenter : HomeContract.Presenter {
     lateinit var deferRepository: DeferOperations
 
     @Inject
+    lateinit var patternsRepository: PatternRepository
+
+    @Inject
     lateinit var userBalanceInteractor: IUserBalanceInteractor
 
     @Inject
     lateinit var currencyConverter: CurrencyConverter
 
-    private lateinit var mHomeView: HomeContract.HomeView
-    private var mOperationView: HomeContract.OperationView? = null
+    lateinit var mHomeView: HomeContract.HomeView
+    var mOperationView: HomeContract.OperationView? = null
     private var currentNewOperation: Operation.OperationType? = null
 
     private lateinit var userBalance: Money
@@ -113,6 +123,16 @@ class HomePresenter : HomeContract.Presenter {
         }
     }
 
+    override fun newOperationPatternButtonClick() {
+        if (mOperationView == null) {
+            mHomeView.openOperationPatternFragment()
+            mHomeView.animateNewOperationButtonToCheck()
+        }
+        else {
+            mOperationView!!.confirmOperationAndCloseSelf()
+        }
+    }
+
     override fun newExpenseButtonClick() {
         currentNewOperation = Operation.OperationType.EXPENSE
         mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE, accounts)
@@ -136,12 +156,52 @@ class HomePresenter : HomeContract.Presenter {
         }
     }
 
+    override fun newOperationRequest(operation: Operation, accountId: Int) {
+
+        accountsRepository.findAccountById(accountId.toLong())
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ account ->
+                val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
+                updatedAccountOperations.add(operation)
+
+                for(account_ in accounts)
+                    if(account_.id == accountId.toLong())
+                        account_.operations = updatedAccountOperations
+
+                val money = currencyConverter.convertCurrency(Money(operation.sum,
+                    getCurrencyByString(operation.currency)),
+                    defaultCurrency)
+                val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
+                    getCurrencyByString(account.currency)),
+                    defaultCurrency)
+
+                if (operation.type == Operation.OperationType.INCOME)
+                    accountMoney.count += money.count
+                else
+                    accountMoney.count -= money.count
+
+                account.balance = currencyConverter.convertCurrency(accountMoney,
+                    getCurrencyByString(account.currency)).count
+                accountsRepository.updateAccountOfflineAsync(account)
+
+                userBalance =
+                        userBalanceInteractor.executeNewOperation(operation.type, money)
+                updateTextViews()
+                initOperationsRV(account.operations)
+                updateAccountItemOnPagerView(account)
+
+            },
+                { })
+
+    }
+
     override fun newOperationRequest(sum: Float, account: Account, category: String,
-                                     currency: String, repeat: String) {
+                                     currency: String, repeat: Int) {
         Log.d("mytag", "new operation:\n" +
                 "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
 
-        if (repeat != "") {
+        if (repeat != NONE) {
             if (currentNewOperation == Operation.OperationType.INCOME)
                 newRepeatOperationRequest(sum, account, category, currency, repeat)
             else
@@ -178,13 +238,18 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     fun newRepeatOperationRequest(sum: Float, account: Account, category: String,
-                                  currency: String, repeat: String) {
+                                  currency: String, repeat: Int) {
         Log.d("mytag", "new operation:\n" +
                 "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
 
 
         val calendar = Calendar.getInstance()
-        calendar.add(Calendar.DAY_OF_MONTH, repeat.toInt())
+        when (repeat) {
+            DAY -> calendar.add(Calendar.DAY_OF_MONTH, 1)
+            WEEK -> calendar.add(Calendar.DAY_OF_MONTH, 7)
+            MONTH -> calendar.add(Calendar.MONTH, 1)
+        }
+
 
         val nextRepeatDay = calendar.get(Calendar.DAY_OF_MONTH)
         val nextRepeatMonth = calendar.get(Calendar.MONTH)
@@ -197,12 +262,13 @@ class HomePresenter : HomeContract.Presenter {
             account.id!!,
             nextRepeatMonth,
             nextRepeatYear,
-            repeat.toInt(),
+            repeat,
             sum,
             category)
 
         deferRepository.addNewOperation(operation)
     }
+
 
     override fun animateOperationAddButtonRequest() {
         mHomeView.animateNewOperationButtonToAdd()
@@ -233,4 +299,23 @@ class HomePresenter : HomeContract.Presenter {
     private fun updateAccountItemOnPagerView(account: Account) {
         mHomeView.updateAccountItemPagerView(account)
     }
+
+    override fun initPatternsRV() {
+        patternsRepository.getAllPatterns().subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ patterns -> mHomeView.initPatternsRv(patterns) },
+                { handleErrorAccountsRequest() })
+
+    }
+
+    override fun addNewPattern(pattern: Pattern, account: Account) {
+        pattern.type = currentNewOperation.toString()
+        currentNewOperation = null
+        patternsRepository.insertPattern(pattern) {
+            initOperationsRV(account.operations)
+            initPatternsRV()
+        }
+
+    }
+
 }

@@ -1,18 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#0a0e19</color>
-    <color name="colorPrimaryDark">#000000</color>
+    <color name="colorPrimary">#0073FF</color>
+    <color name="colorPrimaryDark">#0073FF</color>
     <color name="colorPrimaryLight">#31353f</color>
 
-    <color name="colorAccent">#880e4f</color>
+    <color name="colorAccent">#ffcc00</color>
 
     <color name="colorGreen">#50e56f</color>
     <color name="colorRed">#ff3654</color>
 
-    <color name="colorWhite">#FFFFFF</color>
     <color name="colorGray">#A7A7A7</color>
     <color name="colorLightGray">#CFCFCF</color>
     <color name="black">#000000</color>
     <color name="transparent">#00000000</color>
+    <color name="defaultAccountColor">#ffe28a</color>
 
+    <color name="yandex_red">#f33F33</color>
+    <color name="yandex_yellow">#ffcc00</color>
+    <color name="toolbarIconsColor">#ffffff</color>
+    <color name="pattern_text_color">#ffffff</color>
 </resources>

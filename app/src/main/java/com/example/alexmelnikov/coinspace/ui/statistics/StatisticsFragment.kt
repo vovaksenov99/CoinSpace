@@ -58,12 +58,10 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
         statistics_toolbar.title = resources.getString(R.string.statistics_fragment_title)
         statistics_toolbar.navigationIcon =
                 ContextCompat.getDrawable(activity!!, R.drawable.ic_arrow_back_white_24dp)
-        statistics_toolbar.setNavigationOnClickListener { fragmentManager?.popBackStack() }
+        statistics_toolbar.setNavigationOnClickListener { (activity as MainActivity).onBackPressed() }
 
         //Setup chart
         expenses_by_category_chart.centerText = resources.getString(R.string.expenses_pie_chart_lbl)
-        expenses_by_category_chart.setCenterTextTypeface(Typeface
-            .createFromAsset((activity as MainActivity).assets, "fonts/Roboto-Regular.ttf"))
         expenses_by_category_chart.setUsePercentValues(false)
         expenses_by_category_chart.description.isEnabled = false
 
@@ -92,24 +90,28 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
 
 
     override fun setupChartData(dataSet: PieDataSet) {
-        val colorsArray = resources.obtainTypedArray(R.array.custom_pie_chart_colors)
-        val colors = ArrayList<Int>()
-        for (i in 0 until colorsArray.length()) {
-            colors.add(colorsArray.getColor(i, 0))
+        try {
+            val colorsArray = resources.obtainTypedArray(R.array.custom_pie_chart_colors)
+            val colors = ArrayList<Int>()
+            for (i in 0 until colorsArray.length()) {
+                colors.add(colorsArray.getColor(i, 0))
+            }
+            colorsArray.recycle()
+
+            dataSet.colors = colors
+            dataSet.sliceSpace = 3f
+            dataSet.selectionShift = 5f
+
+            val data = PieData(dataSet)
+            data.setValueTextSize(11f)
+            data.setValueTextColor(Color.WHITE)
+            expenses_by_category_chart.data = data
+            expenses_by_category_chart.invalidate()
         }
-        colorsArray.recycle()
+        catch (e: Exception)
+        {
 
-        dataSet.colors = colors
-        dataSet.sliceSpace = 3f
-        dataSet.selectionShift = 5f
-
-        val data = PieData(dataSet)
-        data.setValueTextSize(11f)
-        data.setValueTextColor(Color.WHITE)
-        data.setValueTypeface(Typeface.createFromAsset((activity as MainActivity).assets,
-            "fonts/Roboto-Regular.ttf"))
-        expenses_by_category_chart.data = data
-        expenses_by_category_chart.invalidate()
+        }
     }
 
     companion object {

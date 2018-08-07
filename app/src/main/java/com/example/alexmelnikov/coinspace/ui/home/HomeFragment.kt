@@ -18,6 +18,7 @@ import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
@@ -30,6 +31,7 @@ import javax.inject.Inject
 
 
 class HomeFragment : Fragment(), HomeContract.HomeView {
+
 
     @Inject
     override lateinit var presenter: HomeContract.Presenter
@@ -59,11 +61,14 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
+
+
     }
 
     override fun onStart() {
         super.onStart()
         presenter.viewPagerSetupRequest()
+        presenter.initPatternsRV()
     }
 
     private fun setupEventListeners() {
@@ -130,16 +135,24 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         val fragment = OperationFragment.newInstance(fab_new_action)
         fragmentManager?.beginTransaction()
             ?.replace(R.id.actionFrame, fragment)
-            ?.commitNow()
+            ?.commit()
+    }
+
+    override fun openOperationPatternFragment() {
+        closeOperationFragment()
+        val fragment = OperationPatternFragment.newInstance(fab_new_action)
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.actionFrame, fragment)
+            ?.commit()
     }
 
     override fun closeOperationFragment() {
         val fragment = fragmentManager?.findFragmentById(R.id.actionFrame)
         try {
-            if (fragment != null && fragment is OperationFragment) {
+            if (fragment != null && fragment is  HomeContract.OperationView) {
                 fragmentManager?.beginTransaction()
                     ?.remove(fragment)
-                    ?.commitNow()
+                    ?.commit()
             }
         } catch (exp: IllegalStateException) {
             Log.e("exception", "can't commit remove fragment transaction after onSaveInstanceState")
@@ -158,7 +171,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
             appInfoDialog = MaterialDialog.Builder(activity!!)
                 .customView(R.layout.dialog_app_info, false)
                 .positiveText(android.R.string.ok)
-                //.dismissListener()
                 .build()
             appInfoDialog!!.view.findViewById<TextView>(R.id.tv_content).movementMethod =
                     LinkMovementMethod.getInstance()
@@ -208,10 +220,25 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun animateNewOperationButtonToAdd() {
-        val drawable =
-            activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
-        fab_new_action.setImageDrawable(drawable)
-        drawable.start()
+        try {
+
+
+            val drawable =
+                activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
+            fab_new_action.setImageDrawable(drawable)
+            drawable.start()
+        } catch (e: Exception) {
+
+        }
+    }
+
+    override fun initPatternsRv(patterns: List<Pattern>) {
+        val layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+        patterns_rv.setHasFixedSize(true)
+        patterns_rv.layoutManager = layoutManager
+        patterns_rv.isNestedScrollingEnabled = true
+
+        patterns_rv.adapter = PatternsAdapter(context!!, presenter, patterns.toMutableList())
     }
 
     companion object {
