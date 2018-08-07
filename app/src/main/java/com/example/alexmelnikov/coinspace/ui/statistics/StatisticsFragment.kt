@@ -12,8 +12,10 @@ import android.view.View
 import android.view.ViewGroup
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import com.github.mikephil.charting.components.Legend
@@ -23,23 +25,25 @@ import kotlinx.android.synthetic.main.fragment_statistics.*
 import javax.inject.Inject
 
 
-
-class StatisticsFragment: Fragment(), StatisticsContract.View {
+class StatisticsFragment : Fragment(), StatisticsContract.View {
 
     @Inject
     override lateinit var presenter: StatisticsContract.Presenter
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        DaggerFragmentComponent.builder().build().inject(this)
+        DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
+            .inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         presenter.attach(this)
         val root = inflater.inflate(R.layout.fragment_statistics, container, false)
         RevealCircleAnimatorHelper
-                .create(this, container)
-                .start(root)
+            .create(this, container)
+            .start(root)
         return root
     }
 
@@ -47,17 +51,19 @@ class StatisticsFragment: Fragment(), StatisticsContract.View {
         super.onViewCreated(view, savedInstanceState)
 
         //Setup toolbar
-        statistics_toolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
+        statistics_toolbar.overflowIcon =
+                (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
         (activity as MainActivity).setSupportActionBar(statistics_toolbar)
         setHasOptionsMenu(true)
         statistics_toolbar.title = resources.getString(R.string.statistics_fragment_title)
-        statistics_toolbar.navigationIcon = ContextCompat.getDrawable(activity!!, R.drawable.ic_arrow_back_white_24dp)
+        statistics_toolbar.navigationIcon =
+                ContextCompat.getDrawable(activity!!, R.drawable.ic_arrow_back_white_24dp)
         statistics_toolbar.setNavigationOnClickListener { fragmentManager?.popBackStack() }
 
         //Setup chart
         expenses_by_category_chart.centerText = resources.getString(R.string.expenses_pie_chart_lbl)
         expenses_by_category_chart.setCenterTextTypeface(Typeface
-                .createFromAsset((activity as MainActivity).assets, "fonts/Roboto-Regular.ttf"))
+            .createFromAsset((activity as MainActivity).assets, "fonts/Roboto-Regular.ttf"))
         expenses_by_category_chart.setUsePercentValues(false)
         expenses_by_category_chart.description.isEnabled = false
 
@@ -74,8 +80,8 @@ class StatisticsFragment: Fragment(), StatisticsContract.View {
             try {
                 chart_container.visibility = View.VISIBLE
                 YoYo.with(Techniques.SlideInUp)
-                        .duration(400)
-                        .playOn(chart_container)
+                    .duration(400)
+                    .playOn(chart_container)
             } catch (e: Exception) {
                 Log.e("StatisticsFragment", e.toString())
             }
@@ -100,7 +106,8 @@ class StatisticsFragment: Fragment(), StatisticsContract.View {
         val data = PieData(dataSet)
         data.setValueTextSize(11f)
         data.setValueTextColor(Color.WHITE)
-        data.setValueTypeface(Typeface.createFromAsset((activity as MainActivity).assets, "fonts/Roboto-Regular.ttf"))
+        data.setValueTypeface(Typeface.createFromAsset((activity as MainActivity).assets,
+            "fonts/Roboto-Regular.ttf"))
         expenses_by_category_chart.data = data
         expenses_by_category_chart.invalidate()
     }

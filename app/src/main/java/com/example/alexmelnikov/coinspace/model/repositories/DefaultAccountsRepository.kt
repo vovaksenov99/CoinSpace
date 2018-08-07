@@ -10,7 +10,12 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRepository {
+class DefaultAccountsRepository(val accountDao: AccountDao) : AccountsRepository {
+    override fun findAccountById(id: Long): Single<Account> {
+        return Single.create<Account> {
+            it.onSuccess(accountDao.findById(id))
+        }
+    }
 
     /**
      * This method called from BaseApp onCreate
@@ -58,6 +63,15 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
                         {Log.d("mytag", "insertAccountOfflineAsync error!")})
     }
 
+    override fun insertAccountOfflineAsync(account: Account) {
+        Completable.fromAction {
+            accountDao.insert(account)
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d("mytag", "insertAccountOfflineAsync success") },
+                {Log.d("mytag", "insertAccountOfflineAsync error!")})
+    }
+
     override fun updateAccountOfflineAsync(account: Account) {
         Completable.fromAction {
             Log.d("mytag", "updating Account ${account.name}\n" +
@@ -68,5 +82,14 @@ class DefaultAccountsRepository(private val accountDao: AccountDao) : AccountsRe
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe({ Log.d("mytag", "updateAccountOfflineAsync success") },
                         {Log.d("mytag", "updateAccountOfflineAsync error!")})
+    }
+
+    override fun deleteAll() {
+        Completable.fromAction {
+            accountDao.deleteAll()
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d("mytag", "deleteAll success") },
+                {Log.d("mytag", "deleteAll error!")})
     }
 }

@@ -16,11 +16,20 @@
         <item name="preferenceTheme">@style/PreferenceThemeOverlay</item>
     </style>
 
-    <style name="Widget.CoinSpace.TextInputLayout" parent="Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+    <style name="Widget.CoinSpace.TextInputLayout" parent="Widget.Design.TextInputLayout">
         <item name="android:paddingBottom">8dp</item>
     </style>
 
+    <style name="FullscreenDialog" parent="Base.Theme.AppCompat.Light.Dialog">
 
+        <item name="android:layout_width">fill_parent</item>
+        <item name="android:layout_height">fill_parent</item>
+        <!-- No backgrounds, titles or window float -->
+        <item name="android:windowBackground">@color/transparent</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowIsFloating">false</item>
+
+    </style>
 
 
 

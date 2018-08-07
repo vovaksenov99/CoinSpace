@@ -1,14 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <ListPreference
-        android:key="@string/sp_key_main_currency"
-        android:title="Валюта"
-        android:defaultValue="@string/main_currency"
-        android:entries="@array/main_currency_names_array"
-        android:entryValues="@array/main_currency_values_array"
-        android:icon="@drawable/ic_attach_money_primary_24dp"
-        android:dialogIcon="@drawable/ic_attach_money_primary_24dp"
-        />
+
 
 </PreferenceScreen>

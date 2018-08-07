@@ -15,11 +15,10 @@ import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
-import java.text.DateFormat
 import java.util.*
 import android.text.Editable
-import android.view.KeyEvent
 import android.view.inputmethod.InputMethodManager
+import com.example.alexmelnikov.coinspace.model.Category
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
@@ -94,8 +93,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         }
 
         accounts_spinner.adapter = AccountsSpinnerAdapter(activity as MainActivity, ArrayList(accounts))
-        category_spinner.adapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item,
-                resources.getStringArray(R.array.operation_categories_array))
+        category_spinner.adapter = ArrayAdapter<String>(activity,android.R.layout.simple_spinner_dropdown_item,
+                Category.values().map { context!!.getString(it.getStringResource()) })
         ll_action_type_btns.visibility = View.GONE
         rl_new_action.visibility = View.VISIBLE
     }
@@ -119,7 +118,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         val spinnerArrayAdapter = ArrayAdapter<String>(activity, android.R.layout.simple_spinner_item, currencies)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
         currency_spinner.adapter = spinnerArrayAdapter
-        currency_spinner.setSelection(currencies.indexOf(presenter.getMainCurrency()))
+        currency_spinner.setSelection(currencies.indexOf(presenter.getMainCurrency().toString()))
     }
 
     override fun onStop() {
@@ -141,7 +140,8 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
                     accounts_spinner.selectedItem as Account,
                     category_spinner.selectedItem.toString(),
-                    currency_spinner.selectedItem.toString())
+                    currency_spinner.selectedItem.toString(),
+                    et_repeat.text.toString())
 
             YoYo.with(Techniques.SlideOutUp)
                     .duration(300)

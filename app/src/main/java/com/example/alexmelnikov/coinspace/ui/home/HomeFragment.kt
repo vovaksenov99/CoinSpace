@@ -4,15 +4,22 @@ import android.content.Context
 import android.graphics.drawable.AnimatedVectorDrawable
 import android.os.Bundle
 import android.support.v4.app.Fragment
+import android.support.v4.view.ViewPager
+import android.support.v7.widget.LinearLayoutManager
+import android.support.v7.widget.RecyclerView
 import android.text.method.LinkMovementMethod
 import android.util.Log
 import android.view.*
 import android.widget.TextView
 import com.afollestad.materialdialogs.MaterialDialog
+import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.UserBalance
+import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.getCurrencyByString
+import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
@@ -31,10 +38,13 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        DaggerFragmentComponent.builder().build().inject(this)
+        DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
+            .inject(this)
     }
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
+                              savedInstanceState: Bundle?): View? {
         presenter.attach(this)
         return inflater.inflate(R.layout.fragment_home, container, false)
     }
@@ -44,7 +54,8 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         setupEventListeners()
 
         //Setup toolbar
-        home_toolbar.overflowIcon = (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
+        home_toolbar.overflowIcon =
+                (activity as MainActivity).getDrawable(R.drawable.ic_more_vert_white_24dp)
         (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
@@ -61,9 +72,42 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun setupViewPager(balance: UserBalance, accounts: List<Account>) {
-        accounts_viewpager.adapter = AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
+    override fun setupViewPager(balance: Money, accounts: List<Account>) {
+        accounts_viewpager.adapter =
+                AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+        setupOperationsAdapter(accounts.flatMap { it.operations })
+
+        accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
+            override fun onPageScrollStateChanged(p0: Int) {
+
+            }
+
+            override fun onPageScrolled(p0: Int, p1: Float, p2: Int) {
+            }
+
+            override fun onPageSelected(p0: Int) {
+                if (p0 == 0) {
+                    setupOperationsAdapter(accounts.flatMap { it.operations })
+                    return
+                }
+                setupOperationsAdapter(accounts[p0 - 1].operations)
+            }
+        })
+    }
+
+    override fun setupOperationsAdapter(operations: List<Operation>) {
+        val layoutManager = LinearLayoutManager(context, RecyclerView.VERTICAL, false)
+        operation_rv.setHasFixedSize(true)
+        operation_rv.layoutManager = layoutManager
+        operation_rv.isNestedScrollingEnabled = true
+
+        operation_rv.adapter = OperationAdapter(operations)
+
+        if (operations.isNotEmpty()) {
+            lbl_empty_operation_history.visibility = View.INVISIBLE
+        }
+        //accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
     }
 
     override fun updateUserBalanceItemPagerView(mainBalance: String, additionalBalance: String) {
@@ -77,15 +121,16 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun updateAccountItemPagerView(account: Account) {
         val balanceView = accounts_viewpager.findViewWithTag<View>(account.id)
         if (balanceView != null)
-            balanceView.tv_account_balance.text = formatToMoneyString(account.balance, account.currency)
+            balanceView.tv_account_balance.text = formatToMoneyString(Money(account.balance,
+                getCurrencyByString(account.currency)))
     }
 
     override fun openOperationFragment() {
         closeOperationFragment()
         val fragment = OperationFragment.newInstance(fab_new_action)
         fragmentManager?.beginTransaction()
-                ?.replace(R.id.actionFrame, fragment)
-                ?.commit()
+            ?.replace(R.id.actionFrame, fragment)
+            ?.commitNow()
     }
 
     override fun closeOperationFragment() {
@@ -93,8 +138,8 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         try {
             if (fragment != null && fragment is OperationFragment) {
                 fragmentManager?.beginTransaction()
-                        ?.remove(fragment)
-                        ?.commit()
+                    ?.remove(fragment)
+                    ?.commitNow()
             }
         } catch (exp: IllegalStateException) {
             Log.e("exception", "can't commit remove fragment transaction after onSaveInstanceState")
@@ -111,11 +156,12 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         if (appInfoDialog == null) {
             //Setup dialog with application info
             appInfoDialog = MaterialDialog.Builder(activity!!)
-                    .customView(R.layout.dialog_app_info, false)
-                    .positiveText(android.R.string.ok)
-                    //.dismissListener()
-                    .build()
-            appInfoDialog!!.view.findViewById<TextView>(R.id.tv_content).movementMethod = LinkMovementMethod.getInstance()
+                .customView(R.layout.dialog_app_info, false)
+                .positiveText(android.R.string.ok)
+                //.dismissListener()
+                .build()
+            appInfoDialog!!.view.findViewById<TextView>(R.id.tv_content).movementMethod =
+                    LinkMovementMethod.getInstance()
         }
         appInfoDialog?.show()
     }
@@ -133,7 +179,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
-        when (item?.itemId ){
+        when (item?.itemId) {
             R.id.settings -> {
                 presenter.openSettingsActivityRequest()
                 return true
@@ -155,13 +201,15 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun animateNewOperationButtonToCheck() {
-        val drawable = activity?.getDrawable(R.drawable.anim_ic_add_to_check_white) as AnimatedVectorDrawable
+        val drawable =
+            activity?.getDrawable(R.drawable.anim_ic_add_to_check_white) as AnimatedVectorDrawable
         fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }
 
     override fun animateNewOperationButtonToAdd() {
-        val drawable = activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
+        val drawable =
+            activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
         fab_new_action.setImageDrawable(drawable)
         drawable.start()
     }

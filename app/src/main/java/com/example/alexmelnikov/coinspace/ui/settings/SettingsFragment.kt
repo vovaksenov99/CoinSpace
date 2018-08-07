@@ -12,7 +12,7 @@ import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteract
 import javax.inject.Inject
 
 
-class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedPreferenceChangeListener {
+class SettingsFragment : PreferenceFragmentCompat() {
 
     @Inject
     lateinit var userBalanceInteractor: IUserBalanceInteractor
@@ -28,24 +28,4 @@ class SettingsFragment : PreferenceFragmentCompat(), SharedPreferences.OnSharedP
         BaseApp.instance.component.inject(this)
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        currencyBeforeChange = PreferenceManager.getDefaultSharedPreferences(activity as SettingsActivity)
-                .getString(resources.getString(R.string.sp_key_main_currency), "")
-    }
-
-    override fun onSharedPreferenceChanged(sp: SharedPreferences?, key: String?) {
-        if (key == resources.getString(R.string.sp_key_main_currency))
-            userBalanceInteractor.mainCurrencyChanged(currencyBeforeChange)
-    }
-
-    override fun onResume() {
-        super.onResume()
-        preferenceScreen.sharedPreferences.registerOnSharedPreferenceChangeListener(this)
-    }
-
-    override fun onPause() {
-        super.onPause()
-        preferenceScreen.sharedPreferences.unregisterOnSharedPreferenceChangeListener(this)
-    }
 }

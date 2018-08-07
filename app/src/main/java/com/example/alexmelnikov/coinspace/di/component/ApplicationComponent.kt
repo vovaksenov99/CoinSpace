@@ -1,7 +1,9 @@
 package com.example.alexmelnikov.coinspace.di.component
 
 import com.example.alexmelnikov.coinspace.BaseApp
+import com.example.alexmelnikov.coinspace.model.workers.PeriodicOperationsWorker
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
+import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsPresenter
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountPresenter
 import com.example.alexmelnikov.coinspace.ui.home.HomePresenter
@@ -26,4 +28,7 @@ interface ApplicationComponent {
 
     fun inject(settingsFragment: SettingsFragment)
 
+    fun inject(converter: CurrencyConverter)
+
+    fun inject(converter: PeriodicOperationsWorker)
 }

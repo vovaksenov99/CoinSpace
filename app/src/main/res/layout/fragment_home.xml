@@ -9,21 +9,20 @@
         android:id="@+id/home_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintBottom_toTopOf="@+id/actionFrame"
-        app:layout_constraintDimensionRatio="1.5:1"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        app:layout_constraintBottom_toTopOf="@+id/actionFrame"
+        app:layout_constraintDimensionRatio="1.2:1"
+        app:layout_constraintTop_toTopOf="parent">
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/home_toolbar"
-            xmlns:android="http://schemas.android.com/apk/res/android"
+        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
             xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/home_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
             app:titleTextColor="@color/colorWhite">
-            
+
         </android.support.v7.widget.Toolbar>
 
         <RelativeLayout
@@ -37,12 +36,12 @@
 
             <android.support.design.widget.TabLayout
                 android:id="@+id/accounts_tabDots"
-                android:layout_alignParentBottom="true"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
                 app:tabBackground="@drawable/tab_selector"
                 app:tabGravity="center"
-                app:tabIndicatorHeight="0dp"/>
+                app:tabIndicatorHeight="0dp" />
 
         </RelativeLayout>
 
@@ -55,7 +54,13 @@
         android:layout_alignParentStart="true"
         android:layout_alignParentTop="true"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/home_appbar_layout" />
+        app:layout_constraintTop_toBottomOf="@+id/home_appbar_layout" >
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/operation_rv"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </FrameLayout>
 
     <LinearLayout
         android:id="@+id/lbl_empty_operation_history"

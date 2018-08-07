@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.model.entities
 
 import android.arch.persistence.room.*
+import java.io.Serializable
 
 @Entity(tableName = "accounts")
 data class Account(@PrimaryKey(autoGenerate = true) var id: Long?,
@@ -8,7 +9,7 @@ data class Account(@PrimaryKey(autoGenerate = true) var id: Long?,
                    var currency: String,
                    var balance: Float,
                    var color: Int,
-                   @TypeConverters(OperationTypeConverters::class) var operations: List<Operation>)
+                   @TypeConverters(OperationTypeConverters::class) var operations: List<Operation>): Serializable
 
 
 
