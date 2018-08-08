@@ -9,13 +9,15 @@ import java.util.*
 /**
  *  Created by Aksenov Vladimir 03.08.2018
  */
-interface DeferOperations{
+interface IDeferOperationsRepository{
 
     fun getAllOperations(): Single<List<DeferOperation>>
 
     fun addNewOperation(deferOperation: DeferOperation)
 
     fun removeOperation(deferOperation: DeferOperation)
+
+    fun removeOperationByAccountId(accountId: Long)
 
     fun removeAllOperation()
 

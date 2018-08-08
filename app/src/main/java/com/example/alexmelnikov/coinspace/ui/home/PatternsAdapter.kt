@@ -13,6 +13,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import kotlinx.android.synthetic.main.pattern_operation_dialog.view.*
 import kotlinx.android.synthetic.main.pattern_rv_element.view.*
@@ -42,21 +43,23 @@ class PatternsAdapter(private val mContext: Context,
             builder.setPositiveButton(itemView.context.getString(R.string.done)) { dialogInterface: DialogInterface, i: Int ->
                 val pattern = patterns[position]
                 val type =
-                    if (pattern.type == Operation.OperationType.INCOME.toString()) Operation.OperationType.INCOME
+                    if (pattern.type == OperationType.INCOME.toString()) OperationType.INCOME
                     else
-                        Operation.OperationType.EXPENSE
+                        OperationType.EXPENSE
 
                 val category = pattern.category.toString()
                 val calendar = Calendar.getInstance()
                 val date = Date(calendar.get(Calendar.YEAR),
                     calendar.get(Calendar.MONTH),
                     calendar.get(Calendar.DAY_OF_MONTH))
-
-                val operation = Operation(type,
+                if (view.sum.text.toString().toFloatOrNull() == null) {
+                    view.sum.error = itemView.context.getString(R.string.empty_sum_error)
+                    return@setPositiveButton
+                }
+                val operation = Operation(type.toString(),
                     view.sum.text.toString().toFloat(),
                     pattern.currency.toString(),
-                    category,
-                    date)
+                    category, pattern.bill.toLong(), null, date.toString())
 
                 presenter.newOperationRequest(operation, pattern.bill)
             }
@@ -131,7 +134,7 @@ class PatternsAdapter(private val mContext: Context,
             val pattern = patterns[position]
 
             holder.type.text =
-                    if (pattern.type == Operation.OperationType.INCOME.toString()) "+" else "-"
+                    if (pattern.type == OperationType.INCOME.toString()) "+" else "-"
             holder.currency.text = pattern.currency.currencySymbol
             holder.icon.setImageResource(pattern.category.getIconResource())
             holder.icon.setColorFilter(ContextCompat.getColor(holder.icon.context,

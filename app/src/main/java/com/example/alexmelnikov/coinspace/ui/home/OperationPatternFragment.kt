@@ -17,7 +17,7 @@ import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.Category
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.getCategoryByString
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
@@ -28,7 +28,6 @@ import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.NONE
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.WEEK
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
-import java.util.*
 
 class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
@@ -75,12 +74,18 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
         setupEventListeners()
 
         //animate operation card sliding up
-        rl_expense_card.postDelayed({
-            rl_expense_card.visibility = View.VISIBLE
-            YoYo.with(Techniques.SlideInUp)
-                .duration(300)
-                .playOn(rl_expense_card)
-        }, 350)
+        try {
+            rl_expense_card.postDelayed({
+                rl_expense_card.visibility = View.VISIBLE
+                YoYo.with(Techniques.SlideInUp)
+                    .duration(300)
+                    .playOn(rl_expense_card)
+            }, 350)
+        }
+        catch (e: Exception)
+        {
+
+        }
 
     }
 
@@ -99,16 +104,16 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
     }
 
-    override fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>) {
+    override fun setupNewOperationLayout(type: OperationType, accounts: MutableMap<Long, Account>) {
         when (type) {
-            Operation.OperationType.EXPENSE -> tv_label.text =
+            OperationType.EXPENSE -> tv_label.text =
                     getString(R.string.label_new_expense_pattern)
-            Operation.OperationType.INCOME -> tv_label.text =
+            OperationType.INCOME -> tv_label.text =
                     getString(R.string.label_new_income_pattern)
         }
 
         accounts_spinner.adapter =
-                AccountsSpinnerAdapter(activity as MainActivity, ArrayList(accounts))
+                AccountsSpinnerAdapter(activity as MainActivity, accounts.map { it.value })
         category_spinner.adapter =
                 ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item,
                     Category.values().map { context!!.getString(it.getStringResource()) })

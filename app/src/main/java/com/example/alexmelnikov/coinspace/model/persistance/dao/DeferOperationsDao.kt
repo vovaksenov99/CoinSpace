@@ -32,6 +32,9 @@ interface DeferOperationsDao {
     @Query("DELETE from deferOperations WHERE id = :mid")
     fun deleteById(mid: Long)
 
+    @Query("DELETE from deferOperations WHERE accountId = :accountId")
+    fun deleteByAccountId(accountId: Long)
+
 
     @Update
     fun updateAccounts(vararg deferOperation: DeferOperation)

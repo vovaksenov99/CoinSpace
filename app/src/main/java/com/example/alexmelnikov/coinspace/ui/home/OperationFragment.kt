@@ -19,7 +19,7 @@ import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.Category
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.DAY
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.MONTH
@@ -27,7 +27,6 @@ import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.NONE
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.WEEK
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
-import java.util.*
 
 object RepeatedPeriod {
     val NONE = 0
@@ -126,14 +125,15 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         })
     }
 
-    override fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>) {
+    override fun setupNewOperationLayout(type: OperationType, accounts: MutableMap<Long, Account>) {
         when (type) {
-            Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense)
-            Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income)
+            OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense)
+            OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income)
         }
 
         accounts_spinner.adapter =
-                AccountsSpinnerAdapter(activity as MainActivity, ArrayList(accounts))
+                AccountsSpinnerAdapter(activity as MainActivity,
+                    accounts.toList().map { it.second })
         category_spinner.adapter =
                 ArrayAdapter<String>(activity, android.R.layout.simple_spinner_dropdown_item,
                     Category.values().map { context!!.getString(it.getStringResource()) })
@@ -182,26 +182,30 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
             input_layout_sum.error = getString(R.string.zero_sum_error)
         }
         else {
-            presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
-                accounts_spinner.selectedItem as Account,
-                Category.values()[category_spinner.selectedItemPosition].toString(),
-                currency_spinner.selectedItem.toString(),
-                selectedRepeat)
+            try {
+                presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
+                    accounts_spinner.selectedItem as Account,
+                    Category.values()[category_spinner.selectedItemPosition].toString(),
+                    currency_spinner.selectedItem.toString(),
+                    selectedRepeat)
 
-            YoYo.with(Techniques.SlideOutUp)
-                .duration(300)
-                .withListener(object : AnimatorListenerAdapter() {
-                    override fun onAnimationCancel(animation: Animator) {
-                        super.onAnimationCancel(animation)
-                        rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
-                    }
+                YoYo.with(Techniques.SlideOutUp)
+                    .duration(300)
+                    .withListener(object : AnimatorListenerAdapter() {
+                        override fun onAnimationCancel(animation: Animator) {
+                            super.onAnimationCancel(animation)
+                            rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
+                        }
 
-                    override fun onAnimationEnd(animation: Animator) {
-                        super.onAnimationEnd(animation)
-                        rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
-                    }
-                })
-                .playOn(rl_expense_card)
+                        override fun onAnimationEnd(animation: Animator) {
+                            super.onAnimationEnd(animation)
+                            rl_expense_card.postDelayed({ presenter.detachOperationView() }, 50)
+                        }
+                    })
+                    .playOn(rl_expense_card)
+            } catch (e: Exception) {
+                presenter.clearButtonClick()
+            }
         }
 
     }

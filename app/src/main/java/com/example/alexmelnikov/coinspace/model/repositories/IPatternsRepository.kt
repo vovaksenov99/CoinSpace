@@ -6,11 +6,13 @@ import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import io.reactivex.Single
 
 
-interface PatternRepository {
+interface IPatternsRepository {
 
     fun deleteAll()
 
     fun removePattern(patternId: Int)
+
+    fun removePatternByAccountId(accountId: Long)
 
     fun getAllPatterns(): Single<List<Pattern>>
 

@@ -1,26 +1,13 @@
 package com.example.alexmelnikov.coinspace
 
 import android.app.Application
-import android.util.Log
-import androidx.work.PeriodicWorkRequest
-import androidx.work.WorkManager
 import com.example.alexmelnikov.coinspace.di.component.ApplicationComponent
 import com.example.alexmelnikov.coinspace.di.component.DaggerApplicationComponent
 import com.example.alexmelnikov.coinspace.di.module.ApplicationModule
-import com.example.alexmelnikov.coinspace.model.Category
-import com.example.alexmelnikov.coinspace.model.Currency
-import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
-import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.PatternRepository
-import com.example.alexmelnikov.coinspace.model.repositories.PatternsRepository
-import com.example.alexmelnikov.coinspace.model.workers.CurrenciesRateWorker
-import com.example.alexmelnikov.coinspace.model.workers.PeriodicOperationsWorker
+import com.facebook.stetho.Stetho
 import com.hawkcatcherkotlin.akscorp.hawkcatcherkotlin.HawkExceptionCatcher
-import uk.co.chrisjenx.calligraphy.CalligraphyConfig
-import java.util.concurrent.TimeUnit
 import javax.inject.Inject
 
 class BaseApp : Application() {
@@ -36,6 +23,7 @@ class BaseApp : Application() {
 
     override fun onCreate() {
         super.onCreate()
+        Stetho.initializeWithDefaults(this)
 
         instance = this
         setup()

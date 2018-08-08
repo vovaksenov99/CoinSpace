@@ -59,18 +59,23 @@ class FragmentModule(private val baseApp: BaseApp) {
 
     @Provides
     @Singleton
-    fun provideDeferRepository(database: Database): DeferOperations =
-        DeferOperationsRepository(database.deferOperationsDao())
+    fun provideDeferRepository(database: Database): IDeferOperationsRepository =
+        IDeferOperationsRepositoryRepository(database.deferOperationsDao())
 
     @Provides
     @Singleton
     fun provideAccountRepository(database: Database): AccountsRepository =
-        DefaultAccountsRepository(database.accountDao())
+        DefaultAccountsRepository(database)
 
     @Provides
     @Singleton
-    fun providePatternRepository(database: Database): PatternRepository =
+    fun providePatternRepository(database: Database): IPatternsRepository =
         PatternsRepository(database.patternDao())
+
+    @Provides
+    @Singleton
+    fun provideOperationsRepository(database: Database): IOperationsRepository =
+        OperationsRepository(database.operationsDao())
 
     @Provides
     @Singleton

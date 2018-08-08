@@ -4,18 +4,16 @@ import android.util.Log
 import android.view.View
 import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.Currency
-import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
-import com.example.alexmelnikov.coinspace.model.entities.Operation
-import com.example.alexmelnikov.coinspace.model.entities.Pattern
+import com.example.alexmelnikov.coinspace.model.entities.*
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.model.interactors.defaultCurrency
 import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
-import com.example.alexmelnikov.coinspace.model.repositories.PatternRepository
+import com.example.alexmelnikov.coinspace.model.repositories.IDeferOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.IOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.IPatternsRepository
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.DAY
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.MONTH
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.NONE
@@ -36,10 +34,13 @@ class HomePresenter : HomeContract.Presenter {
     lateinit var accountsRepository: AccountsRepository
 
     @Inject
-    lateinit var deferRepository: DeferOperations
+    lateinit var IDeferRepositoryRepository: IDeferOperationsRepository
 
     @Inject
-    lateinit var patternsRepository: PatternRepository
+    lateinit var patternsRepository: IPatternsRepository
+
+    @Inject
+    lateinit var operationsRepository: IOperationsRepository
 
     @Inject
     lateinit var userBalanceInteractor: IUserBalanceInteractor
@@ -49,15 +50,16 @@ class HomePresenter : HomeContract.Presenter {
 
     lateinit var mHomeView: HomeContract.HomeView
     var mOperationView: HomeContract.OperationView? = null
-    private var currentNewOperation: Operation.OperationType? = null
+    private var currentNewOperation: OperationType? = null
+
 
     private lateinit var userBalance: Money
 
-    private var accounts: List<Account> = ArrayList()
-    private var operations: MutableList<Operation> = mutableListOf()
+    var accounts: MutableMap<Long, Account> = mutableMapOf()
 
     override fun attach(view: HomeContract.HomeView) {
         mHomeView = view
+        accounts = mutableMapOf()
         BaseApp.instance.component.inject(this)
         if (mOperationView != null) mHomeView.openOperationFragment()
 
@@ -93,17 +95,22 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     private fun handleSuccessAccountsRequest(accounts: List<Account>) {
-        this.accounts = accounts
+
+        for (account in accounts) {
+            this.accounts[account.id!!] = account
+        }
+
         mHomeView.setupViewPager(userBalance, accounts)
 
-        this.operations.clear()
+        val operations = mutableListOf<Operation>()
         for (account in accounts) {
-            this.operations.addAll(account.operations)
+            operations.addAll(account.operations)
         }
         initOperationsRV(operations)
     }
 
     fun initOperationsRV(operations: List<Operation>) {
+
         mHomeView.setupOperationsAdapter(operations)
     }
 
@@ -133,14 +140,14 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun newExpenseButtonClick() {
-        currentNewOperation = Operation.OperationType.EXPENSE
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.EXPENSE, accounts)
+        currentNewOperation = OperationType.EXPENSE
+        mOperationView?.setupNewOperationLayout(OperationType.EXPENSE, accounts)
         mOperationView?.animateCloseButtonCloseToBack()
     }
 
     override fun newIncomeButtonClick() {
-        currentNewOperation = Operation.OperationType.INCOME
-        mOperationView?.setupNewOperationLayout(Operation.OperationType.INCOME, accounts)
+        currentNewOperation = OperationType.INCOME
+        mOperationView?.setupNewOperationLayout(OperationType.INCOME, accounts)
         mOperationView?.animateCloseButtonCloseToBack()
     }
 
@@ -156,88 +163,96 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun newOperationRequest(operation: Operation, accountId: Int) {
+        operationsRepository.insertOperation(operation) {
+            val account = accounts[accountId.toLong()]!!
+            operation.id = it
 
-        accountsRepository.findAccountById(accountId.toLong())
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .subscribe({ account ->
-                val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
-                updatedAccountOperations.add(operation)
+            account.operations.add(operation)
 
-                for(account_ in accounts)
-                    if(account_.id == accountId.toLong())
-                        account_.operations = updatedAccountOperations
+            val money = currencyConverter.convertCurrency(Money(operation.sum,
+                getCurrencyByString(operation.currency)),
+                defaultCurrency)
+            val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
+                getCurrencyByString(account.currency)),
+                defaultCurrency)
 
-                val money = currencyConverter.convertCurrency(Money(operation.sum,
-                    getCurrencyByString(operation.currency)),
-                    defaultCurrency)
-                val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
-                    getCurrencyByString(account.currency)),
-                    defaultCurrency)
-
-                if (operation.type == Operation.OperationType.INCOME)
-                    accountMoney.count += money.count
+            val type =
+                if (operation.type == OperationType.INCOME.toString())
+                    OperationType.INCOME
                 else
-                    accountMoney.count -= money.count
+                    OperationType.EXPENSE
 
-                account.balance = currencyConverter.convertCurrency(accountMoney,
-                    getCurrencyByString(account.currency)).count
-                accountsRepository.updateAccountOfflineAsync(account)
+            if (type == OperationType.INCOME)
+                accountMoney.count += money.count
+            else
+                accountMoney.count -= money.count
 
-                userBalance =
-                        userBalanceInteractor.executeNewOperation(operation.type, money)
-                updateTextViews()
-                initOperationsRV(account.operations)
-                updateAccountItemOnPagerView(account)
+            account.balance = currencyConverter.convertCurrency(accountMoney,
+                getCurrencyByString(account.currency)).count
 
-            },
-                { })
+            userBalance =
+                    userBalanceInteractor.executeNewOperation(type, money)
+            updateTextViews()
+            updateAccountItemOnPagerView(account)
+            currentNewOperation = null
+        }
 
     }
 
     override fun newOperationRequest(sum: Float, account: Account, category: String,
                                      currency: String, repeat: Int) {
-        Log.d("mytag", "new operation:\n" +
-                "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
-
         if (repeat != NONE) {
-            if (currentNewOperation == Operation.OperationType.INCOME)
+            if (currentNewOperation == OperationType.INCOME)
                 newRepeatOperationRequest(sum, account, category, currency, repeat)
             else
                 newRepeatOperationRequest(-sum, account, category, currency, repeat)
         }
-        //Create operation and add it to accountOperationsList
-        val operation = Operation(currentNewOperation!!, sum, currency, category, Date())
-        val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
-        updatedAccountOperations.add(operation)
-        account.operations = updatedAccountOperations
+        val operation = Operation(currentNewOperation!!.toString(),
+            sum,
+            currency,
+            category,
+            account.id,
+            null,
+            Date().toString())
 
-        val money = currencyConverter.convertCurrency(Money(sum, getCurrencyByString(currency)),
-            defaultCurrency)
-        val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
-            getCurrencyByString(account.currency)),
-            defaultCurrency)
+        operationsRepository.insertOperation(operation) {
+            operation.id = it
+            account.operations.add(operation)
 
-        if (currentNewOperation == Operation.OperationType.INCOME)
-            accountMoney.count += money.count
-        else
-            accountMoney.count -= money.count
+            val money = currencyConverter.convertCurrency(Money(sum, getCurrencyByString(currency)),
+                defaultCurrency)
+            val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
+                getCurrencyByString(account.currency)),
+                defaultCurrency)
 
-        account.balance = currencyConverter.convertCurrency(accountMoney,
-            getCurrencyByString(account.currency)).count
-        accountsRepository.updateAccountOfflineAsync(account)
+            if (currentNewOperation == OperationType.INCOME)
+                accountMoney.count += money.count
+            else
+                accountMoney.count -= money.count
 
-        userBalance =
-                userBalanceInteractor.executeNewOperation(currentNewOperation, money)
-        updateTextViews()
-        initOperationsRV(account.operations)
-        updateAccountItemOnPagerView(account)
+            account.balance = currencyConverter.convertCurrency(accountMoney,
+                getCurrencyByString(account.currency)).count
+            accountsRepository.updateAccountOfflineAsync(account)
+            operationsRepository.insertOperation(operation)
 
-        currentNewOperation = null
+            userBalance =
+                    userBalanceInteractor.executeNewOperation(currentNewOperation, money)
+            updateTextViews()
+            updateAccountItemOnPagerView(account)
+            currentNewOperation = null
+        }
+
     }
 
-    override fun newRemoveOperationRequest(operation: Operation) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun newRemoveOperationRequest(operationId: Long, accountId: Long) {
+        operationsRepository.removeOperation(operationId)
+
+        for (operation in accounts[accountId]!!.operations) {
+            if (operation.id == operationId) {
+                accounts[accountId]!!.operations.remove(operation)
+                break
+            }
+        }
     }
 
 
@@ -270,7 +285,7 @@ class HomePresenter : HomeContract.Presenter {
             sum,
             category)
 
-        deferRepository.addNewOperation(operation)
+        IDeferRepositoryRepository.addNewOperation(operation)
     }
 
 
@@ -302,6 +317,7 @@ class HomePresenter : HomeContract.Presenter {
 
     private fun updateAccountItemOnPagerView(account: Account) {
         mHomeView.updateAccountItemPagerView(account)
+        initOperationsRV(account.operations)
     }
 
     override fun initPatternsRV() {

@@ -8,7 +8,20 @@ import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 
-class PatternsRepository(private val patternsDao: PatternsDao) : PatternRepository {
+class PatternsRepository(private val patternsDao: PatternsDao) : IPatternsRepository {
+    override fun removePatternByAccountId(accountId: Long) {
+        Completable.fromAction {
+            patternsDao.deleteByAccountId(accountId)
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("mytag", "removePattern done!")
+            },
+                {
+                    Log.d("mytag", "removePattern error!")
+                })
+    }
+
     override fun removePattern(patternId: Int) {
         Completable.fromAction {
             patternsDao.deleteById(patternId.toLong())

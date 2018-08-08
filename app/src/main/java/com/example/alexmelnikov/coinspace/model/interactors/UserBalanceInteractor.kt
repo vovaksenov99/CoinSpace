@@ -6,6 +6,7 @@ import com.example.alexmelnikov.coinspace.model.workers.CurrenciesRateWorker
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.util.PreferencesHelper
 import java.io.Serializable
@@ -77,7 +78,7 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper) : 
         preferencesHelper.saveFloat(BALANCE_KEY, balance.count)
     }
 
-    override fun executeNewOperation(type: Operation.OperationType?, money: Money): Money {
+    override fun executeNewOperation(type: OperationType?, money: Money): Money {
         if (type == null) {
             throw IllegalArgumentException("Operation type can't equal null")
         }
@@ -85,17 +86,24 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper) : 
         var ub = currencyConverter.convertCurrency(getUserBalance(), defaultCurrency)
 
         when (type) {
-            Operation.OperationType.INCOME -> {
+            OperationType.INCOME -> {
                 ub.count += currencyConverter.convertCurrency(money, defaultCurrency).count
 
             }
-            Operation.OperationType.EXPENSE -> {
+            OperationType.EXPENSE -> {
                 ub.count -= currencyConverter.convertCurrency(money, defaultCurrency).count
             }
         }
 
         preferencesHelper.saveFloat(BALANCE_KEY, ub.count)
         return ub
+    }
+
+
+    override fun setBalance(money: Money) {
+        val money= currencyConverter.convertCurrency(money, defaultCurrency)
+
+        preferencesHelper.saveFloat(BALANCE_KEY, money.count)
     }
 }
 

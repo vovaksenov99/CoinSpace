@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
@@ -66,7 +67,7 @@ class StatisticsPresenter : StatisticsContract.Presenter {
         val mainCurrency = userBalanceInteractor.getUserBalance().currency
         accounts.forEach {
             it.operations.forEach {
-                if (it.type == Operation.OperationType.EXPENSE) {
+                if (it.type == OperationType.EXPENSE.toString()) {
 
                     operationSum = currencyConverter.convertCurrency(Money(it.sum,
                         getCurrencyByString(it.currency)), mainCurrency).count

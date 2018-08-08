@@ -5,6 +5,7 @@ import android.view.View
 import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.BaseContract
@@ -57,7 +58,7 @@ class HomeContract {
 
         fun resetLayout()
 
-        fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>)
+        fun setupNewOperationLayout(type: OperationType, accounts: MutableMap<Long, Account>)
 
         fun showPeriodicDialog()
     }
@@ -87,7 +88,7 @@ class HomeContract {
 
         fun newOperationRequest(operation: Operation, accountId: Int)
 
-        fun newRemoveOperationRequest(operation: Operation)
+        fun newRemoveOperationRequest(operationId: Long, accountId: Long)
 
         fun animateOperationAddButtonRequest()
 

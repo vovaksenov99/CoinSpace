@@ -78,6 +78,7 @@
     <string name="show_delay_operation">Показать отложенные операции</string>
     <string name="do_you_want_to_delete_periodic_payment">Вы действительно хотите удалить переодическую операцию?</string>
     <string name="do_you_want_to_delete_pattern">Вы действительно хотите удалить шаблон?</string>
+    <string name="do_you_want_to_delete_operation">Вы действительно хотите удалить операцию?</string>
 
     <string name="yandex">Yandex</string>
     <string name="money_tracker">Money Tracker</string>
@@ -94,5 +95,8 @@
     <string name="every_day">Каждый день</string>
     <string name="every_week">Каждую неделю</string>
     <string name="every_month">Каждый месяц</string>
+
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
 
 </resources>

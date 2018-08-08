@@ -20,6 +20,9 @@ interface PatternsDao {
     @Query("SELECT * from patterns WHERE id = :mid")
     fun getById(mid: Int): Pattern
 
+    @Query("DELETE from patterns WHERE bill = :accountId")
+    fun deleteByAccountId(accountId: Long)
+
     @Insert(onConflict = REPLACE)
     fun insert(pattern: Pattern)
 

@@ -81,6 +81,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         accounts_viewpager.adapter =
                 AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
+
         setupOperationsAdapter(accounts.flatMap { it.operations })
 
         accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
@@ -93,10 +94,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
             override fun onPageSelected(p0: Int) {
                 if (p0 == 0) {
-                    setupOperationsAdapter(accounts.flatMap { it.operations })
+                    (operation_rv.adapter as OperationAdapter).updateData(accounts.flatMap { it.operations }.toMutableList())
                     return
                 }
-                setupOperationsAdapter(accounts[p0 - 1].operations)
+                (operation_rv.adapter as OperationAdapter).updateData(accounts[p0 - 1].operations)
             }
         })
     }

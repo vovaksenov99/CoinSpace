@@ -18,7 +18,7 @@ import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
 import com.example.alexmelnikov.coinspace.model.getCategoryByString
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
+import com.example.alexmelnikov.coinspace.model.repositories.IDeferOperationsRepository
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.periodic_operation_rv_item.view.*
@@ -30,7 +30,7 @@ val PERIODIC_DIALOG_TAG = "PAYMENT_DIALOG_TAG"
 class PeriodicDialog : DialogFragment() {
 
     @Inject
-    lateinit var database: DeferOperations
+    lateinit var database: IDeferOperationsRepository
 
     lateinit var fragmentView: View
 
