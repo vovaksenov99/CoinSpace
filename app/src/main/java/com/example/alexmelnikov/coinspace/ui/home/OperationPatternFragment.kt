@@ -21,7 +21,6 @@ import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.getCategoryByString
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
-import com.example.alexmelnikov.coinspace.model.repositories.PatternRepository
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.DAY
 import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.MONTH
@@ -30,7 +29,6 @@ import com.example.alexmelnikov.coinspace.ui.home.RepeatedPeriod.WEEK
 import com.example.alexmelnikov.coinspace.ui.main.MainActivity
 import kotlinx.android.synthetic.main.fragment_operation.*
 import java.util.*
-import javax.inject.Inject
 
 class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
@@ -103,8 +101,10 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
     override fun setupNewOperationLayout(type: Operation.OperationType, accounts: List<Account>) {
         when (type) {
-            Operation.OperationType.EXPENSE -> tv_label.text = getString(R.string.label_new_expense_pattern)
-            Operation.OperationType.INCOME -> tv_label.text = getString(R.string.label_new_income_pattern)
+            Operation.OperationType.EXPENSE -> tv_label.text =
+                    getString(R.string.label_new_expense_pattern)
+            Operation.OperationType.INCOME -> tv_label.text =
+                    getString(R.string.label_new_income_pattern)
         }
 
         accounts_spinner.adapter =
@@ -146,34 +146,36 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
 
 
     override fun confirmOperationAndCloseSelf() {
+        try {
+            val account = accounts_spinner.selectedItem as Account
+            val currency = getCurrencyByString(currency_spinner.selectedItem.toString())
+            val category =
+                getCategoryByString(Category.values()[category_spinner.selectedItemPosition].toString())
 
-        val account = accounts_spinner.selectedItem as Account
-        val currency = getCurrencyByString(currency_spinner.selectedItem.toString())
-        val category =
-            getCategoryByString(Category.values()[category_spinner.selectedItemPosition].toString())
+            val pattern = Pattern(account.id!!.toInt(), null, null, currency, category)
+            presenter.addNewPattern(pattern, account)
 
-        val pattern = Pattern(account.id!!.toInt(), null, null, currency, category)
-        presenter.addNewPattern(pattern, account)
+            YoYo.with(Techniques.SlideOutUp)
+                .duration(300)
+                .withListener(object : AnimatorListenerAdapter() {
+                    override fun onAnimationCancel(animation: Animator) {
+                        super.onAnimationCancel(animation)
+                        rl_expense_card.postDelayed({
+                            presenter.detachOperationView()
+                        }, 50)
+                    }
 
-        YoYo.with(Techniques.SlideOutUp)
-            .duration(300)
-            .withListener(object : AnimatorListenerAdapter() {
-                override fun onAnimationCancel(animation: Animator) {
-                    super.onAnimationCancel(animation)
-                    rl_expense_card.postDelayed({
-                        presenter.detachOperationView()
-                    }, 50)
-                }
-
-                override fun onAnimationEnd(animation: Animator) {
-                    super.onAnimationEnd(animation)
-                    rl_expense_card.postDelayed({
-                        presenter.detachOperationView()
-                    }, 50)
-                }
-            })
-            .playOn(rl_expense_card)
-
+                    override fun onAnimationEnd(animation: Animator) {
+                        super.onAnimationEnd(animation)
+                        rl_expense_card.postDelayed({
+                            presenter.detachOperationView()
+                        }, 50)
+                    }
+                })
+                .playOn(rl_expense_card)
+        } catch (e: Exception) {
+            presenter.detachOperationView()
+        }
     }
 
 

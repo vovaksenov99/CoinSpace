@@ -107,7 +107,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         operation_rv.layoutManager = layoutManager
         operation_rv.isNestedScrollingEnabled = true
 
-        operation_rv.adapter = OperationAdapter(operations)
+        operation_rv.adapter = OperationAdapter(operations.toMutableList(),presenter)
 
         if (operations.isNotEmpty()) {
             lbl_empty_operation_history.visibility = View.INVISIBLE

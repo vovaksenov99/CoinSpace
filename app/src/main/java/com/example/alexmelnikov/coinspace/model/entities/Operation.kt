@@ -10,7 +10,7 @@ import java.util.*
  *  Operation represents financial transaction
  */
 data class Operation(val type: OperationType,
-                     val sum: Float,
+                     var sum: Float,
                      val currency: String,
                      val category: String,
                      val date: Date) {

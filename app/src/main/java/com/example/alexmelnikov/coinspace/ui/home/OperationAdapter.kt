@@ -1,6 +1,7 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
 import android.support.v7.widget.RecyclerView
+import android.text.format.DateFormat
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +19,7 @@ import kotlinx.android.synthetic.main.operation_rv_item.view.*
  * akscorp2014@gmail.com
  * web site aksenov-vladimir.herokuapp.com
  */
-class OperationAdapter(private val operations: List<Operation>) :
+class OperationAdapter(private val operations: MutableList<Operation>,val presenter: HomeContract.Presenter) :
     RecyclerView.Adapter<OperationAdapter.OperationHolder>() {
 
 
@@ -31,24 +32,31 @@ class OperationAdapter(private val operations: List<Operation>) :
         val context = parent.context
         val inflater = LayoutInflater.from(context)
         val view = inflater.inflate(R.layout.operation_rv_item, parent, false)
-        return OperationHolder(view)
+        val holder = OperationHolder(view)
+        view.setOnLongClickListener {
+            if(holder.adapterPosition !=RecyclerView.NO_POSITION)
+            {
+                holder.onLongClicked(holder.adapterPosition)
+            }
+            true
+        }
+        return holder
     }
 
     override fun onBindViewHolder(holder: OperationAdapter.OperationHolder, position: Int) {
         val operation = operations[position]
-
-        holder.sum.text = getSign(operation)+
-                Money(operation.sum, getCurrencyByString(operation.currency)).normalizeCountString()
+        normalize(operation)
+        holder.sum.text = Money(operation.sum, getCurrencyByString(operation.currency)).normalizeCountString()
         holder.currency.text = operation.currency
         holder.icon.setImageResource(getCategoryByString(operation.category).getIconResource())
-        holder.date.text = operation.date.toString()
+        holder.date.text = DateFormat.format("dd-MM-yyyy hh:mm", operation.date)
     }
 
-    fun getSign(operation: Operation): String {
-        return if (operation.type == Operation.OperationType.INCOME)
-            ""
-        else
-            "-"
+    fun normalize(operation: Operation) {
+        if (operation.type == Operation.OperationType.EXPENSE)
+            operation.sum *= -1
+
+
     }
 
     inner class OperationHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -56,6 +64,13 @@ class OperationAdapter(private val operations: List<Operation>) :
         val sum: TextView = itemView.sum as TextView
         val currency: TextView = itemView.currency as TextView
         val icon: ImageView = itemView.icon as ImageView
+
+        fun onLongClicked(position: Int)
+        {
+            operations.removeAt(position)
+            notifyItemRemoved(position)
+            presenter.newRemoveOperationRequest(operations[position])
+        }
     }
 
 }

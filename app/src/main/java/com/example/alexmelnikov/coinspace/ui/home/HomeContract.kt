@@ -87,6 +87,8 @@ class HomeContract {
 
         fun newOperationRequest(operation: Operation, accountId: Int)
 
+        fun newRemoveOperationRequest(operation: Operation)
+
         fun animateOperationAddButtonRequest()
 
         fun openSettingsActivityRequest()

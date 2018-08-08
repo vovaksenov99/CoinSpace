@@ -32,7 +32,6 @@ import javax.inject.Inject
  */
 class HomePresenter : HomeContract.Presenter {
 
-
     @Inject
     lateinit var accountsRepository: AccountsRepository
 
@@ -236,6 +235,11 @@ class HomePresenter : HomeContract.Presenter {
 
         currentNewOperation = null
     }
+
+    override fun newRemoveOperationRequest(operation: Operation) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
 
     fun newRepeatOperationRequest(sum: Float, account: Account, category: String,
                                   currency: String, repeat: Int) {

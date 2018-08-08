@@ -17,7 +17,7 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@drawable/anim_ic_add_to_check_white" />
+        app:srcCompat="@drawable/add_icon" />
 
 
 </android.support.constraint.ConstraintLayout>
