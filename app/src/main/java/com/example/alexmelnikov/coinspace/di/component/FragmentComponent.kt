@@ -1,9 +1,8 @@
 package com.example.alexmelnikov.coinspace.di.component
 
-import android.support.v4.app.DialogFragment
-import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.ui.IntroductionDialog
+import com.example.alexmelnikov.coinspace.ui.OperationSearchDialog
 import com.example.alexmelnikov.coinspace.ui.PeriodicDialog
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountFragment
@@ -33,4 +32,7 @@ interface FragmentComponent {
     fun inject(introductionDialog: IntroductionDialog)
 
     fun inject(operationPatternFragment: OperationPatternFragment)
+
+    fun inject(operationSearchDialog: OperationSearchDialog)
+
 }

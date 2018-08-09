@@ -81,9 +81,7 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
                     .duration(300)
                     .playOn(rl_expense_card)
             }, 350)
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
 
         }
 
@@ -157,7 +155,12 @@ class OperationPatternFragment : Fragment(), HomeContract.OperationView {
             val category =
                 getCategoryByString(Category.values()[category_spinner.selectedItemPosition].toString())
 
-            val pattern = Pattern(account.id!!.toInt(), null, null, currency, category)
+            val pattern = Pattern(account.id!!.toInt(),
+                null,
+                null,
+                et_desc.text.toString(),
+                currency,
+                category)
             presenter.addNewPattern(pattern, account)
 
             YoYo.with(Techniques.SlideOutUp)

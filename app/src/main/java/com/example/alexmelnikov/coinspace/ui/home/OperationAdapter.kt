@@ -13,6 +13,7 @@ import com.example.alexmelnikov.coinspace.model.entities.OperationType
 import com.example.alexmelnikov.coinspace.model.getCategoryByString
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.util.getDate
 import kotlinx.android.synthetic.main.operation_rv_item.view.*
 
 /**
@@ -55,8 +56,9 @@ class OperationAdapter(private var operations: MutableList<Operation>,
         holder.sum.text = getSign(operation) +
                 Money(operation.sum, getCurrencyByString(operation.currency)).normalizeCountString()
         holder.currency.text = operation.currency
+        holder.description.text = "${holder.itemView.context.getString(R.string.description)}: ${operation.description}"
         holder.icon.setImageResource(getCategoryByString(operation.category).getIconResource())
-        holder.date.text = operation.date
+        holder.date.text = getDate(operation.date)
     }
 
     fun getSign(operation: Operation): String {
@@ -69,18 +71,19 @@ class OperationAdapter(private var operations: MutableList<Operation>,
         val date: TextView = itemView.date as TextView
         val sum: TextView = itemView.sum as TextView
         val currency: TextView = itemView.currency as TextView
+        val description: TextView = itemView.description as TextView
         val icon: ImageView = itemView.icon as ImageView
 
         fun onLongClicked(position: Int) {
 
             val builder = android.app.AlertDialog.Builder(itemView.context)
-            builder.setMessage(itemView.context.getString(R.string.do_you_want_to_delete_pattern))
+            builder.setMessage(itemView.context.getString(R.string.do_you_want_to_delete_operation))
             builder.setPositiveButton(itemView.context.getString(R.string.yes)) { dialogInterface: DialogInterface, i: Int ->
                 val id = operations[position].id!!
                 val accountId = operations[position].accountId!!
                 presenter.newRemoveOperationRequest(id, accountId)
-                operations.removeAt(position)
                 notifyItemRemoved(position)
+                //operations.removeAt(position)
                 dialogInterface.cancel()
             }
             builder.setNegativeButton(itemView.context.getString(R.string.no)) { dialogInterface: DialogInterface, i: Int ->

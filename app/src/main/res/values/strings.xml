@@ -71,7 +71,7 @@
     <string name="accounts_fragment_title">Счета</string>
     <string name="statistics_fragment_title">Статистика</string>
     <string name="expenses_pie_chart_lbl">Расходы по категориям</string>
-    <string name="next_repeat">Повторяется каждые </string>
+    <string name="next_repeat">Повторяется </string>
     <string name="days">Дней</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
@@ -80,7 +80,6 @@
     <string name="do_you_want_to_delete_pattern">Вы действительно хотите удалить шаблон?</string>
     <string name="do_you_want_to_delete_operation">Вы действительно хотите удалить операцию?</string>
 
-    <string name="yandex">Yandex</string>
     <string name="money_tracker">Money Tracker</string>
 
     <string name="introduce_message">Добро пожаловать</string>
@@ -92,11 +91,20 @@
 
 
     <string name="none">Нет</string>
-    <string name="every_day">Каждый день</string>
-    <string name="every_week">Каждую неделю</string>
-    <string name="every_month">Каждый месяц</string>
+    <string name="every_day">каждый день</string>
+    <string name="every_week">каждую неделю</string>
+    <string name="every_month">каждый месяц</string>
 
     <string name="delete">Удалить</string>
     <string name="edit">Редактировать</string>
+    <string name="patterns">Шаблоны</string>
+
+    <string name="yandex">Yandex</string>
+    <string name="description">Описание</string>
+    <string name="select_dated">Выберите даты</string>
+    <string name="periodic_operations">Периодические операции</string>
+    <string name="periodic_operations_empty">Нет переодических операций</string>
+    <string name="search_by_description">Поиск по описанию</string>
+
 
 </resources>

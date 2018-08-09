@@ -1,6 +1,5 @@
 package com.example.alexmelnikov.coinspace.ui.home
 
-import android.content.Context
 import android.view.View
 import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.entities.Account
@@ -83,7 +82,8 @@ class HomeContract {
 
         fun clearButtonClick()
 
-        fun newOperationRequest(sum: Float, account: Account, category: String, currency: String,
+        fun newOperationRequest(sum: Float, account: Account, category: String, description: String,
+                                currency: String,
                                 repeat: Int)
 
         fun newOperationRequest(operation: Operation, accountId: Int)

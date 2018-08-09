@@ -1,8 +1,8 @@
 package com.example.alexmelnikov.coinspace.ui.statistics
 
+import android.app.DatePickerDialog
 import android.content.Context
 import android.graphics.Color
-import android.graphics.Typeface
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat
@@ -10,6 +10,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
 import com.example.alexmelnikov.coinspace.BaseApp
@@ -22,6 +23,8 @@ import com.github.mikephil.charting.components.Legend
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import kotlinx.android.synthetic.main.fragment_statistics.*
+import java.text.SimpleDateFormat
+import java.util.*
 import javax.inject.Inject
 
 
@@ -30,11 +33,22 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
     @Inject
     override lateinit var presenter: StatisticsContract.Presenter
 
+    lateinit var fromCalendar: Calendar
+    lateinit var toCalendar: Calendar
+
     override fun onAttach(context: Context?) {
         super.onAttach(context)
         DaggerFragmentComponent.builder()
             .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
             .inject(this)
+    }
+
+    override fun getFromDate(): Calendar {
+        return fromCalendar
+    }
+
+    override fun getToDate(): Calendar {
+        return toCalendar
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -45,6 +59,25 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
             .create(this, container)
             .start(root)
         return root
+    }
+
+    fun initChart() {
+        //Setup chart
+        expenses_by_category_chart.centerText = resources.getString(R.string.expenses_pie_chart_lbl)
+        expenses_by_category_chart.setUsePercentValues(false)
+        expenses_by_category_chart.description.isEnabled = false
+
+        expenses_by_category_chart.setDrawEntryLabels(false)
+
+        val l = expenses_by_category_chart.legend
+        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
+        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
+        l.orientation = Legend.LegendOrientation.VERTICAL
+        l.setDrawInside(false)
+        l.yOffset = 30f
+
+        presenter.chartDataRequest()
+
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -60,19 +93,9 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
                 ContextCompat.getDrawable(activity!!, R.drawable.ic_arrow_back_white_24dp)
         statistics_toolbar.setNavigationOnClickListener { (activity as MainActivity).onBackPressed() }
 
-        //Setup chart
-        expenses_by_category_chart.centerText = resources.getString(R.string.expenses_pie_chart_lbl)
-        expenses_by_category_chart.setUsePercentValues(false)
-        expenses_by_category_chart.description.isEnabled = false
+        startDateButtonsInit()
 
-        expenses_by_category_chart.setDrawEntryLabels(false)
-
-        val l = expenses_by_category_chart.legend
-        l.verticalAlignment = Legend.LegendVerticalAlignment.BOTTOM
-        l.horizontalAlignment = Legend.LegendHorizontalAlignment.CENTER
-        l.orientation = Legend.LegendOrientation.VERTICAL
-        l.setDrawInside(false)
-        l.yOffset = 30f
+        initChart()
 
         view.postDelayed({
             try {
@@ -85,7 +108,55 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
             }
         }, 370)
 
-        presenter.chartDataRequest()
+    }
+
+    fun startDateButtonsInit() {
+        val calendar = Calendar.getInstance()
+        toCalendar = calendar.clone() as Calendar
+        val format = SimpleDateFormat("dd MMMM yyyy")
+        to.text = format.format(calendar.time)
+
+        calendar.add(Calendar.MONTH, -1)
+
+        fromCalendar = calendar
+
+        from.text = format.format(calendar.time)
+
+        from.setOnClickListener {
+            showDatePicker(from)
+        }
+
+        to.setOnClickListener {
+            showDatePicker(to)
+        }
+    }
+
+    private fun showDatePicker(btn: Button) {
+        var calendar = Calendar.getInstance()
+
+        when (btn.id) {
+            R.id.from -> calendar = fromCalendar
+            R.id.to -> calendar = toCalendar
+        }
+
+        val myCallBack = DatePickerDialog.OnDateSetListener { _, year, month, dayOfMonth ->
+            calendar.set(year, month, dayOfMonth)
+            val format = SimpleDateFormat("dd MMMM yyyy")
+            btn.text = format.format(calendar.time)
+            when (btn.id) {
+                R.id.from -> fromCalendar = calendar
+                R.id.to -> toCalendar = calendar
+            }
+            initChart()
+        }
+
+        val tpd = DatePickerDialog(context,
+            myCallBack,
+            calendar.get(Calendar.YEAR),
+            calendar.get(Calendar.MONTH),
+            calendar.get(Calendar.DAY_OF_MONTH))
+
+        tpd.show()
     }
 
 
@@ -107,9 +178,7 @@ class StatisticsFragment : Fragment(), StatisticsContract.View {
             data.setValueTextColor(Color.WHITE)
             expenses_by_category_chart.data = data
             expenses_by_category_chart.invalidate()
-        }
-        catch (e: Exception)
-        {
+        } catch (e: Exception) {
 
         }
     }

@@ -190,9 +190,12 @@ class HomePresenter : HomeContract.Presenter {
             account.balance = currencyConverter.convertCurrency(accountMoney,
                 getCurrencyByString(account.currency)).count
 
+            accountsRepository.updateAccountOfflineAsync(account)
+
             userBalance =
                     userBalanceInteractor.executeNewOperation(type, money)
             updateTextViews()
+
             updateAccountItemOnPagerView(account)
             currentNewOperation = null
         }
@@ -200,20 +203,22 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     override fun newOperationRequest(sum: Float, account: Account, category: String,
+                                     description: String,
                                      currency: String, repeat: Int) {
         if (repeat != NONE) {
             if (currentNewOperation == OperationType.INCOME)
-                newRepeatOperationRequest(sum, account, category, currency, repeat)
+                newRepeatOperationRequest(sum, account, category, description, currency, repeat)
             else
-                newRepeatOperationRequest(-sum, account, category, currency, repeat)
+                newRepeatOperationRequest(-sum, account, category, description, currency, repeat)
         }
         val operation = Operation(currentNewOperation!!.toString(),
             sum,
             currency,
+            description,
             category,
             account.id,
             null,
-            Date().toString())
+            Date().time)
 
         operationsRepository.insertOperation(operation) {
             operation.id = it
@@ -249,15 +254,36 @@ class HomePresenter : HomeContract.Presenter {
 
         for (operation in accounts[accountId]!!.operations) {
             if (operation.id == operationId) {
+                val m = currencyConverter.convertCurrency(Money(operation.sum,
+                    getCurrencyByString(operation.currency)), defaultCurrency)
+                if (operation.type == OperationType.EXPENSE.toString()) {
+                    accounts[accountId]!!.balance += m.count
+                    userBalanceInteractor.executeNewOperation(OperationType.INCOME, m)
+                    userBalance.count += m.count
+                }
+                else {
+                    accounts[accountId]!!.balance -= m.count
+                    userBalanceInteractor.executeNewOperation(OperationType.EXPENSE, m)
+                    userBalance.count -= m.count
+                }
+
+                accountsRepository.updateAccountOfflineAsync(accounts[accountId]!!)
+
+
                 accounts[accountId]!!.operations.remove(operation)
+
+                updateTextViews()
+                updateAccountItemOnPagerView(accounts[accountId]!!)
                 break
             }
         }
+
+        initOperationsRV(accounts[accountId]!!.operations)
     }
 
 
     fun newRepeatOperationRequest(sum: Float, account: Account, category: String,
-                                  currency: String, repeat: Int) {
+                                  description: String, currency: String, repeat: Int) {
         Log.d("mytag", "new operation:\n" +
                 "account.name = ${account.name}\ncategory = $category\ncurrency = $currency")
 
@@ -275,7 +301,7 @@ class HomePresenter : HomeContract.Presenter {
         val nextRepeatYear = calendar.get(Calendar.YEAR)
 
         val operation = DeferOperation(null,
-            "",
+            description,
             nextRepeatDay,
             currency,
             account.id!!,

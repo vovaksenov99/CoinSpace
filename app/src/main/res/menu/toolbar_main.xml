@@ -14,12 +14,6 @@
         android:icon="@drawable/ic_account_balance_wallet_white_24dp"
         app:showAsAction="always" />
 
-    <item android:id="@+id/settings"
-        android:title="@string/pref_settings"
-        android:orderInCategory="100"
-        android:icon="@drawable/ic_settings_white_24dp"
-        app:showAsAction="never" />
-
     <item android:id="@+id/about"
         android:title="@string/pref_about"
         android:orderInCategory="100"

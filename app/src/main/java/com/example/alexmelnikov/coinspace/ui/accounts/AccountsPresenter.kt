@@ -69,18 +69,15 @@ class AccountsPresenter : AccountsContract.Presenter {
     override fun removeAccount(account: Account) {
         var money = Money(account.balance, getCurrencyByString(account.currency))
         money = currencyConverter.convertCurrency(money, defaultCurrency)
-        if (account.balance < 0) {
+        money = Money(balanceInteractor.getUserBalance().count - money.count, defaultCurrency).copy()
+        Log.i("Updated balance request", "${money}")
 
-            balanceInteractor.setBalance(Money(balanceInteractor.getUserBalance().count - money.count,
-                defaultCurrency))
-        }
-        else {
-            balanceInteractor.setBalance(Money(balanceInteractor.getUserBalance().count + money.count,
-                defaultCurrency))
-        }
+        balanceInteractor.setBalance(money)
+
         val id = account.id!!
         patternsRepository.removePatternByAccountId(id)
-        defererOperationsRepository.removeOperationByAccountId(id)
+        defererOperationsRepository.removeOperationsByAccountId(id)
+        operationsRepository.removeOperationsByAccountId(id)
         accountsRepository.removeByAccountId(id)
     }
 }

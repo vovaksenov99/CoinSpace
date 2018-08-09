@@ -2,6 +2,7 @@ package com.example.alexmelnikov.coinspace.model.interactors
 
 import android.content.Context
 import android.content.SharedPreferences
+import android.util.Log
 import com.example.alexmelnikov.coinspace.model.workers.CurrenciesRateWorker
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.model.Currency
@@ -96,13 +97,14 @@ class UserBalanceInteractor(private val preferencesHelper: PreferencesHelper) : 
         }
 
         preferencesHelper.saveFloat(BALANCE_KEY, ub.count)
+
         return ub
     }
 
 
     override fun setBalance(money: Money) {
         val money= currencyConverter.convertCurrency(money, defaultCurrency)
-
+        Log.i("Updated balance","$money")
         preferencesHelper.saveFloat(BALANCE_KEY, money.count)
     }
 }

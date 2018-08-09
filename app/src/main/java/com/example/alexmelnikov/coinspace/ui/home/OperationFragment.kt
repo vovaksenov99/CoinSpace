@@ -9,9 +9,11 @@ import android.support.v4.app.Fragment
 import android.support.v7.app.AlertDialog
 import android.text.Editable
 import android.text.TextWatcher
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.WindowManager
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import com.daimajia.androidanimations.library.Techniques
@@ -169,6 +171,21 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
         presenter.detachOperationView()
     }
 
+    private fun hideKeyboard() {
+        activity?.let {
+
+            try {
+                it.currentFocus.clearFocus()
+                activity!!.window.setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN)
+
+                activity!!.window.setFlags(WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM,
+                    WindowManager.LayoutParams.FLAG_ALT_FOCUSABLE_IM)
+            } catch (e: Exception) {
+                Log.e(::OperationFragment.name, e.toString())
+            }
+
+        }
+    }
     /**
      * If user input is suitable, animate operation card sliding out
      * and call popbackstack when animation ends or canceled
@@ -186,6 +203,7 @@ class OperationFragment : Fragment(), HomeContract.OperationView {
                 presenter.newOperationRequest(et_sum.text.toString().trim().toFloat(),
                     accounts_spinner.selectedItem as Account,
                     Category.values()[category_spinner.selectedItemPosition].toString(),
+                    et_desc.text.toString(),
                     currency_spinner.selectedItem.toString(),
                     selectedRepeat)
 

@@ -2,6 +2,7 @@ package com.example.alexmelnikov.coinspace.ui.statistics
 
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 import com.github.mikephil.charting.data.PieDataSet
+import java.util.*
 
 class StatisticsContract {
 
@@ -10,6 +11,10 @@ class StatisticsContract {
         var presenter: StatisticsContract.Presenter
 
         fun setupChartData(dataSet: PieDataSet)
+
+        fun getFromDate(): Calendar
+
+        fun getToDate(): Calendar
 
     }
 

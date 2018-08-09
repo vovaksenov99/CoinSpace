@@ -80,13 +80,14 @@ class PeriodicOperationsWorker : Worker() {
                     newOperationRequest(operation.moneyCount,
                         account,
                         operation.category,
+                        operation.description,
                         operation.currency)
                 }, { Log.w("Test", it) })
         }
     }
 
 
-    private fun newOperationRequest(sum: Float, account: Account, category: String,
+    private fun newOperationRequest(sum: Float, account: Account, category: String,description:String,
                                     currency: String) {
         var type = OperationType.INCOME
         if (sum < 0) {
@@ -94,7 +95,7 @@ class PeriodicOperationsWorker : Worker() {
         }
 
         //Create operation and add it to accountOperationsList
-        val operation = Operation(type.toString(), sum, currency, category, account.id, null,Date().toString())
+        val operation = Operation(type.toString(), sum, currency,description, category, account.id, null,Date().time)
         val updatedAccountOperations: ArrayList<Operation> = ArrayList(account.operations)
         updatedAccountOperations.add(operation)
         account.operations = updatedAccountOperations

@@ -13,8 +13,7 @@
         android:theme="@style/AppTheme"
         app:elevation="6dp">
 
-        <android.support.v7.widget.Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
+        <android.support.v7.widget.Toolbar
             android:id="@+id/statistics_toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -23,13 +22,61 @@
 
         </android.support.v7.widget.Toolbar>
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/select_dated"
+            android:textColor="@color/toolbarIconsColor"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button"
+                android:elevation="2dp"
+                android:text="Button"
+                android:textColor="@color/toolbarIconsColor" />
+
+            <Button
+                android:id="@+id/to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button"
+                android:elevation="2dp"
+                android:text="Button"
+                android:textColor="@color/toolbarIconsColor" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="1"
+            android:background="@color/yandex_yellow" />
     </android.support.design.widget.AppBarLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/chart_container"
         android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="25dp"
+        android:layout_marginTop="8dp"
         android:background="@color/white"
         android:elevation="4dp"
         android:padding="20dp"

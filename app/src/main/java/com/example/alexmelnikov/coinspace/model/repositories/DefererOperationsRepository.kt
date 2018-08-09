@@ -19,13 +19,13 @@ class IDeferOperationsRepositoryRepository(private val deferOperationsDao: Defer
         }
     }
 
-    override fun removeOperationByAccountId(accountId: Long) {
+    override fun removeOperationsByAccountId(accountId: Long) {
         Completable.fromAction {
             deferOperationsDao.deleteByAccountId(accountId)
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d(TAG, "adremoveOperationByAccountId success") },
-                { Log.d(TAG, "removeOperationByAccountId error!") })
+                { Log.d(TAG, "removeOperationsByAccountId error!") })
     }
 
     override fun addNewOperation(deferOperation: DeferOperation) {

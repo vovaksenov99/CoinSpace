@@ -31,6 +31,9 @@ interface OperationsDao {
     @Query("DELETE from operations WHERE id = :id")
     fun deleteById(id: Long)
 
+    @Query("DELETE from operations WHERE accountId = :accountId")
+    fun deleteByAccountId(accountId: Long)
+
 
     @Update
     fun updateAccounts(vararg operation: Operation)

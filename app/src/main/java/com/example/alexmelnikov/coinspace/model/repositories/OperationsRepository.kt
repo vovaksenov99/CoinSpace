@@ -26,6 +26,17 @@ class OperationsRepository(val operationsDao: OperationsDao) : IOperationsReposi
                 { Log.d("OperationsRepository", "deleteAll error!") })
     }
 
+    override fun removeOperationsByAccountId(accountId: Long) {
+        Completable.fromAction {
+            operationsDao.deleteByAccountId(accountId)
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({
+                Log.d("OperationsRepository", "removeOperationsByAccountId success")
+            },
+                { Log.d("OperationsRepository", "removeOperationsByAccountId error!") })
+    }
+
     override fun removeOperation(operationId: Long) {
         Completable.fromAction {
             operationsDao.deleteById(operationId)

@@ -59,7 +59,8 @@ class PatternsAdapter(private val mContext: Context,
                 val operation = Operation(type.toString(),
                     view.sum.text.toString().toFloat(),
                     pattern.currency.toString(),
-                    category, pattern.bill.toLong(), null, date.toString())
+                    pattern.description,
+                    category, pattern.bill.toLong(), null, date.time)
 
                 presenter.newOperationRequest(operation, pattern.bill)
             }

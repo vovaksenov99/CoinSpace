@@ -215,8 +215,26 @@
                     android:layout_marginTop="2dp"
                     android:gravity="center" />
 
-            </LinearLayout>
+                <android.support.design.widget.TextInputLayout
+                    android:id="@+id/input_layout_desc"
+                    style="@style/Widget.CoinSpace.TextInputLayout"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
 
+                    android:layout_weight="1"
+                    android:hint="@string/description">
+
+                    <EditText
+                        android:id="@+id/et_desc"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text|textAutoCorrect|textAutoComplete"
+                        android:maxLength="13"
+                        android:maxLines="1"
+                        android:textSize="18sp" />
+                </android.support.design.widget.TextInputLayout>
+
+            </LinearLayout>
 
         </RelativeLayout>
     </android.support.constraint.ConstraintLayout>

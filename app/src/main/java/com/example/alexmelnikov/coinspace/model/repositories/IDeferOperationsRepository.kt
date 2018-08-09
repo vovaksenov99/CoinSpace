@@ -17,7 +17,7 @@ interface IDeferOperationsRepository{
 
     fun removeOperation(deferOperation: DeferOperation)
 
-    fun removeOperationByAccountId(accountId: Long)
+    fun removeOperationsByAccountId(accountId: Long)
 
     fun removeAllOperation()
 

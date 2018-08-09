@@ -61,8 +61,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         (activity as MainActivity).setSupportActionBar(home_toolbar)
         setHasOptionsMenu(true)
 
-
-
     }
 
     override fun onStart() {
@@ -79,7 +77,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun setupViewPager(balance: Money, accounts: List<Account>) {
         accounts_viewpager.adapter =
-                AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
+                AccountsPagerAdapter(activity as MainActivity,
+                    balance,
+                    ArrayList(accounts),
+                    presenter)
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
 
         setupOperationsAdapter(accounts.flatMap { it.operations })
@@ -108,7 +109,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         operation_rv.layoutManager = layoutManager
         operation_rv.isNestedScrollingEnabled = true
 
-        operation_rv.adapter = OperationAdapter(operations.toMutableList(),presenter)
+        operation_rv.adapter = OperationAdapter(operations.toMutableList(), presenter)
 
         if (operations.isNotEmpty()) {
             lbl_empty_operation_history.visibility = View.INVISIBLE
@@ -150,7 +151,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun closeOperationFragment() {
         val fragment = fragmentManager?.findFragmentById(R.id.actionFrame)
         try {
-            if (fragment != null && fragment is  HomeContract.OperationView) {
+            if (fragment != null && fragment is HomeContract.OperationView) {
                 fragmentManager?.beginTransaction()
                     ?.remove(fragment)
                     ?.commit()
@@ -193,10 +194,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.settings -> {
-                presenter.openSettingsActivityRequest()
-                return true
-            }
             R.id.about -> {
                 presenter.showAboutDialogRequest()
                 return true
@@ -243,9 +240,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     companion object {
-
         fun newInstance() = HomeFragment()
-
     }
 
 }

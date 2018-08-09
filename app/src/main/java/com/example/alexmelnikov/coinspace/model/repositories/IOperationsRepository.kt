@@ -18,5 +18,8 @@ interface IOperationsRepository {
 
     fun getOperationByAccountId(accountId: Long): Single<List<Operation>>
 
+    fun removeOperationsByAccountId(accountId: Long)
+
+
     fun insertOperation(operation: Operation, callback: (id: Long)->Unit = {})
 }
