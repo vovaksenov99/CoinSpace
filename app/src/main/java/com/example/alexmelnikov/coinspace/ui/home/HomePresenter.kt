@@ -95,7 +95,6 @@ class HomePresenter : HomeContract.Presenter {
     }
 
     private fun handleSuccessAccountsRequest(accounts: List<Account>) {
-
         for (account in accounts) {
             this.accounts[account.id!!] = account
         }
@@ -106,6 +105,7 @@ class HomePresenter : HomeContract.Presenter {
         for (account in accounts) {
             operations.addAll(account.operations)
         }
+
         initOperationsRV(operations)
     }
 
@@ -172,6 +172,7 @@ class HomePresenter : HomeContract.Presenter {
             val money = currencyConverter.convertCurrency(Money(operation.sum,
                 getCurrencyByString(operation.currency)),
                 defaultCurrency)
+
             val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
                 getCurrencyByString(account.currency)),
                 defaultCurrency)
@@ -182,23 +183,44 @@ class HomePresenter : HomeContract.Presenter {
                 else
                     OperationType.EXPENSE
 
-            if (type == OperationType.INCOME)
+            if (type == OperationType.INCOME) {
                 accountMoney.count += money.count
-            else
+                userBalance.count += money.count
+            }
+            else {
                 accountMoney.count -= money.count
+                userBalance.count -= money.count
+            }
 
             account.balance = currencyConverter.convertCurrency(accountMoney,
                 getCurrencyByString(account.currency)).count
 
             accountsRepository.updateAccountOfflineAsync(account)
 
-            userBalance =
-                    userBalanceInteractor.executeNewOperation(type, money)
-            updateTextViews()
+            userBalanceInteractor.executeNewOperation(type, money)
 
-            updateAccountItemOnPagerView(account)
             currentNewOperation = null
+
+            updateUIAfterRequest()
         }
+
+    }
+
+    fun updateUIAfterRequest() {
+        val accs = accounts.toList().map { it.second }
+
+        val pos = mHomeView.getViewPagerPosition()
+        if (pos == 0) {
+            val operations = mutableListOf<Operation>()
+            for (account in accs)
+                operations.addAll(account.operations)
+            initOperationsRV(operations)
+        }
+        else {
+            initOperationsRV(accs[pos - 1].operations)
+        }
+
+        mHomeView.setupViewPager(userBalance, accs, pos)
 
     }
 
@@ -211,6 +233,7 @@ class HomePresenter : HomeContract.Presenter {
             else
                 newRepeatOperationRequest(-sum, account, category, description, currency, repeat)
         }
+
         val operation = Operation(currentNewOperation!!.toString(),
             sum,
             currency,
@@ -220,33 +243,7 @@ class HomePresenter : HomeContract.Presenter {
             null,
             Date().time)
 
-        operationsRepository.insertOperation(operation) {
-            operation.id = it
-            account.operations.add(operation)
-
-            val money = currencyConverter.convertCurrency(Money(sum, getCurrencyByString(currency)),
-                defaultCurrency)
-            val accountMoney = currencyConverter.convertCurrency(Money(account.balance,
-                getCurrencyByString(account.currency)),
-                defaultCurrency)
-
-            if (currentNewOperation == OperationType.INCOME)
-                accountMoney.count += money.count
-            else
-                accountMoney.count -= money.count
-
-            account.balance = currencyConverter.convertCurrency(accountMoney,
-                getCurrencyByString(account.currency)).count
-            accountsRepository.updateAccountOfflineAsync(account)
-            operationsRepository.insertOperation(operation)
-
-            userBalance =
-                    userBalanceInteractor.executeNewOperation(currentNewOperation, money)
-            updateTextViews()
-            updateAccountItemOnPagerView(account)
-            currentNewOperation = null
-        }
-
+        newOperationRequest(operation, account.id!!.toInt())
     }
 
     override fun newRemoveOperationRequest(operationId: Long, accountId: Long) {
@@ -256,6 +253,7 @@ class HomePresenter : HomeContract.Presenter {
             if (operation.id == operationId) {
                 val m = currencyConverter.convertCurrency(Money(operation.sum,
                     getCurrencyByString(operation.currency)), defaultCurrency)
+
                 if (operation.type == OperationType.EXPENSE.toString()) {
                     accounts[accountId]!!.balance += m.count
                     userBalanceInteractor.executeNewOperation(OperationType.INCOME, m)
@@ -267,18 +265,14 @@ class HomePresenter : HomeContract.Presenter {
                     userBalance.count -= m.count
                 }
 
-                accountsRepository.updateAccountOfflineAsync(accounts[accountId]!!)
-
-
                 accounts[accountId]!!.operations.remove(operation)
 
-                updateTextViews()
-                updateAccountItemOnPagerView(accounts[accountId]!!)
+                accountsRepository.updateAccountOfflineAsync(accounts[accountId]!!.copy())
+
+                updateUIAfterRequest()
                 break
             }
         }
-
-        initOperationsRV(accounts[accountId]!!.operations)
     }
 
 

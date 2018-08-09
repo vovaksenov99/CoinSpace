@@ -32,16 +32,13 @@ class AccountsAdapter(private val context: Context,
             var dialog: AlertDialog? = null
             val builder = AlertDialog.Builder(context)
             val animals =
-                arrayOf(context.getString(R.string.delete), context.getString(R.string.edit))
+                arrayOf(context.getString(R.string.delete))
             builder.setItems(animals) { _, which ->
                 when (which) {
                     0 -> {
                         presenter.removeAccount(accounts[position])
                         accounts.removeAt(position)
                         notifyItemRemoved(position)
-                    }
-                    1 -> {
-                        dialog!!.setView(LayoutInflater.from(context).inflate(R.layout.fragment_operation_pattern,null))
                     }
                 }
             }

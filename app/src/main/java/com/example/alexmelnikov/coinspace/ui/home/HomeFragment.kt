@@ -32,7 +32,6 @@ import javax.inject.Inject
 
 class HomeFragment : Fragment(), HomeContract.HomeView {
 
-
     @Inject
     override lateinit var presenter: HomeContract.Presenter
 
@@ -43,6 +42,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         DaggerFragmentComponent.builder()
             .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
             .inject(this)
+    }
+
+    override fun getViewPagerPosition(): Int {
+        return accounts_viewpager.currentItem
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
@@ -75,7 +78,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun setupViewPager(balance: Money, accounts: List<Account>) {
+    override fun setupViewPager(balance: Money, accounts: List<Account>, startPage: Int) {
         accounts_viewpager.adapter =
                 AccountsPagerAdapter(activity as MainActivity,
                     balance,
@@ -83,7 +86,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
                     presenter)
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
 
-        setupOperationsAdapter(accounts.flatMap { it.operations })
+        accounts_viewpager.currentItem = startPage
 
         accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {

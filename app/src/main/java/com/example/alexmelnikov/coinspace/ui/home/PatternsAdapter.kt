@@ -49,9 +49,6 @@ class PatternsAdapter(private val mContext: Context,
 
                 val category = pattern.category.toString()
                 val calendar = Calendar.getInstance()
-                val date = Date(calendar.get(Calendar.YEAR),
-                    calendar.get(Calendar.MONTH),
-                    calendar.get(Calendar.DAY_OF_MONTH))
                 if (view.sum.text.toString().toFloatOrNull() == null) {
                     view.sum.error = itemView.context.getString(R.string.empty_sum_error)
                     return@setPositiveButton
@@ -60,9 +57,10 @@ class PatternsAdapter(private val mContext: Context,
                     view.sum.text.toString().toFloat(),
                     pattern.currency.toString(),
                     pattern.description,
-                    category, pattern.bill.toLong(), null, date.time)
+                    category, pattern.bill.toLong(), null, Calendar.getInstance().time.time)
 
                 presenter.newOperationRequest(operation, pattern.bill)
+                dialogInterface.cancel()
             }
             builder.setNegativeButton(itemView.context.getString(R.string.no)) { dialogInterface: DialogInterface, i: Int ->
                 dialogInterface.cancel()

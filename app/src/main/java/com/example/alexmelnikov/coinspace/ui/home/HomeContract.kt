@@ -25,13 +25,15 @@ class HomeContract {
 
         fun updateAccountItemPagerView(account: Account)
 
-        fun setupViewPager(balance: Money, accounts: List<Account>)
+        fun setupViewPager(balance: Money, accounts: List<Account>, startPage:Int = 0)
 
         fun animateNewOperationButtonToCheck()
 
         fun animateNewOperationButtonToAdd()
 
         fun openSettingsActivity()
+
+        fun getViewPagerPosition(): Int
 
         fun openAccountsFragmentRequest()
 

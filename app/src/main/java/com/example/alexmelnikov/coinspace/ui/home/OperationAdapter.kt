@@ -79,11 +79,17 @@ class OperationAdapter(private var operations: MutableList<Operation>,
             val builder = android.app.AlertDialog.Builder(itemView.context)
             builder.setMessage(itemView.context.getString(R.string.do_you_want_to_delete_operation))
             builder.setPositiveButton(itemView.context.getString(R.string.yes)) { dialogInterface: DialogInterface, i: Int ->
-                val id = operations[position].id!!
-                val accountId = operations[position].accountId!!
-                presenter.newRemoveOperationRequest(id, accountId)
-                notifyItemRemoved(position)
-                //operations.removeAt(position)
+                try {
+                    val op = operations[position].copy()
+                    val id = op.id!!
+                    val accountId = op.accountId!!
+                    presenter.newRemoveOperationRequest(id, accountId)
+                    notifyItemRemoved(position)
+                    operations.removeAt(position)
+                }
+                catch (e:Exception) {
+                    //??
+                }
                 dialogInterface.cancel()
             }
             builder.setNegativeButton(itemView.context.getString(R.string.no)) { dialogInterface: DialogInterface, i: Int ->
