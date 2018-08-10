@@ -234,12 +234,18 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun initPatternsRv(patterns: List<Pattern>) {
-        val layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
-        patterns_rv.setHasFixedSize(true)
-        patterns_rv.layoutManager = layoutManager
-        patterns_rv.isNestedScrollingEnabled = true
+        try {
+            val layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            patterns_rv.setHasFixedSize(true)
+            patterns_rv.layoutManager = layoutManager
+            patterns_rv.isNestedScrollingEnabled = true
 
-        patterns_rv.adapter = PatternsAdapter(context!!, presenter, patterns.toMutableList())
+            patterns_rv.adapter = PatternsAdapter(context!!, presenter, patterns.toMutableList())
+        }
+        catch (e:Exception)
+        {
+            Log.i("",e.toString())
+        }
     }
 
     companion object {

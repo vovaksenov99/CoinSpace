@@ -28,7 +28,7 @@ class MainActivity : AppCompatActivity(), MainContract.View {
     lateinit var presenter: MainContract.Presenter
 
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    public override fun onCreate(savedInstanceState: Bundle?) {
         DaggerActivityComponent.builder().build().inject(this)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)

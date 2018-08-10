@@ -10,6 +10,7 @@ import dagger.Provides
 @Module
 class ActivityModule {
 
+
     @Provides
     fun provideMainPresenter(): MainContract.Presenter = MainPresenter()
 

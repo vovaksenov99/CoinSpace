@@ -75,7 +75,7 @@ class InstrumentedDatabaseTests {
             "USD",
             InstrumentationRegistry.getTargetContext().getString(
                 Category.FOOD.getStringResource()),
-            Date(1533475542852)),
+            Calendar.getInstance().time.time),
             Operation(OperationType.EXPENSE,
                 123f,
                 "EUR",
@@ -96,7 +96,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldReturnAccountById() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountById(0).subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -109,7 +109,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldReturnNullByNoneId() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountById(-1).subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -119,7 +119,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldFindAccountByName() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountByName("Account1").subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -131,7 +131,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldFindAccountByNoneName() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountByName(" ").subscribeOn(Schedulers.io())
             .subscribe({ account ->

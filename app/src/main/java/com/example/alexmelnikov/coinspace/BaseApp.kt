@@ -32,8 +32,6 @@ class BaseApp : Application() {
         //Init UserBalanceInteractor
         userBalanceInteractor.initCurrencyRates(applicationContext, {})
 
-
-
         //Init Hawk
         val exceptionCatcher = HawkExceptionCatcher(this, HAWK_TOKEN)
         try {
