@@ -3,41 +3,88 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@color/colorPrimaryLight">
+    android:layout_height="match_parent">
 
     <android.support.design.widget.AppBarLayout
         android:id="@+id/statistics_appbar_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:elevation="6dp"
         android:fitsSystemWindows="true"
-        android:theme="@style/AppTheme">
+        android:theme="@style/AppTheme"
+        app:elevation="6dp">
 
         <android.support.v7.widget.Toolbar
             android:id="@+id/statistics_toolbar"
-            xmlns:android="http://schemas.android.com/apk/res/android"
-            xmlns:app="http://schemas.android.com/apk/res-auto"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            app:titleTextColor="@color/colorWhite">
+            app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>
 
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/select_dated"
+            android:textColor="@color/toolbarIconsColor"
+            android:textSize="18sp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:orientation="horizontal"
+            android:padding="10dp">
+
+            <Button
+                android:id="@+id/from"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button"
+                android:elevation="2dp"
+                android:text="Button"
+                android:textColor="@color/toolbarIconsColor" />
+
+            <Button
+                android:id="@+id/to"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="2dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_button"
+                android:elevation="2dp"
+                android:text="Button"
+                android:textColor="@color/toolbarIconsColor" />
+
+        </LinearLayout>
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:layout_weight="1"
+            android:background="@color/yandex_yellow" />
     </android.support.design.widget.AppBarLayout>
+
+
 
     <RelativeLayout
         android:id="@+id/chart_container"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:layout_margin="25dp"
-        android:padding="20dp"
-        app:layout_constraintTop_toBottomOf="@+id/statistics_appbar_layout"
-        app:layout_constraintBottom_toBottomOf="parent"
+        android:layout_marginTop="8dp"
+        android:background="@color/white"
         android:elevation="4dp"
+        android:padding="20dp"
         android:visibility="gone"
-        android:background="@color/colorWhite">
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/statistics_appbar_layout">
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/expenses_by_category_chart"

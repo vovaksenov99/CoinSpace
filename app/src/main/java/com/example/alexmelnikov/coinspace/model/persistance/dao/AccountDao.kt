@@ -28,6 +28,9 @@ interface AccountDao {
     @Query("DELETE from accounts")
     fun deleteAll()
 
+    @Query("DELETE from accounts WHERE id = :id")
+    fun deleteByAccountId(id: Long)
+
     @Update
     fun updateAccounts(vararg account: Account)
 

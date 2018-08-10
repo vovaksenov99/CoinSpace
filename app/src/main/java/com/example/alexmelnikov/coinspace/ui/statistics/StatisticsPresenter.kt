@@ -3,7 +3,8 @@ package com.example.alexmelnikov.coinspace.ui.statistics
 import android.util.Log
 import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.entities.Account
-import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
+import com.example.alexmelnikov.coinspace.model.getCategoryByString
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
@@ -66,30 +67,37 @@ class StatisticsPresenter : StatisticsContract.Presenter {
         val mainCurrency = userBalanceInteractor.getUserBalance().currency
         accounts.forEach {
             it.operations.forEach {
-                if (it.type == Operation.OperationType.EXPENSE) {
 
-                    operationSum = currencyConverter.convertCurrency(Money(it.sum,
-                        getCurrencyByString(it.currency)), mainCurrency).count
+                val from = view.getFromDate().time.time
+                val to = view.getToDate().time.time
 
-                    overallSum += operationSum
+                if (it.date in from..to) {
+                    if (it.type == OperationType.EXPENSE.toString()) {
 
-                    if (!categorySums.contains(it.category)) {
-                        categorySums[it.category] = operationSum
-                    }
-                    else {
-                        var prevSum = categorySums[it.category]!!
-                        prevSum += operationSum
-                        categorySums[it.category] = prevSum
+                        operationSum = currencyConverter.convertCurrency(Money(it.sum,
+                            getCurrencyByString(it.currency)), mainCurrency).count
+
+                        overallSum += operationSum
+
+                        if (!categorySums.contains(it.category)) {
+                            categorySums[it.category] = operationSum
+                        }
+                        else {
+                            var prevSum = categorySums[it.category]!!
+                            prevSum += operationSum
+                            categorySums[it.category] = prevSum
+                        }
                     }
                 }
             }
         }
 
         categorySums.forEach {
-            chartEntries.add(PieEntry(it.value, it.key))
+            val name = BaseApp.instance.getString(getCategoryByString(it.key).getStringResource())
+            chartEntries.add(PieEntry(it.value, name))
         }
 
-        val dataSet = PieDataSet(chartEntries, "Category Expenses")
+        val dataSet = PieDataSet(chartEntries, "")
         view.setupChartData(dataSet)
 
     }

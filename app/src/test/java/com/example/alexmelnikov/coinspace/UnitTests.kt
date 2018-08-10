@@ -4,9 +4,14 @@ import com.example.alexmelnikov.coinspace.model.Currency
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.util.find
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
+import com.example.alexmelnikov.coinspace.util.getDate
+import com.example.alexmelnikov.coinspace.util.prefixFunction
+import org.junit.Assert
 import org.junit.Assert.assertEquals
 import org.junit.Test
+import org.junit.rules.ExpectedException
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -49,6 +54,11 @@ class UnitTests {
             assertEquals(listRez[i], getCurrencyByString(list[i]))
     }
 
+    @Test(expected = Exception::class)
+    fun getCurrencyByStringTestBad() {
+      getCurrencyByString("NONE")
+    }
+
     @Test
     fun currencyConverterTest() {
         val currencyConverter = CurrencyConverter()
@@ -58,5 +68,38 @@ class UnitTests {
             currencyConverter.convertCurrency(Money(23.45f, Currency.RUR), Currency.USD).count,
             0.001f)
     }
+
+    @Test
+    fun kmpTest()
+    {
+        assertEquals(true,find("a","aa"))
+        assertEquals(true,find("","defrtgyr"))
+        assertEquals(false,find("i","asddb"))
+    }
+
+    @Test
+    fun kmpTestPrecalc()
+    {
+        assertEquals(true,find("a","aa",prefixFunction("a#aa")))
+        assertEquals(true,find("","defrtgyr",prefixFunction("frt#defrtgyr")))
+        assertEquals(false,find("i","asddb",prefixFunction("i#asddb")))
+    }
+
+    @Test
+    fun prefixFunctionTestPrecalc()
+    {
+        assertEquals(listOf(0,0,1,1), prefixFunction("a#aa"))
+        assertEquals(listOf(0,0,0,0,0,0,1,2,3,0,0,0), prefixFunction("frt#defrtgyr"))
+        assertEquals(listOf(0,0,0,0,0,0,0), prefixFunction("i#asddb"))
+    }
+
+    @Test
+    fun timestampToStringDate()
+    {
+        assertEquals("30.11.1973", getDate(123456787654))
+        assertEquals("05.08.2713", getDate(23465478457483))
+        assertEquals("01.01.1970", getDate(-23526))
+    }
+
 
 }

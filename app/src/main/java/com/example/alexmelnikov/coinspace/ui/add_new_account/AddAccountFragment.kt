@@ -16,8 +16,10 @@ import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import com.daimajia.androidanimations.library.Techniques
 import com.daimajia.androidanimations.library.YoYo
+import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.R
 import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
+import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.ui.RevealCircleAnimatorHelper
 import com.thebluealliance.spectrum.SpectrumDialog
 import kotlinx.android.synthetic.main.fragment_add_account.*
@@ -32,7 +34,9 @@ class AddAccountFragment : Fragment(), AddAccountContract.View {
 
     override fun onAttach(context: Context?) {
         super.onAttach(context)
-        DaggerFragmentComponent.builder().build().inject(this)
+        DaggerFragmentComponent.builder()
+            .fragmentModule(FragmentModule(activity!!.applicationContext as BaseApp)).build()
+            .inject(this)
     }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {

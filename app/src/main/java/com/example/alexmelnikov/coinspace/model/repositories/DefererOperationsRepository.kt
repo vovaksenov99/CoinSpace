@@ -1,16 +1,16 @@
 package com.example.alexmelnikov.coinspace.model.repositories
 
 import android.util.Log
-import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.DeferOperation
 import com.example.alexmelnikov.coinspace.model.persistance.dao.DeferOperationsDao
 import io.reactivex.Completable
 import io.reactivex.Single
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
-import java.util.*
 
-class DeferOperationsRepository(private val deferOperationsDao: DeferOperationsDao) : DeferOperations {
+class IDeferOperationsRepositoryRepository(private val deferOperationsDao: DeferOperationsDao) :
+    IDeferOperationsRepository {
+    val TAG = "DeferOperationsRep"
 
 
     override fun getOperationsByDay(day: Int, month: Int, year: Int): Single<List<DeferOperation>> {
@@ -19,14 +19,22 @@ class DeferOperationsRepository(private val deferOperationsDao: DeferOperationsD
         }
     }
 
-    val TAG = "DeferOperationsRep"
+    override fun removeOperationsByAccountId(accountId: Long) {
+        Completable.fromAction {
+            deferOperationsDao.deleteByAccountId(accountId)
+        }.subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe({ Log.d(TAG, "adremoveOperationByAccountId success") },
+                { Log.d(TAG, "removeOperationsByAccountId error!") })
+    }
+
     override fun addNewOperation(deferOperation: DeferOperation) {
         Completable.fromAction {
             deferOperationsDao.insert(deferOperation)
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d(TAG, "addNewOperation success") },
-                {Log.d(TAG, "addNewOperation error!")})
+                { Log.d(TAG, "addNewOperation error!") })
     }
 
     override fun removeOperation(deferOperation: DeferOperation) {
@@ -35,7 +43,7 @@ class DeferOperationsRepository(private val deferOperationsDao: DeferOperationsD
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d(TAG, "removeOperation success") },
-                {Log.d(TAG, "removeOperation error!")})
+                { Log.d(TAG, "removeOperation error!") })
     }
 
     override fun removeAllOperation() {
@@ -44,7 +52,7 @@ class DeferOperationsRepository(private val deferOperationsDao: DeferOperationsD
         }.subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe({ Log.d(TAG, "removeAllOperation success") },
-                {Log.d(TAG, "removeAllOperation error!")})
+                { Log.d(TAG, "removeAllOperation error!") })
     }
 
     override fun getAllOperations(): Single<List<DeferOperation>> {

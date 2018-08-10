@@ -1,5 +1,6 @@
 package com.example.alexmelnikov.coinspace.ui.main
 
+import android.content.Context
 import android.view.View
 import com.example.alexmelnikov.coinspace.ui.BaseContract
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsFragment
@@ -22,6 +23,8 @@ class MainContract {
 
         fun openAccountsFragment(): AccountsFragment
 
+        fun openIntroductionDialog()
+
         fun openStatisticsFragment(animationCenter: android.view.View?): StatisticsFragment
     }
 
@@ -40,9 +43,10 @@ class MainContract {
 
         fun openStatisticsFragmentRequest(animationCenter: android.view.View?)
 
-        enum class FragmentOnScreen {
-            HOME, ACCOUNTS, STATISTICS
-        }
+        fun openIntroductionDialog(context: Context)
 
+    }
+    enum class FragmentOnScreen {
+        HOME, ACCOUNTS, STATISTICS
     }
 }

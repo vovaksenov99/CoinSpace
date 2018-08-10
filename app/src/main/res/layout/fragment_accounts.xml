@@ -20,7 +20,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:theme="@style/Theme.AppCompat.Light.DarkActionBar"
-            app:titleTextColor="@color/colorWhite">
+            app:titleTextColor="@color/white">
 
         </android.support.v7.widget.Toolbar>
 

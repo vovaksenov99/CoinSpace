@@ -2,6 +2,7 @@ package com.example.alexmelnikov.coinspace.model.interactors
 
 import android.content.Context
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.OperationType
 
 /**
  *  Created by Alexander Melnikov on 29.07.18.
@@ -19,6 +20,8 @@ interface IUserBalanceInteractor {
     /**
      * @return updated user balance
      */
-    fun executeNewOperation(type: Operation.OperationType?, money: Money): Money
+    fun executeNewOperation(type: OperationType?, money: Money): Money
+
+    fun setBalance(money: Money)
 
 }

@@ -18,6 +18,7 @@ import com.example.alexmelnikov.coinspace.di.component.DaggerFragmentComponent
 import com.example.alexmelnikov.coinspace.di.module.FragmentModule
 import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
+import com.example.alexmelnikov.coinspace.model.entities.Pattern
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.Money
 import com.example.alexmelnikov.coinspace.ui.home.AccountsPagerAdapter.Companion.BALANCE_VIEW_TAG
@@ -43,6 +44,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
             .inject(this)
     }
 
+    override fun getViewPagerPosition(): Int {
+        return accounts_viewpager.currentItem
+    }
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?,
                               savedInstanceState: Bundle?): View? {
         presenter.attach(this)
@@ -64,6 +69,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     override fun onStart() {
         super.onStart()
         presenter.viewPagerSetupRequest()
+        presenter.initPatternsRV()
     }
 
     private fun setupEventListeners() {
@@ -72,11 +78,15 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         }
     }
 
-    override fun setupViewPager(balance: Money, accounts: List<Account>) {
+    override fun setupViewPager(balance: Money, accounts: List<Account>, startPage: Int) {
         accounts_viewpager.adapter =
-                AccountsPagerAdapter(activity as MainActivity, balance, ArrayList(accounts))
+                AccountsPagerAdapter(activity as MainActivity,
+                    balance,
+                    ArrayList(accounts),
+                    presenter)
         accounts_tabDots.setupWithViewPager(accounts_viewpager, true)
-        setupOperationsAdapter(accounts.flatMap { it.operations })
+
+        accounts_viewpager.currentItem = startPage
 
         accounts_viewpager.addOnPageChangeListener(object : ViewPager.OnPageChangeListener {
             override fun onPageScrollStateChanged(p0: Int) {
@@ -88,10 +98,10 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
             override fun onPageSelected(p0: Int) {
                 if (p0 == 0) {
-                    setupOperationsAdapter(accounts.flatMap { it.operations })
+                    (operation_rv.adapter as OperationAdapter).updateData(accounts.flatMap { it.operations }.toMutableList())
                     return
                 }
-                setupOperationsAdapter(accounts[p0 - 1].operations)
+                (operation_rv.adapter as OperationAdapter).updateData(accounts[p0 - 1].operations)
             }
         })
     }
@@ -102,7 +112,7 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         operation_rv.layoutManager = layoutManager
         operation_rv.isNestedScrollingEnabled = true
 
-        operation_rv.adapter = OperationAdapter(operations)
+        operation_rv.adapter = OperationAdapter(operations.toMutableList(), presenter)
 
         if (operations.isNotEmpty()) {
             lbl_empty_operation_history.visibility = View.INVISIBLE
@@ -130,16 +140,24 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
         val fragment = OperationFragment.newInstance(fab_new_action)
         fragmentManager?.beginTransaction()
             ?.replace(R.id.actionFrame, fragment)
-            ?.commitNow()
+            ?.commit()
+    }
+
+    override fun openOperationPatternFragment() {
+        closeOperationFragment()
+        val fragment = OperationPatternFragment.newInstance(fab_new_action)
+        fragmentManager?.beginTransaction()
+            ?.replace(R.id.actionFrame, fragment)
+            ?.commit()
     }
 
     override fun closeOperationFragment() {
         val fragment = fragmentManager?.findFragmentById(R.id.actionFrame)
         try {
-            if (fragment != null && fragment is OperationFragment) {
+            if (fragment != null && fragment is HomeContract.OperationView) {
                 fragmentManager?.beginTransaction()
                     ?.remove(fragment)
-                    ?.commitNow()
+                    ?.commit()
             }
         } catch (exp: IllegalStateException) {
             Log.e("exception", "can't commit remove fragment transaction after onSaveInstanceState")
@@ -158,7 +176,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
             appInfoDialog = MaterialDialog.Builder(activity!!)
                 .customView(R.layout.dialog_app_info, false)
                 .positiveText(android.R.string.ok)
-                //.dismissListener()
                 .build()
             appInfoDialog!!.view.findViewById<TextView>(R.id.tv_content).movementMethod =
                     LinkMovementMethod.getInstance()
@@ -180,10 +197,6 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
 
     override fun onOptionsItemSelected(item: MenuItem?): Boolean {
         when (item?.itemId) {
-            R.id.settings -> {
-                presenter.openSettingsActivityRequest()
-                return true
-            }
             R.id.about -> {
                 presenter.showAboutDialogRequest()
                 return true
@@ -208,16 +221,35 @@ class HomeFragment : Fragment(), HomeContract.HomeView {
     }
 
     override fun animateNewOperationButtonToAdd() {
-        val drawable =
-            activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
-        fab_new_action.setImageDrawable(drawable)
-        drawable.start()
+        try {
+
+
+            val drawable =
+                activity?.getDrawable(R.drawable.anim_ic_check_to_add_white) as AnimatedVectorDrawable
+            fab_new_action.setImageDrawable(drawable)
+            drawable.start()
+        } catch (e: Exception) {
+
+        }
+    }
+
+    override fun initPatternsRv(patterns: List<Pattern>) {
+        try {
+            val layoutManager = LinearLayoutManager(context, RecyclerView.HORIZONTAL, false)
+            patterns_rv.setHasFixedSize(true)
+            patterns_rv.layoutManager = layoutManager
+            patterns_rv.isNestedScrollingEnabled = true
+
+            patterns_rv.adapter = PatternsAdapter(context!!, presenter, patterns.toMutableList())
+        }
+        catch (e:Exception)
+        {
+            Log.i("",e.toString())
+        }
     }
 
     companion object {
-
         fun newInstance() = HomeFragment()
-
     }
 
 }

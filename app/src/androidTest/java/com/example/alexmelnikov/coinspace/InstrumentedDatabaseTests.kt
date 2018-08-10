@@ -9,7 +9,7 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.entities.Operation
 import com.example.alexmelnikov.coinspace.model.persistance.Database
 import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.IDeferOperationsRepositoryRepository
 import io.reactivex.schedulers.Schedulers
 import org.junit.After
 import org.junit.Assert
@@ -18,10 +18,6 @@ import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 import java.util.*
-import android.support.test.espresso.matcher.ViewMatchers.isDisplayed
-import android.support.test.espresso.matcher.ViewMatchers
-import android.support.test.espresso.Espresso.onView
-import android.support.test.espresso.assertion.ViewAssertions.matches
 
 
 /**
@@ -40,7 +36,7 @@ class InstrumentedDatabaseTests {
     lateinit var db: Database
 
     lateinit var accountsRepository: DefaultAccountsRepository
-    lateinit var deferOperationsRepository: DeferOperationsRepository
+    lateinit var deferOperationsRepository: IDeferOperationsRepositoryRepository
 
     @Before
     fun setup() {
@@ -49,11 +45,11 @@ class InstrumentedDatabaseTests {
             DATABASE_NAME).build()
 
         accountsRepository = DefaultAccountsRepository(db.accountDao())
-        deferOperationsRepository = DeferOperationsRepository(db.deferOperationsDao())
+        deferOperationsRepository = IDeferOperationsRepositoryRepository(db.deferOperationsDao())
 
         val accounts = getStartAccounts()
         for (account in accounts)
-            accountsRepository.accountDao.insert(account)
+            accountsRepository.database.insert(account)
 
     }
 
@@ -65,7 +61,7 @@ class InstrumentedDatabaseTests {
 
     private fun getStartAccounts(): List<Account> {
 
-        val operations = listOf(Operation(Operation.OperationType.INCOME,
+        val operations = listOf(Operation(OperationType.INCOME,
             12f,
             "USD",
             InstrumentationRegistry.getTargetContext().getString(
@@ -74,19 +70,19 @@ class InstrumentedDatabaseTests {
         val account1 = Account(0, "Account1", "USD", 1000f, 10, operations)
 
 
-        val operations2 = listOf(Operation(Operation.OperationType.INCOME,
+        val operations2 = listOf(Operation(OperationType.INCOME,
             12f,
             "USD",
             InstrumentationRegistry.getTargetContext().getString(
                 Category.FOOD.getStringResource()),
-            Date(1533475542852)),
-            Operation(Operation.OperationType.EXPENSE,
+            Calendar.getInstance().time.time),
+            Operation(OperationType.EXPENSE,
                 123f,
                 "EUR",
                 InstrumentationRegistry.getTargetContext().getString(
                     Category.TRANSPORT.getStringResource()),
                 Date(1533475542852)),
-            Operation(Operation.OperationType.EXPENSE,
+            Operation(OperationType.EXPENSE,
                 200f,
                 "RUB",
                 InstrumentationRegistry.getTargetContext().getString(
@@ -100,7 +96,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldReturnAccountById() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountById(0).subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -113,7 +109,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldReturnNullByNoneId() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountById(-1).subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -123,7 +119,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldFindAccountByName() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountByName("Account1").subscribeOn(Schedulers.io())
             .subscribe({ account ->
@@ -135,7 +131,7 @@ class InstrumentedDatabaseTests {
 
     @Test
     fun shouldFindAccountByNoneName() {
-        val repository = DefaultAccountsRepository(db.accountDao())
+        val repository = DefaultAccountsRepository(db)
 
         repository.findAccountByName(" ").subscribeOn(Schedulers.io())
             .subscribe({ account ->

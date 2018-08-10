@@ -7,7 +7,7 @@ import java.util.concurrent.TimeUnit
 
 @Entity(tableName = "deferOperations")
 data class DeferOperation(@PrimaryKey(autoGenerate = true) var id: Long?,
-                          var name: String,
+                          var description: String,
                           var nextRepeatDay: Int,
                           var currency: String,
                           var accountId: Long,

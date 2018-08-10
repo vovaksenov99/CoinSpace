@@ -7,10 +7,7 @@ import com.example.alexmelnikov.coinspace.BaseApp
 import com.example.alexmelnikov.coinspace.model.interactors.IUserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.interactors.UserBalanceInteractor
 import com.example.alexmelnikov.coinspace.model.persistance.Database
-import com.example.alexmelnikov.coinspace.model.repositories.AccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DefaultAccountsRepository
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperations
-import com.example.alexmelnikov.coinspace.model.repositories.DeferOperationsRepository
+import com.example.alexmelnikov.coinspace.model.repositories.*
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsContract
 import com.example.alexmelnikov.coinspace.ui.accounts.AccountsPresenter
 import com.example.alexmelnikov.coinspace.ui.add_new_account.AddAccountContract
@@ -62,13 +59,23 @@ class FragmentModule(private val baseApp: BaseApp) {
 
     @Provides
     @Singleton
-    fun provideDeferRepository(database: Database): DeferOperations =
-        DeferOperationsRepository(database.deferOperationsDao())
+    fun provideDeferRepository(database: Database): IDeferOperationsRepository =
+        IDeferOperationsRepositoryRepository(database.deferOperationsDao())
 
     @Provides
     @Singleton
     fun provideAccountRepository(database: Database): AccountsRepository =
-        DefaultAccountsRepository(database.accountDao())
+        DefaultAccountsRepository(database)
+
+    @Provides
+    @Singleton
+    fun providePatternRepository(database: Database): IPatternsRepository =
+        PatternsRepository(database.patternDao())
+
+    @Provides
+    @Singleton
+    fun provideOperationsRepository(database: Database): IOperationsRepository =
+        OperationsRepository(database.operationsDao())
 
     @Provides
     @Singleton

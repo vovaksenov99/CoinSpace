@@ -10,13 +10,6 @@ import io.reactivex.Single
  */
 interface AccountsRepository {
 
-    /**
-     * This method called from BaseApp onCreate
-     * It checks if accounts table is empty and add two main accounts (cash and card)
-     */
-    fun initAddTwoMainAccountsIfTableEmptyAsync(cashName: String, mainCurrency: String, color: Int,
-                                                cardName: String)
-
     fun getAccountsOffline(): Single<List<Account>>
 
 
@@ -25,11 +18,13 @@ interface AccountsRepository {
     fun findAccountById(id: Long): Single<Account>
 
     fun insertAccountOfflineAsync(name: String, currency: String, balance: Float = 0f, color: Int,
-                                  operations: List<Operation> = ArrayList())
+                                  operations: List<Operation> = ArrayList(),callback: ()->Unit = {})
 
     fun insertAccountOfflineAsync(account: Account)
 
     fun updateAccountOfflineAsync(account: Account)
 
     fun deleteAll()
+
+    fun removeByAccountId(accountId: Long, callback: () -> Unit = {})
 }

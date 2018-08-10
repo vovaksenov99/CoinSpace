@@ -13,6 +13,8 @@ import com.example.alexmelnikov.coinspace.model.entities.Account
 import com.example.alexmelnikov.coinspace.model.getCurrencyByString
 import com.example.alexmelnikov.coinspace.model.interactors.CurrencyConverter
 import com.example.alexmelnikov.coinspace.model.interactors.Money
+import com.example.alexmelnikov.coinspace.ui.OPERATION_SEARCH_DIALOG
+import com.example.alexmelnikov.coinspace.ui.OperationSearchDialog
 import com.example.alexmelnikov.coinspace.ui.PERIODIC_DIALOG_TAG
 import com.example.alexmelnikov.coinspace.ui.PeriodicDialog
 import com.example.alexmelnikov.coinspace.util.formatToMoneyString
@@ -25,7 +27,8 @@ import kotlinx.android.synthetic.main.card_current_budget.view.*
 
 class AccountsPagerAdapter(private val mContext: Context,
                            private val mUserBalance: Money,
-                           private val mAccounts: ArrayList<Account>) : PagerAdapter() {
+                           private val mAccounts: ArrayList<Account>,
+                            val presenter: HomeContract.Presenter) : PagerAdapter() {
 
     var currencyConverter = CurrencyConverter()
 
@@ -48,6 +51,14 @@ class AccountsPagerAdapter(private val mContext: Context,
                 dialog.showNow((mContext as FragmentActivity).supportFragmentManager, PERIODIC_DIALOG_TAG)
 
             }
+
+            layout.search.setOnClickListener {
+                val dialog = OperationSearchDialog()
+                OperationSearchDialog.presenter = presenter
+                dialog.showNow((mContext as FragmentActivity).supportFragmentManager, OPERATION_SEARCH_DIALOG)
+
+            }
+
             return layout
         }
         else {

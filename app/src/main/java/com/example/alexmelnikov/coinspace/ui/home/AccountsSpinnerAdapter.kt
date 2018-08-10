@@ -16,7 +16,7 @@ import kotlinx.android.synthetic.main.spinner_item_account.view.*
  */
 
 class AccountsSpinnerAdapter(private val mContext: Context,
-                             private val mData: ArrayList<Account>) : BaseAdapter(), SpinnerAdapter {
+                             private val mData: List<Account>) : BaseAdapter(), SpinnerAdapter {
 
     override fun getView(i: Int, convertView: View?, viewGroup: ViewGroup?): View {
         val view: View = convertView ?: LayoutInflater.from(mContext)

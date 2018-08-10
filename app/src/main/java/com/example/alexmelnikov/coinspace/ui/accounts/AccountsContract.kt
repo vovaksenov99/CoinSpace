@@ -16,12 +16,16 @@ class AccountsContract {
     }
 
     //interface View
-    interface Presenter : BaseContract.Presenter<AccountsView>, AccountsAdapter.AccountsAdapterEventsListener {
+    interface Presenter : BaseContract.Presenter<AccountsView>,
+        AccountsAdapter.AccountsAdapterEventsListener {
 
         fun addNewAccountButtonClick()
 
         fun accountsDataRequest()
 
+        fun removeAccount(account: Account)
+
     }
+
     interface View
 }

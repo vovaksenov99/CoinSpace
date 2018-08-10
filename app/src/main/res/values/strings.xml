@@ -39,6 +39,8 @@
     <string name="btn_expense">Расход</string>
     <string name="label_new_income">Новый доход</string>
     <string name="label_new_expense">Новый расход</string>
+    <string name="label_new_income_pattern">Новый шаблон дохода</string>
+    <string name="label_new_expense_pattern">Новый шабон расхода</string>
     <string name="tv_currency_label">Валюта:</string>
     <string name="tv_account_label">Счет:</string>
     <string name="tv_category_label">Категория:</string>
@@ -56,24 +58,49 @@
     <string name="icon_usd">$</string>
     <string name="icon_eur">€</string>
     <string name="info_dialog_content">
-        Ad attingere objectiva pertinent an si abducerem.
-        \n\nAestimare mea profertur qui existimem referenda pergamque sum has eos naturalis detractis.
-        \nVi at ad complector id quaecumque consuetudo. Fal praecise rum physicam actiones lus recenseo uno.
-        \n\nHaberem visione dicetur rom dominum mutuari hac <a href="https://academy.yandex.ru/events/mobdev/msk-2018/">Yandex School of Mobile Development 2018</a>
-        \n\nDeveloped by <a href="https://github.com/millerovv">Alexander Melnikov</a>
+        Мобильное приложение для отслеживания финансов\n<a href="https://academy.yandex.ru/events/mobdev/msk-2018/">Yandex School of Mobile Development 2018</a>
+        \n\nDeveloped by <a href="https://github.com/vovaksenov99">Aksenov Vladimir</a>\n<a href="http://aksenov-vladimir.herokuapp.com?lang=Rus">Сайт разработчика</a>
     </string>
-
     <string name="text_new_account_header">Новый счет</string>
     <string name="hint_account_name">Название счета</string>
     <string name="label_account_color">Цвет счета</string>
     <string name="accounts_fragment_title">Счета</string>
     <string name="statistics_fragment_title">Статистика</string>
     <string name="expenses_pie_chart_lbl">Расходы по категориям</string>
-    <string name="next_repeat">Повторяется каждые </string>
+    <string name="next_repeat">Повторяется </string>
     <string name="days">Дней</string>
     <string name="yes">Да</string>
     <string name="no">Нет</string>
     <string name="show_delay_operation">Показать отложенные операции</string>
     <string name="do_you_want_to_delete_periodic_payment">Вы действительно хотите удалить переодическую операцию?</string>
+    <string name="do_you_want_to_delete_pattern">Вы действительно хотите удалить шаблон?</string>
+    <string name="do_you_want_to_delete_operation">Вы действительно хотите удалить операцию?</string>
+
+    <string name="money_tracker">Money Tracker</string>
+
+    <string name="introduce_message">Добро пожаловать</string>
+    <string name="introduce_message_instruction">Для начала необходимо создать кошелек</string>
+    <string name="done">Готово</string>
+
+    <string name="choose_periodic">Повторять каждые</string>
+    <string name="input_sum">Введите сумму</string>
+
+
+    <string name="none">Нет</string>
+    <string name="every_day">каждый день</string>
+    <string name="every_week">каждую неделю</string>
+    <string name="every_month">каждый месяц</string>
+
+    <string name="delete">Удалить</string>
+    <string name="edit">Редактировать</string>
+    <string name="patterns">Шаблоны</string>
+
+    <string name="yandex">Yandex</string>
+    <string name="description">Описание</string>
+    <string name="select_dated">Выберите даты</string>
+    <string name="periodic_operations">Периодические операции</string>
+    <string name="periodic_operations_empty">Нет переодических операций</string>
+    <string name="search_by_description">Поиск по описанию</string>
+
 
 </resources>

@@ -101,9 +101,9 @@ enum class Category {
 }
 
 
-fun getCategoryByString(context: Context, categoryIndex: String): Category {
+fun getCategoryByString(categoryIndex: String): Category {
     for (category in Category.values())
-        if (context.getString(category.getStringResource()) == categoryIndex)
+        if (category.toString() == categoryIndex)
             return category
     throw Exception("Not valid currency index. Invalid string '$categoryIndex'")
 }
